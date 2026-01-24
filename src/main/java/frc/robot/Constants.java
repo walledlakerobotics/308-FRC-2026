@@ -144,4 +144,6 @@ public final class Constants {
     public static final AprilTagFieldLayout kAprilTagFieldLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   }
+
+  public static final class ExtendorConstants {}
 }

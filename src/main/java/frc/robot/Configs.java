@@ -12,6 +12,8 @@ public final class Configs {
     public static final SparkMaxConfig drivingConfig = new SparkMaxConfig();
     public static final SparkMaxConfig turningConfig = new SparkMaxConfig();
 
+    public static final SparkMaxConfig extenderConfig = new SparkMaxConfig();
+
     public static final MagnetSensorConfigs turningEncoderConfig = new MagnetSensorConfigs();
 
     static {
@@ -61,6 +63,12 @@ public final class Configs {
                   ? SensorDirectionValue.Clockwise_Positive
                   : SensorDirectionValue.CounterClockwise_Positive)
           .withAbsoluteSensorDiscontinuityPoint(0.5);
+
+      extenderConfig.inverted(false).smartCurrentLimit(0).idleMode(null);
+
+      extenderConfig.closedLoop.p(0).i(0).d(0);
+
+      extenderConfig.closedLoop.feedForward.kA(0).kG(0).kS(0).kV(0);
     }
   }
 }
