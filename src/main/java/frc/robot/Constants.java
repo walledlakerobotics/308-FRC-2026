@@ -151,11 +151,10 @@ public final class Constants {
 
     public static final double kTransitionPeriodSeconds = 10.0;
 
-    public static final int kShiftPeriodAmount = 4;
+    public static final int kNumShiftPeriods = 4;
     public static final double kShiftPeriodSeconds = 25.0;
 
     public static final double kEndgamePeriodSeconds = 30.0;
-
   }
 
   public static final class ExtenderConstants {

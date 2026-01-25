@@ -88,7 +88,7 @@ public final class MatchTimer {
 
     Alliance firstInactive = firstInactiveOptional.get();
 
-    for (int i = 0; i < MatchTimerConstants.kShiftPeriodAmount; i++) {
+    for (int i = 0; i < MatchTimerConstants.kNumShiftPeriods; i++) {
       if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kShiftPeriodSeconds)) {
         boolean useFirstInactive = i % 2 == 1;
 
