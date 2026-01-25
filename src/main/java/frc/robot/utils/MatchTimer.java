@@ -39,7 +39,7 @@ public final class MatchTimer {
 
   public double getMatchTime() {
     TimerDirection direction = getTimerDirection();
-    int sign = direction == TimerDirection.kUp ? 1 : -1;
+    int sign = direction == TimerDirection.Up ? 1 : -1;
 
     double currentTimestamp = Timer.getTimestamp();
     double difference = currentTimestamp - m_lastTickTimestamp;
@@ -64,14 +64,14 @@ public final class MatchTimer {
   }
 
   public MatchPeriod getMatchPeriod() {
-    if (DriverStation.isAutonomous()) return MatchPeriod.kAuto;
-    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.kNone;
+    if (DriverStation.isAutonomous()) return MatchPeriod.Auto;
+    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
     Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
     Optional<Alliance> firstActiveOptional = getFirstActiveAlliance();
 
     if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty())
-      return MatchPeriod.kNone;
+      return MatchPeriod.None;
 
     Alliance currentAlliance = currentAllianceOptional.get();
     Alliance firstActive = firstActiveOptional.get();
@@ -80,7 +80,7 @@ public final class MatchTimer {
     double matchTime = getMatchTime();
 
     if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kTransitionPeriodSeconds)) {
-      return MatchPeriod.kTransition;
+      return MatchPeriod.Transition;
     }
 
     periodStart -= MatchTimerConstants.kTransitionPeriodSeconds;
@@ -91,12 +91,12 @@ public final class MatchTimer {
 
         if (useFirstActive) {
           return firstActive == currentAlliance
-              ? MatchPeriod.kShiftActive
-              : MatchPeriod.kShiftInactive;
+              ? MatchPeriod.ShiftActive
+              : MatchPeriod.ShiftInactive;
         } else {
           return firstActive == currentAlliance
-              ? MatchPeriod.kShiftInactive
-              : MatchPeriod.kShiftActive;
+              ? MatchPeriod.ShiftInactive
+              : MatchPeriod.ShiftActive;
         }
       }
 
@@ -104,10 +104,10 @@ public final class MatchTimer {
     }
 
     if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kEndgamePeriodSeconds)) {
-      return MatchPeriod.kEndgame;
+      return MatchPeriod.Endgame;
     }
 
-    return MatchPeriod.kNone;
+    return MatchPeriod.None;
   }
 
   private int getDSMatchTime() {
@@ -116,8 +116,8 @@ public final class MatchTimer {
 
   public TimerDirection getTimerDirection() {
     return DriverStation.getMatchType() == MatchType.None
-        ? TimerDirection.kUp
-        : TimerDirection.kDown;
+        ? TimerDirection.Up
+        : TimerDirection.Down;
   }
 
   public void poll() {
@@ -125,20 +125,20 @@ public final class MatchTimer {
   }
 
   public static enum TimerDirection {
-    kUp,
-    kDown;
+    Up,
+    Down;
   }
 
   public static enum MatchPeriod {
-    kAuto,
-    kTransition,
-    kShiftActive,
-    kShiftInactive,
-    kEndgame,
-    kNone;
+    Auto,
+    Transition,
+    ShiftActive,
+    ShiftInactive,
+    Endgame,
+    None;
 
     public boolean isHubActive() {
-      return this != kShiftInactive;
+      return this != ShiftInactive;
     }
   }
 }
