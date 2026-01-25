@@ -4,6 +4,8 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.ModuleConstants;
 
 /** Contains configuration objects for various robot components. */
@@ -11,8 +13,6 @@ public final class Configs {
   public static final class SwerveModule {
     public static final SparkMaxConfig drivingConfig = new SparkMaxConfig();
     public static final SparkMaxConfig turningConfig = new SparkMaxConfig();
-
-    public static final SparkMaxConfig extenderConfig = new SparkMaxConfig();
 
     public static final MagnetSensorConfigs turningEncoderConfig = new MagnetSensorConfigs();
 
@@ -63,12 +63,28 @@ public final class Configs {
                   ? SensorDirectionValue.Clockwise_Positive
                   : SensorDirectionValue.CounterClockwise_Positive)
           .withAbsoluteSensorDiscontinuityPoint(0.5);
+    }
+  }
 
-      extenderConfig.inverted(false).smartCurrentLimit(0).idleMode(null);
+  public static final class Extender {
+    public static final SparkMaxConfig extenderConfig = new SparkMaxConfig();
 
-      extenderConfig.closedLoop.p(0).i(0).d(0);
+    static {
+      double extenderFactor = 1.0 / ExtenderConstants.kExtenderMotorReduction;
 
-      extenderConfig.closedLoop.feedForward.kA(0).kG(0).kS(0).kV(0);
+      extenderConfig
+          .inverted(ExtenderConstants.kExtenderMotorInverted)
+          .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
+          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit);
+      extenderConfig
+          .absoluteEncoder
+          .positionConversionFactor(extenderFactor) // rotations
+          .velocityConversionFactor(extenderFactor / 60.0); // rotations per second
+      extenderConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(0.1, 0, 0)
+          .outputRange(-1.0, 1.0);
     }
   }
 }

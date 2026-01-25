@@ -145,5 +145,13 @@ public final class Constants {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   }
 
-  public static final class ExtendorConstants {}
+  public static final class ExtenderConstants {
+    public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
+
+    public static final double kExtenderMotorReduction = 1.0;
+
+    public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
+    public static final int kExtenderMotorCurrentLimit = 30; // amps
+    public static final boolean kExtenderMotorInverted = false;
+  }
 }
