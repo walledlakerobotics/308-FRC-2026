@@ -39,7 +39,7 @@ public final class MatchTimer {
     int sign = direction == TimerDirection.kUp ? 1 : -1;
 
     double currentTimestamp = Timer.getTimestamp();
-    double difference = m_lastTickTimestamp - currentTimestamp;
+    double difference = currentTimestamp - m_lastTickTimestamp;
 
     return m_currentDSMatchTime + sign * difference;
   }
