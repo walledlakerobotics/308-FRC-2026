@@ -9,25 +9,25 @@ import frc.robot.Configs;
 
 public class Extender {
 
-  private SparkMax m_Motor = new SparkMax(0, MotorType.kBrushless);
-  private AbsoluteEncoder m_Encoder = m_Motor.getAbsoluteEncoder();
+  private SparkMax m_motor = new SparkMax(0, MotorType.kBrushless);
+  private AbsoluteEncoder m_encoder = m_motor.getAbsoluteEncoder();
 
   public Extender() {
-    m_Motor.configure(
+    m_motor.configure(
         Configs.Extender.extenderConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
   }
 
   public void setSpeed(double speed) {
-    m_Motor.set(speed);
+    m_motor.set(speed);
   }
 
   public double getPosition() {
-    return m_Encoder.getPosition();
+    return m_encoder.getPosition();
   }
 
   public double getVelocity() {
-    return m_Encoder.getVelocity();
+    return m_encoder.getVelocity();
   }
 }
