@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-
 import java.util.function.DoubleSupplier;
 
 /** Subsystem to control a swerve drivetrain. */

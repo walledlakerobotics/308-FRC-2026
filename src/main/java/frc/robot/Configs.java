@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.ModuleConstants;
 
