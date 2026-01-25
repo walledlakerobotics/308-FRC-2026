@@ -70,7 +70,7 @@ public final class MatchTimer {
 
     Alliance currentAlliance = currentAllianceOptional.get();
 
-    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Auto;
+    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Autonomous;
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
     double periodStart = MatchConstants.kTeleopPeriodSeconds;
@@ -131,7 +131,7 @@ public final class MatchTimer {
   }
 
   public static enum MatchPeriod {
-    Auto,
+    Autonomous,
     Transition,
     ShiftActive,
     ShiftInactive,
