@@ -13,6 +13,10 @@ public final class MatchTimer {
 
   private EventLoop m_timerLoop = new EventLoop();
 
+  public void poll() {
+    m_timerLoop.poll();
+  }
+
   public static enum MatchPeriod {
     kAuto,
     kTransition,
