@@ -147,6 +147,7 @@ public final class Constants {
 
   public static final class MatchTimerConstants {
     public static final double kAutoPeriodSeconds = 20.0;
+    public static final double kTeleopPeriodSeconds = 140.0;
 
     public static final double kTransitionPeriodSeconds = 10.0;
 
