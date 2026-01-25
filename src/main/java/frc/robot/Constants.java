@@ -77,10 +77,6 @@ public final class Constants {
     public static final int kFrontRightTurningEncoderId = CANIDs.frontRightEncoder();
     public static final int kRearRightTurningEncoderId = CANIDs.rearRightEncoder();
 
-    public static final SwerveSetpointGenerator setpointGenerator =
-        new SwerveSetpointGenerator(
-            DriveConstants.kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
-
     public static final RobotConfig kRobotConfig;
 
     static {
@@ -90,6 +86,10 @@ public final class Constants {
         throw new RuntimeException("Failed to load robot configuration", e);
       }
     }
+
+    public static final SwerveSetpointGenerator setpointGenerator =
+        new SwerveSetpointGenerator(
+            DriveConstants.kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
   }
 
   public static final class ModuleConstants {
