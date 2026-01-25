@@ -64,16 +64,14 @@ public final class MatchTimer {
   }
 
   public MatchPeriod getMatchPeriod() {
-    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Auto;
-    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
-
     Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
-    Optional<Alliance> firstActiveOptional = getFirstInactiveAlliance();
 
-    if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty()) return MatchPeriod.None;
+    if (currentAllianceOptional.isEmpty()) return MatchPeriod.None;
 
     Alliance currentAlliance = currentAllianceOptional.get();
-    Alliance firstInactive = firstActiveOptional.get();
+
+    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Auto;
+    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
     double periodStart = MatchTimerConstants.kTeleopPeriodSeconds;
     double matchTime = getMatchTime();
@@ -83,6 +81,12 @@ public final class MatchTimer {
     }
 
     periodStart -= MatchTimerConstants.kTransitionPeriodSeconds;
+
+    Optional<Alliance> firstInactiveOptional = getFirstInactiveAlliance();
+
+    if (firstInactiveOptional.isEmpty()) return MatchPeriod.None;
+
+    Alliance firstInactive = firstInactiveOptional.get();
 
     for (int i = 0; i < MatchTimerConstants.kShiftPeriodAmount; i++) {
       if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kShiftPeriodSeconds)) {
