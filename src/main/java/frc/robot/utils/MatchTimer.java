@@ -1,6 +1,10 @@
 package frc.robot.utils;
 
 public final class MatchTimer {
+  private MatchTimer() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
+
   public static enum MatchPeriod {
     kAuto,
     kTransition,
@@ -11,9 +15,5 @@ public final class MatchTimer {
     public boolean isHubActive() {
       return this != kShiftInactive;
     }
-  }
-
-  private MatchTimer() {
-    throw new UnsupportedOperationException("This is a utility class!");
   }
 }
