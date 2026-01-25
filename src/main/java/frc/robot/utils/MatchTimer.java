@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import edu.wpi.first.wpilibj.event.EventLoop;
+
 public final class MatchTimer {
   public static final MatchTimer instance = new MatchTimer();
 
@@ -8,6 +10,8 @@ public final class MatchTimer {
   public static MatchTimer getInstance() {
     return instance;
   }
+
+  private EventLoop m_timerLoop = new EventLoop();
 
   public static enum MatchPeriod {
     kAuto,
