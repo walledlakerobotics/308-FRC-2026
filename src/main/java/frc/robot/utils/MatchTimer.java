@@ -47,7 +47,7 @@ public final class MatchTimer {
     return m_currentDSMatchTime + sign * difference;
   }
 
-  public Optional<Alliance> getFirstActiveAlliance() {
+  public Optional<Alliance> getFirstInactiveAlliance() {
     String gameData = DriverStation.getGameSpecificMessage();
     switch (gameData) {
       case "B":
@@ -68,12 +68,12 @@ public final class MatchTimer {
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
     Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
-    Optional<Alliance> firstActiveOptional = getFirstActiveAlliance();
+    Optional<Alliance> firstActiveOptional = getFirstInactiveAlliance();
 
     if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty()) return MatchPeriod.None;
 
     Alliance currentAlliance = currentAllianceOptional.get();
-    Alliance firstActive = firstActiveOptional.get();
+    Alliance firstInactive = firstActiveOptional.get();
 
     double periodStart = MatchTimerConstants.kTeleopPeriodSeconds;
     double matchTime = getMatchTime();
@@ -86,14 +86,14 @@ public final class MatchTimer {
 
     for (int i = 0; i < MatchTimerConstants.kShiftPeriodAmount; i++) {
       if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kShiftPeriodSeconds)) {
-        boolean useFirstActive = i % 2 == 0;
+        boolean useFirstInactive = i % 2 == 1;
 
-        if (useFirstActive) {
-          return firstActive == currentAlliance
+        if (useFirstInactive) {
+          return firstInactive == currentAlliance
               ? MatchPeriod.ShiftActive
               : MatchPeriod.ShiftInactive;
         } else {
-          return firstActive == currentAlliance
+          return firstInactive == currentAlliance
               ? MatchPeriod.ShiftInactive
               : MatchPeriod.ShiftActive;
         }
