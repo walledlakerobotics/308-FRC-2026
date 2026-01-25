@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.event.EventLoop;
 
 public final class MatchTimer {
@@ -13,8 +15,17 @@ public final class MatchTimer {
 
   private EventLoop m_timerLoop = new EventLoop();
 
+  public TimerDirection getTimerDirection() {
+    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.kUp : TimerDirection.kDown;
+  }
+
   public void poll() {
     m_timerLoop.poll();
+  }
+
+  public static enum TimerDirection {
+    kUp,
+    kDown;
   }
 
   public static enum MatchPeriod {
