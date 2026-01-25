@@ -1,10 +1,13 @@
 package frc.robot.utils;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import frc.robot.Constants.MatchTimerConstants;
+import java.util.Optional;
 
 public final class MatchTimer {
   private static final MatchTimer instance = new MatchTimer();
@@ -44,6 +47,69 @@ public final class MatchTimer {
     return m_currentDSMatchTime + sign * difference;
   }
 
+  public Optional<Alliance> getFirstActiveAlliance() {
+    String gameData = DriverStation.getGameSpecificMessage();
+    switch (gameData) {
+      case "B":
+        return Optional.of(Alliance.Blue);
+      case "R":
+        return Optional.of(Alliance.Red);
+      default:
+        return Optional.empty();
+    }
+  }
+
+  private boolean withinPeriod(double t, double start, double length) {
+    return t <= start && t > start - length;
+  }
+
+  public MatchPeriod getMatchPeriod() {
+    if (DriverStation.isAutonomous()) return MatchPeriod.kAuto;
+    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.kNone;
+
+    Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
+    Optional<Alliance> firstActiveOptional = getFirstActiveAlliance();
+
+    if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty())
+      return MatchPeriod.kNone;
+
+    Alliance currentAlliance = currentAllianceOptional.get();
+    Alliance firstActive = firstActiveOptional.get();
+
+    double periodStart = MatchTimerConstants.kTeleopPeriodSeconds;
+    double matchTime = getMatchTime();
+
+    if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kTransitionPeriodSeconds)) {
+      return MatchPeriod.kTransition;
+    }
+
+    periodStart -= MatchTimerConstants.kTransitionPeriodSeconds;
+
+    for (int i = 0; i < MatchTimerConstants.kShiftPeriodAmount; i++) {
+      if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kShiftPeriodSeconds)) {
+        boolean useFirstActive = i % 2 == 0;
+
+        if (useFirstActive) {
+          return firstActive == currentAlliance
+              ? MatchPeriod.kShiftActive
+              : MatchPeriod.kShiftInactive;
+        } else {
+          return firstActive == currentAlliance
+              ? MatchPeriod.kShiftInactive
+              : MatchPeriod.kShiftActive;
+        }
+      }
+
+      periodStart -= MatchTimerConstants.kShiftPeriodSeconds;
+    }
+
+    if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kEndgamePeriodSeconds)) {
+      return MatchPeriod.kEndgame;
+    }
+
+    return MatchPeriod.kNone;
+  }
+
   private int getDSMatchTime() {
     return (int) DriverStation.getMatchTime();
   }
@@ -68,7 +134,8 @@ public final class MatchTimer {
     kTransition,
     kShiftActive,
     kShiftInactive,
-    kEndgame;
+    kEndgame,
+    kNone;
 
     public boolean isHubActive() {
       return this != kShiftInactive;
