@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import frc.robot.Constants.MatchTimerConstants;
+import frc.robot.Constants.MatchConstants;
 import java.util.Optional;
 
 public final class MatchTimer {
@@ -73,14 +73,14 @@ public final class MatchTimer {
     if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Auto;
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
-    double periodStart = MatchTimerConstants.kTeleopPeriodSeconds;
+    double periodStart = MatchConstants.kTeleopPeriodSeconds;
     double matchTime = getMatchTime();
 
-    if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kTransitionPeriodSeconds)) {
+    if (withinPeriod(matchTime, periodStart, MatchConstants.kTransitionPeriodSeconds)) {
       return MatchPeriod.Transition;
     }
 
-    periodStart -= MatchTimerConstants.kTransitionPeriodSeconds;
+    periodStart -= MatchConstants.kTransitionPeriodSeconds;
 
     Optional<Alliance> firstInactiveOptional = getFirstInactiveAlliance();
 
@@ -88,8 +88,8 @@ public final class MatchTimer {
 
     Alliance firstInactive = firstInactiveOptional.get();
 
-    for (int i = 0; i < MatchTimerConstants.kNumShiftPeriods; i++) {
-      if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kShiftPeriodSeconds)) {
+    for (int i = 0; i < MatchConstants.kNumShiftPeriods; i++) {
+      if (withinPeriod(matchTime, periodStart, MatchConstants.kShiftPeriodSeconds)) {
         boolean useFirstInactive = i % 2 == 1;
 
         if (useFirstInactive) {
@@ -103,10 +103,10 @@ public final class MatchTimer {
         }
       }
 
-      periodStart -= MatchTimerConstants.kShiftPeriodSeconds;
+      periodStart -= MatchConstants.kShiftPeriodSeconds;
     }
 
-    if (withinPeriod(matchTime, periodStart, MatchTimerConstants.kEndgamePeriodSeconds)) {
+    if (withinPeriod(matchTime, periodStart, MatchConstants.kEndgamePeriodSeconds)) {
       return MatchPeriod.Endgame;
     }
 

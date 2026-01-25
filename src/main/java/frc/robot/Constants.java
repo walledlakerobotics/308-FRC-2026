@@ -145,7 +145,7 @@ public final class Constants {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   }
 
-  public static final class MatchTimerConstants {
+  public static final class MatchConstants {
     public static final double kAutoPeriodSeconds = 20.0;
     public static final double kTeleopPeriodSeconds = 140.0;
 
