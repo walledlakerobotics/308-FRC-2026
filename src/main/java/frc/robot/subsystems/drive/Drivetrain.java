@@ -269,7 +269,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_previousSetpoint =
-        DriveConstants.setpointGenerator.generateSetpoint(
+        DriveConstants.kSetpointGenerator.generateSetpoint(
             m_previousSetpoint, chassisSpeeds, TimedRobot.kDefaultPeriod);
 
     setModuleStates(m_previousSetpoint.moduleStates());

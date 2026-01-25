@@ -87,7 +87,7 @@ public final class Constants {
       }
     }
 
-    public static final SwerveSetpointGenerator setpointGenerator =
+    public static final SwerveSetpointGenerator kSetpointGenerator =
         new SwerveSetpointGenerator(
             DriveConstants.kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
   }
