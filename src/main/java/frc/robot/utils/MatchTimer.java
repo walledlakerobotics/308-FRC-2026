@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 
 public final class MatchTimer {
-  public static final MatchTimer instance = new MatchTimer();
+  private static final MatchTimer instance = new MatchTimer();
 
   public static MatchTimer getInstance() {
     return instance;
