@@ -7,6 +7,10 @@ public final class MatchTimer {
     kShiftActive,
     kShiftInactive,
     kEndgame;
+
+    public boolean isHubActive() {
+      return this != kShiftInactive;
+    }
   }
 
   private MatchTimer() {
