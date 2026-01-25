@@ -64,14 +64,13 @@ public final class MatchTimer {
   }
 
   public MatchPeriod getMatchPeriod() {
-    if (DriverStation.isAutonomous()) return MatchPeriod.Auto;
+    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Auto;
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
     Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
     Optional<Alliance> firstActiveOptional = getFirstActiveAlliance();
 
-    if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty())
-      return MatchPeriod.None;
+    if (currentAllianceOptional.isEmpty() || firstActiveOptional.isEmpty()) return MatchPeriod.None;
 
     Alliance currentAlliance = currentAllianceOptional.get();
     Alliance firstActive = firstActiveOptional.get();
@@ -115,9 +114,7 @@ public final class MatchTimer {
   }
 
   public TimerDirection getTimerDirection() {
-    return DriverStation.getMatchType() == MatchType.None
-        ? TimerDirection.Up
-        : TimerDirection.Down;
+    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.Up : TimerDirection.Down;
   }
 
   public void poll() {
