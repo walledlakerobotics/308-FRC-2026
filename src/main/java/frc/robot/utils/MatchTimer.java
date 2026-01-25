@@ -1,5 +1,5 @@
 package frc.robot.utils;
 
-public class MatchTimer {
+public final class MatchTimer {
     
 }
