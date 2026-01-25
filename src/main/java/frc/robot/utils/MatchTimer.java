@@ -31,6 +31,17 @@ public final class MatchTimer {
     m_lastTickTimestamp = Timer.getTimestamp();
   }
 
+  public double getMatchTime() {
+    TimerDirection direction = getTimerDirection();
+    int sign = direction == TimerDirection.kUp ? 1 : -1;
+
+    double currentTimestamp = Timer.getTimestamp();
+    double difference = m_lastTickTimestamp - currentTimestamp;
+
+    return m_currentDSMatchTime + sign * difference;
+
+  }
+
   private int getDSMatchTime() {
     return (int)DriverStation.getMatchTime();
   }
