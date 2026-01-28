@@ -143,7 +143,7 @@ public final class MatchTimer {
         case FirstBlueShift:
         case SecondBlueShift:
           return alliance == Alliance.Blue ? HubState.Active : HubState.Inactive;
-        case RedShift1:
+        case FirstRedShift:
         case SecondRedShift:
           return alliance == Alliance.Red ? HubState.Active : HubState.Inactive;
         case Endgame:
@@ -174,7 +174,7 @@ public final class MatchTimer {
         case Blue:
           return periodNum == 1 ? FirstBlueShift : SecondBlueShift;
         case Red:
-          return periodNum == 1 ? RedShift1 : SecondRedShift;
+          return periodNum == 1 ? FirstRedShift : SecondRedShift;
         default:
           return TeleopUnknown;
       }
