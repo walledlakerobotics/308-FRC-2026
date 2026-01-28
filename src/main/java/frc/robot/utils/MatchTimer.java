@@ -144,4 +144,10 @@ public final class MatchTimer {
       return this != ShiftInactive;
     }
   }
+
+  public static enum HubState {
+    Active,
+    Inactive,
+    Unknown;
+  }
 }
