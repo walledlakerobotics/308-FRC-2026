@@ -132,13 +132,13 @@ public final class MatchTimer {
 
   public static enum MatchPeriod {
     Autonomous,
+    TeleopUnknown,
     Transition,
     BlueShift1,
     BlueShift2,
     RedShift1,
     RedShift2,
-    Endgame,
-    None;
+    Endgame;
 
     public boolean isHubActive() {
       return this != ShiftInactive;
