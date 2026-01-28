@@ -165,5 +165,17 @@ public final class Constants {
     public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
     public static final int kExtenderMotorCurrentLimit = 30; // amps
     public static final boolean kExtenderMotorInverted = false;
+
   }
+  public static final class IntakeConstants {
+      public static final int kIntakeCanId = CANIDs.secondaryMotor(1);
+      public static final double kIntakeMotorReduction = 1.0;
+
+    public static final IdleMode kIntakeMotorIdleMode = IdleMode.kBrake;
+    public static final int kIntakeMotorCurrentLimit = 30; // amps
+    public static final boolean kIntakeMotorInverted = false;
+    public static final double kIntakeSpeed = 0.5;
+
+
+  }  
 }

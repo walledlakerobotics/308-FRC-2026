@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants.ExtenderConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 
 /** Contains configuration objects for various robot components. */
@@ -84,6 +85,29 @@ public final class Configs {
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(0.1, 0, 0)
           .outputRange(-1.0, 1.0);
+    }
+  }
+  
+  public static final class Intake {
+    public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
+
+    static {
+      double intakeFactor = 1.0 / IntakeConstants.kIntakeMotorReduction;
+
+      intakeConfig
+          .inverted(IntakeConstants.kIntakeMotorInverted)
+          .idleMode(IntakeConstants.kIntakeMotorIdleMode)
+          .smartCurrentLimit(IntakeConstants.kIntakeMotorCurrentLimit)
+          .voltageCompensation(12.0);
+      intakeConfig
+          .encoder
+          .positionConversionFactor(intakeFactor) // rotations
+          .velocityConversionFactor(intakeFactor / 60.0); // rotations per second
+      intakeConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+          .pid(0.1, 0, 0)
+          .outputRange(-1.0, 1.0); 
     }
   }
 }
