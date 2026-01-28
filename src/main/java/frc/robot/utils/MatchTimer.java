@@ -84,17 +84,7 @@ public final class MatchTimer {
 
     for (int i = 0; i < MatchConstants.kNumShiftPeriods; i++) {
       if (withinPeriod(matchTime, periodStart, MatchConstants.kShiftPeriodSeconds)) {
-        boolean useFirstInactive = i % 2 == 1;
-
-        if (useFirstInactive) {
-          return firstInactive == currentAlliance
-              ? MatchPeriod.ShiftActive
-              : MatchPeriod.ShiftInactive;
-        } else {
-          return firstInactive == currentAlliance
-              ? MatchPeriod.ShiftInactive
-              : MatchPeriod.ShiftActive;
-        }
+        return MatchPeriod.getShiftPeriod(firstInactive, i);
       }
 
       periodStart -= MatchConstants.kShiftPeriodSeconds;
