@@ -164,6 +164,24 @@ public final class MatchTimer {
 
       return HubState.Unknown;
     }
+
+    private static MatchPeriod getShiftPeriod(Alliance firstInactive, int i) {
+      Alliance other = firstInactive == Alliance.Blue ? Alliance.Red : Alliance.Blue;
+      Alliance activeAlliance = i % 2 == 1 ? firstInactive : other;
+
+      // 0 -> 1, 1 -> 1, 2 -> 2, 3 -> 2
+      int periodNum = i / 2 + 1;
+
+      switch (activeAlliance) {
+        case Blue:
+            return periodNum == 1 ? BlueShift1 : BlueShift2;
+        case Red:
+            return periodNum == 1 ? RedShift1 : RedShift2;
+        default:
+            return TeleopUnknown;
+        
+      }
+    }
   }
 
   public static enum HubState {
