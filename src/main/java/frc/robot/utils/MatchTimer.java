@@ -64,12 +64,6 @@ public final class MatchTimer {
   }
 
   public MatchPeriod getMatchPeriod() {
-    Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
-
-    if (currentAllianceOptional.isEmpty()) return MatchPeriod.None;
-
-    Alliance currentAlliance = currentAllianceOptional.get();
-
     if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Autonomous;
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
 
