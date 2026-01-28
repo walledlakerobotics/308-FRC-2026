@@ -140,8 +140,25 @@ public final class MatchTimer {
     RedShift2,
     Endgame;
 
-    public boolean isHubActive() {
-      return this != ShiftInactive;
+    public HubState getHubStateFor(Alliance alliance) {
+      switch (this) {
+        case Autonomous:
+          return HubState.Active;
+        case TeleopUnknown:
+          return HubState.Unknown;
+        case Transition:
+          return HubState.Active;
+        case BlueShift1:
+        case BlueShift2:
+          return alliance == Alliance.Blue ? HubState.Active : HubState.Inactive;
+        case RedShift1:
+        case RedShift2:
+          return alliance == Alliance.Red ? HubState.Active : HubState.Inactive;
+        case Endgame:
+          return HubState.Active;
+        default:
+          return HubState.Unknown;
+      }
     }
   }
 
