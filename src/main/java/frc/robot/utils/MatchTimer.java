@@ -65,7 +65,7 @@ public final class MatchTimer {
 
   public MatchPeriod getMatchPeriod() {
     if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Autonomous;
-    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
+    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.TeleopUnknown;
 
     double periodStart = MatchConstants.kTeleopPeriodSeconds;
     double matchTime = getMatchTime();
@@ -78,7 +78,7 @@ public final class MatchTimer {
 
     Optional<Alliance> firstInactiveOptional = getFirstInactiveAlliance();
 
-    if (firstInactiveOptional.isEmpty()) return MatchPeriod.None;
+    if (firstInactiveOptional.isEmpty()) return MatchPeriod.TeleopUnknown;
 
     Alliance firstInactive = firstInactiveOptional.get();
 
@@ -104,7 +104,7 @@ public final class MatchTimer {
       return MatchPeriod.Endgame;
     }
 
-    return MatchPeriod.None;
+    return MatchPeriod.TeleopUnknown;
   }
 
   private int getDSMatchTime() {
