@@ -100,7 +100,12 @@ public final class MatchTimer {
   }
 
   private int getDSMatchTime() {
-    return (int) DriverStation.getMatchTime();
+    double matchTime = DriverStation.getMatchTime();
+    TimerDirection timerDirection = getTimerDirection();
+
+    return timerDirection == TimerDirection.Up
+        ? (int) Math.floor(matchTime)
+        : (int) Math.ceil(matchTime);
   }
 
   public TimerDirection getTimerDirection() {
@@ -167,12 +172,11 @@ public final class MatchTimer {
 
       switch (activeAlliance) {
         case Blue:
-            return periodNum == 1 ? BlueShift1 : BlueShift2;
+          return periodNum == 1 ? BlueShift1 : BlueShift2;
         case Red:
-            return periodNum == 1 ? RedShift1 : RedShift2;
+          return periodNum == 1 ? RedShift1 : RedShift2;
         default:
-            return TeleopUnknown;
-        
+          return TeleopUnknown;
       }
     }
   }
