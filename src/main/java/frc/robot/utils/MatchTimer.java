@@ -140,7 +140,7 @@ public final class MatchTimer {
     RedShift2,
     Endgame;
 
-    public HubState getHubStateFor(Alliance alliance) {
+    public HubState getHubState(Alliance alliance) {
       switch (this) {
         case Autonomous:
           return HubState.Active;
@@ -165,7 +165,7 @@ public final class MatchTimer {
       Optional<Alliance> alliance = DriverStation.getAlliance();
 
       if (alliance.isPresent()) {
-        return getHubStateFor(alliance.get());
+        return getHubState(alliance.get());
       }
 
       return HubState.Unknown;
