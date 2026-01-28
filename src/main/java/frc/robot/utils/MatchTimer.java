@@ -115,6 +115,7 @@ public final class MatchTimer {
   }
 
   public static enum MatchPeriod {
+    Disabled,
     Autonomous,
     TeleopUnknown,
     Transition,
