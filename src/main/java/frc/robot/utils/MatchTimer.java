@@ -160,6 +160,16 @@ public final class MatchTimer {
           return HubState.Unknown;
       }
     }
+
+    public HubState getHubState() {
+      Optional<Alliance> alliance = DriverStation.getAlliance();
+
+      if (alliance.isPresent()) {
+        return getHubStateFor(alliance.get());
+      }
+
+      return HubState.Unknown;
+    }
   }
 
   public static enum HubState {
