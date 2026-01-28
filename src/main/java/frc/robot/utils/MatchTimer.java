@@ -65,7 +65,8 @@ public final class MatchTimer {
 
   public MatchPeriod getMatchPeriod() {
     if (DriverStation.isDisabled()) return MatchPeriod.Disabled;
-    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Autonomous;
+
+    if (DriverStation.isAutonomous()) return MatchPeriod.Autonomous;
     if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.TeleopUnknown;
 
     double periodStart = MatchConstants.kTeleopPeriodSeconds;
