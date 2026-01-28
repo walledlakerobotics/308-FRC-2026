@@ -126,10 +126,10 @@ public final class MatchTimer {
     Autonomous,
     TeleopUnknown,
     Transition,
-    BlueShift1,
-    BlueShift2,
-    RedShift1,
-    RedShift2,
+    FirstBlueShift,
+    SecondBlueShift,
+    FirstRedShift,
+    SecondRedShift,
     Endgame;
 
     public HubState getHubState(Alliance alliance) {
@@ -140,11 +140,11 @@ public final class MatchTimer {
           return HubState.Unknown;
         case Transition:
           return HubState.Active;
-        case BlueShift1:
-        case BlueShift2:
+        case FirstBlueShift:
+        case SecondBlueShift:
           return alliance == Alliance.Blue ? HubState.Active : HubState.Inactive;
         case RedShift1:
-        case RedShift2:
+        case SecondRedShift:
           return alliance == Alliance.Red ? HubState.Active : HubState.Inactive;
         case Endgame:
           return HubState.Active;
@@ -172,9 +172,9 @@ public final class MatchTimer {
 
       switch (activeAlliance) {
         case Blue:
-          return periodNum == 1 ? BlueShift1 : BlueShift2;
+          return periodNum == 1 ? FirstBlueShift : SecondBlueShift;
         case Red:
-          return periodNum == 1 ? RedShift1 : RedShift2;
+          return periodNum == 1 ? RedShift1 : SecondRedShift;
         default:
           return TeleopUnknown;
       }
