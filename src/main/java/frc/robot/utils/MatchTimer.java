@@ -133,8 +133,10 @@ public final class MatchTimer {
   public static enum MatchPeriod {
     Autonomous,
     Transition,
-    ShiftActive,
-    ShiftInactive,
+    BlueShift1,
+    BlueShift2,
+    RedShift1,
+    RedShift2,
     Endgame,
     None;
 
