@@ -35,9 +35,17 @@ public final class MatchTimer {
   private void tick() {
     m_currentDSMatchTime = getDSMatchTime();
     m_lastTickTimestamp = Timer.getTimestamp();
+
+    if (m_currentDSMatchTime == -1) {
+      m_lastTickTimestamp = -1;
+    }
   }
 
   public double getMatchTime() {
+    if (m_currentDSMatchTime == -1) {
+      return -1;
+    }
+
     TimerDirection direction = getTimerDirection();
     int sign = direction == TimerDirection.Up ? 1 : -1;
 
