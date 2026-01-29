@@ -184,5 +184,9 @@ public final class MatchTimer {
   public static enum HubState {
     Active,
     Inactive;
+
+    public boolean isActive() {
+      return this == Active;
+    }
   }
 }
