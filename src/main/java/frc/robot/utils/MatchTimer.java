@@ -132,35 +132,35 @@ public final class MatchTimer {
     SecondRedShift,
     Endgame;
 
-    public HubState getHubState(Alliance alliance) {
+    public Optional<HubState> getHubState(Alliance alliance) {
       switch (this) {
         case Autonomous:
-          return HubState.Active;
+          return Optional.of(HubState.Active);
         case TeleopUnknown:
-          return HubState.Unknown;
+          return Optional.empty();
         case Transition:
-          return HubState.Active;
+          return Optional.of(HubState.Active);
         case FirstBlueShift:
         case SecondBlueShift:
-          return alliance == Alliance.Blue ? HubState.Active : HubState.Inactive;
+          return Optional.of(alliance == Alliance.Blue ? HubState.Active : HubState.Inactive);
         case FirstRedShift:
         case SecondRedShift:
-          return alliance == Alliance.Red ? HubState.Active : HubState.Inactive;
+          return Optional.of(alliance == Alliance.Red ? HubState.Active : HubState.Inactive);
         case Endgame:
-          return HubState.Active;
+          return Optional.of(HubState.Active);
         default:
-          return HubState.Unknown;
+          return Optional.empty();
       }
     }
 
-    public HubState getHubState() {
+    public Optional<HubState> getHubState() {
       Optional<Alliance> alliance = DriverStation.getAlliance();
 
       if (alliance.isPresent()) {
         return getHubState(alliance.get());
       }
 
-      return HubState.Unknown;
+      return Optional.empty();
     }
 
     private static MatchPeriod getShiftPeriod(Alliance firstInactive, int i) {
@@ -183,7 +183,6 @@ public final class MatchTimer {
 
   public static enum HubState {
     Active,
-    Inactive,
-    Unknown;
+    Inactive;
   }
 }
