@@ -47,6 +47,23 @@ public final class MatchTimer {
     return m_currentDSMatchTime + sign * difference;
   }
 
+  private int getDSMatchTime() {
+    double matchTime = DriverStation.getMatchTime();
+    TimerDirection timerDirection = getTimerDirection();
+
+    return timerDirection == TimerDirection.Up
+        ? (int) Math.floor(matchTime)
+        : (int) Math.ceil(matchTime);
+  }
+
+  public TimerDirection getTimerDirection() {
+    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.Up : TimerDirection.Down;
+  }
+
+  public void poll() {
+    m_timerLoop.poll();
+  }
+
   public Optional<Alliance> getFirstInactiveAlliance() {
     String gameData = DriverStation.getGameSpecificMessage();
     switch (gameData) {
@@ -97,23 +114,6 @@ public final class MatchTimer {
     }
 
     return MatchPeriod.TeleopUnknown;
-  }
-
-  private int getDSMatchTime() {
-    double matchTime = DriverStation.getMatchTime();
-    TimerDirection timerDirection = getTimerDirection();
-
-    return timerDirection == TimerDirection.Up
-        ? (int) Math.floor(matchTime)
-        : (int) Math.ceil(matchTime);
-  }
-
-  public TimerDirection getTimerDirection() {
-    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.Up : TimerDirection.Down;
-  }
-
-  public void poll() {
-    m_timerLoop.poll();
   }
 
   public static enum TimerDirection {
