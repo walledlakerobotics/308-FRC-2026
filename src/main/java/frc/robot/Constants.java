@@ -160,6 +160,7 @@ public final class Constants {
   public static final class ExtenderConstants {
     public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
 
+    public static final double kExdenterMotorSpeed = 0.5;
     public static final double kExtenderMotorReduction = 1.0;
 
     public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
