@@ -171,6 +171,44 @@ public final class MatchTimer {
       return Optional.empty();
     }
 
+    public Optional<MatchPeriod> getNextPeriod(Optional<Alliance> firstInactiveOptional) {
+      switch (this) {
+        case Disabled:
+          return Optional.empty();
+        case TeleopUnknown:
+          return Optional.empty();
+        case Autonomous:
+          return Optional.of(Transition);
+        default:
+          break;
+      }
+
+      if (firstInactiveOptional.isEmpty()) return Optional.empty();
+
+      Alliance firstInactive = firstInactiveOptional.get();
+
+      switch (this) {
+        case Transition:
+          return Optional.of(firstInactive == Alliance.Blue ? FirstRedShift : FirstBlueShift);
+        case FirstBlueShift:
+          return Optional.of(firstInactive == Alliance.Blue ? SecondRedShift : FirstRedShift);
+        case FirstRedShift:
+          return Optional.of(firstInactive == Alliance.Red ? SecondBlueShift : FirstBlueShift);
+        case SecondBlueShift:
+          return Optional.of(firstInactive == Alliance.Blue ? Endgame : SecondRedShift);
+        case SecondRedShift:
+          return Optional.of(firstInactive == Alliance.Red ? Endgame : SecondBlueShift);
+        case Endgame:
+          return Optional.empty();
+        default:
+          return Optional.empty();
+      }
+    }
+
+    public Optional<MatchPeriod> getNextPeriod() {
+      return getNextPeriod(MatchTimer.getInstance().getFirstInactiveAlliance());
+    }
+
     private static MatchPeriod getShiftPeriod(Alliance firstInactive, int i) {
       Alliance other = firstInactive == Alliance.Blue ? Alliance.Red : Alliance.Blue;
       Alliance activeAlliance = i % 2 == 1 ? firstInactive : other;
