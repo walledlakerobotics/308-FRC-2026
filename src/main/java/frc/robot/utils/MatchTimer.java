@@ -18,27 +18,27 @@ public final class MatchTimer {
 
   private EventLoop m_timerLoop = new EventLoop();
 
-  private int m_currentDSMatchTime = -1;
+  private int m_lastTickDSMatchTime = -1;
   private double m_lastTickTimestamp = -1;
 
   private MatchTimer() {
     BooleanEvent tickEvent =
-        new BooleanEvent(m_timerLoop, () -> getDSMatchTime() != m_currentDSMatchTime);
+        new BooleanEvent(m_timerLoop, () -> getDSMatchTime() != m_lastTickDSMatchTime);
 
     tickEvent.rising().ifHigh(this::tick);
   }
 
   private void tick() {
-    m_currentDSMatchTime = getDSMatchTime();
+    m_lastTickDSMatchTime = getDSMatchTime();
     m_lastTickTimestamp = Timer.getTimestamp();
 
-    if (m_currentDSMatchTime == -1) {
+    if (m_lastTickDSMatchTime == -1) {
       m_lastTickTimestamp = -1;
     }
   }
 
   public double getMatchTime() {
-    if (m_currentDSMatchTime == -1) {
+    if (m_lastTickDSMatchTime == -1) {
       return -1;
     }
 
@@ -48,7 +48,7 @@ public final class MatchTimer {
     double currentTimestamp = Timer.getTimestamp();
     double difference = currentTimestamp - m_lastTickTimestamp;
 
-    return m_currentDSMatchTime + sign * difference;
+    return m_lastTickDSMatchTime + sign * difference;
   }
 
   private int getDSMatchTime() {
