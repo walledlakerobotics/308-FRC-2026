@@ -120,6 +120,21 @@ public final class MatchTimer {
     return MatchPeriod.TeleopUnknown;
   }
 
+  public double getTimeUntilNextPeriod() {
+    MatchPeriod currentPeriod = getMatchPeriod();
+
+    Optional<MatchPeriod> nextPeriodOptional = currentPeriod.getNextPeriod();
+
+    if (nextPeriodOptional.isEmpty()) return -1;
+
+    MatchPeriod nextPeriod = nextPeriodOptional.get();
+
+    double currentTime = getMatchTime();
+    double nextStartTime = nextPeriod.getStartTime();
+
+    return currentTime - nextStartTime;
+  }
+
   public static enum TimerDirection {
     Up,
     Down;
