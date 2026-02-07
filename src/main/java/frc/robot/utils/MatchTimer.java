@@ -18,33 +18,54 @@ public final class MatchTimer {
 
   private EventLoop m_timerLoop = new EventLoop();
 
-  private int m_currentDSMatchTime = -1;
+  private int m_lastTickDSMatchTime = -1;
   private double m_lastTickTimestamp = -1;
 
   private MatchTimer() {
     BooleanEvent tickEvent =
-        new BooleanEvent(
-            m_timerLoop,
-            () -> {
-              return getDSMatchTime() != m_currentDSMatchTime;
-            });
+        new BooleanEvent(m_timerLoop, () -> getDSMatchTime() != m_lastTickDSMatchTime);
 
     tickEvent.rising().ifHigh(this::tick);
   }
 
   private void tick() {
-    m_currentDSMatchTime = getDSMatchTime();
+    m_lastTickDSMatchTime = getDSMatchTime();
     m_lastTickTimestamp = Timer.getTimestamp();
+
+    if (m_lastTickDSMatchTime == -1) {
+      m_lastTickTimestamp = -1;
+    }
   }
 
   public double getMatchTime() {
+    if (m_lastTickDSMatchTime == -1) {
+      return -1;
+    }
+
     TimerDirection direction = getTimerDirection();
     int sign = direction == TimerDirection.Up ? 1 : -1;
 
     double currentTimestamp = Timer.getTimestamp();
     double difference = currentTimestamp - m_lastTickTimestamp;
 
-    return m_currentDSMatchTime + sign * difference;
+    return m_lastTickDSMatchTime + sign * difference;
+  }
+
+  private int getDSMatchTime() {
+    double matchTime = DriverStation.getMatchTime();
+    TimerDirection timerDirection = getTimerDirection();
+
+    return timerDirection == TimerDirection.Up
+        ? (int) Math.floor(matchTime)
+        : (int) Math.ceil(matchTime);
+  }
+
+  public TimerDirection getTimerDirection() {
+    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.Up : TimerDirection.Down;
+  }
+
+  public void poll() {
+    m_timerLoop.poll();
   }
 
   public Optional<Alliance> getFirstInactiveAlliance() {
@@ -64,14 +85,10 @@ public final class MatchTimer {
   }
 
   public MatchPeriod getMatchPeriod() {
-    Optional<Alliance> currentAllianceOptional = DriverStation.getAlliance();
+    if (DriverStation.isDisabled()) return MatchPeriod.Disabled;
 
-    if (currentAllianceOptional.isEmpty()) return MatchPeriod.None;
-
-    Alliance currentAlliance = currentAllianceOptional.get();
-
-    if (DriverStation.isAutonomousEnabled()) return MatchPeriod.Autonomous;
-    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.None;
+    if (DriverStation.isAutonomous()) return MatchPeriod.Autonomous;
+    if (DriverStation.getMatchType() == MatchType.None) return MatchPeriod.TeleopUnknown;
 
     double periodStart = MatchConstants.kTeleopPeriodSeconds;
     double matchTime = getMatchTime();
@@ -84,23 +101,13 @@ public final class MatchTimer {
 
     Optional<Alliance> firstInactiveOptional = getFirstInactiveAlliance();
 
-    if (firstInactiveOptional.isEmpty()) return MatchPeriod.None;
+    if (firstInactiveOptional.isEmpty()) return MatchPeriod.TeleopUnknown;
 
     Alliance firstInactive = firstInactiveOptional.get();
 
     for (int i = 0; i < MatchConstants.kNumShiftPeriods; i++) {
       if (withinPeriod(matchTime, periodStart, MatchConstants.kShiftPeriodSeconds)) {
-        boolean useFirstInactive = i % 2 == 1;
-
-        if (useFirstInactive) {
-          return firstInactive == currentAlliance
-              ? MatchPeriod.ShiftActive
-              : MatchPeriod.ShiftInactive;
-        } else {
-          return firstInactive == currentAlliance
-              ? MatchPeriod.ShiftInactive
-              : MatchPeriod.ShiftActive;
-        }
+        return MatchPeriod.getShiftPeriod(firstInactive, i);
       }
 
       periodStart -= MatchConstants.kShiftPeriodSeconds;
@@ -110,19 +117,58 @@ public final class MatchTimer {
       return MatchPeriod.Endgame;
     }
 
-    return MatchPeriod.None;
+    return MatchPeriod.TeleopUnknown;
   }
 
-  private int getDSMatchTime() {
-    return (int) DriverStation.getMatchTime();
+  public double getTimeUntilNextPeriod() {
+    MatchPeriod currentPeriod = getMatchPeriod();
+
+    Optional<MatchPeriod> nextPeriodOptional = currentPeriod.getNextPeriod();
+
+    if (nextPeriodOptional.isEmpty()) return -1;
+
+    MatchPeriod nextPeriod = nextPeriodOptional.get();
+
+    double currentTime = getMatchTime();
+    double nextStartTime = nextPeriod.getStartTime();
+
+    return currentTime - nextStartTime;
   }
 
-  public TimerDirection getTimerDirection() {
-    return DriverStation.getMatchType() == MatchType.None ? TimerDirection.Up : TimerDirection.Down;
+  public double getTimeUntilHubState(HubState state, Alliance alliance) {
+    MatchPeriod currentPeriod = getMatchPeriod();
+    Optional<HubState> hubStateOptional = currentPeriod.getHubState(alliance);
+
+    if (hubStateOptional.isPresent() && hubStateOptional.get() == state) {
+      return 0;
+    }
+
+    Optional<MatchPeriod> nextPeriodOptional = currentPeriod.getNextPeriod();
+
+    while (nextPeriodOptional.isPresent()) {
+      MatchPeriod nextPeriod = nextPeriodOptional.get();
+
+      hubStateOptional = nextPeriod.getHubState(alliance);
+
+      if (hubStateOptional.isPresent() && hubStateOptional.get() == state) {
+        double currentTime = getMatchTime();
+        double nextStartTime = nextPeriod.getStartTime();
+
+        return currentTime - nextStartTime;
+      }
+
+      nextPeriodOptional = nextPeriod.getNextPeriod();
+    }
+
+    return -1;
   }
 
-  public void poll() {
-    m_timerLoop.poll();
+  public double getTimeUntilHubState(HubState state) {
+    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+
+    if (allianceOptional.isEmpty()) return -1;
+
+    return getTimeUntilHubState(state, allianceOptional.get());
   }
 
   public static enum TimerDirection {
@@ -131,15 +177,150 @@ public final class MatchTimer {
   }
 
   public static enum MatchPeriod {
+    Disabled,
     Autonomous,
+    TeleopUnknown,
     Transition,
-    ShiftActive,
-    ShiftInactive,
-    Endgame,
-    None;
+    FirstBlueShift,
+    SecondBlueShift,
+    FirstRedShift,
+    SecondRedShift,
+    Endgame;
 
-    public boolean isHubActive() {
-      return this != ShiftInactive;
+    public Optional<HubState> getHubState(Alliance alliance) {
+      switch (this) {
+        case Autonomous:
+          return Optional.of(HubState.Active);
+        case TeleopUnknown:
+          return Optional.empty();
+        case Transition:
+          return Optional.of(HubState.Active);
+        case FirstBlueShift:
+        case SecondBlueShift:
+          return Optional.of(alliance == Alliance.Blue ? HubState.Active : HubState.Inactive);
+        case FirstRedShift:
+        case SecondRedShift:
+          return Optional.of(alliance == Alliance.Red ? HubState.Active : HubState.Inactive);
+        case Endgame:
+          return Optional.of(HubState.Active);
+        default:
+          return Optional.empty();
+      }
+    }
+
+    public Optional<HubState> getHubState() {
+      Optional<Alliance> alliance = DriverStation.getAlliance();
+
+      if (alliance.isPresent()) {
+        return getHubState(alliance.get());
+      }
+
+      return Optional.empty();
+    }
+
+    public Optional<MatchPeriod> getNextPeriod(Optional<Alliance> firstInactiveOptional) {
+      switch (this) {
+        case Disabled:
+          return Optional.empty();
+        case TeleopUnknown:
+          return Optional.empty();
+        case Autonomous:
+          return Optional.of(Transition);
+        default:
+          break;
+      }
+
+      if (firstInactiveOptional.isEmpty()) return Optional.empty();
+
+      Alliance firstInactive = firstInactiveOptional.get();
+
+      switch (this) {
+        case Transition:
+          return Optional.of(firstInactive == Alliance.Blue ? FirstRedShift : FirstBlueShift);
+        case FirstBlueShift:
+          return Optional.of(firstInactive == Alliance.Blue ? SecondRedShift : FirstRedShift);
+        case FirstRedShift:
+          return Optional.of(firstInactive == Alliance.Red ? SecondBlueShift : FirstBlueShift);
+        case SecondBlueShift:
+          return Optional.of(firstInactive == Alliance.Blue ? Endgame : SecondRedShift);
+        case SecondRedShift:
+          return Optional.of(firstInactive == Alliance.Red ? Endgame : SecondBlueShift);
+        case Endgame:
+          return Optional.empty();
+        default:
+          return Optional.empty();
+      }
+    }
+
+    public Optional<MatchPeriod> getNextPeriod() {
+      return getNextPeriod(MatchTimer.getInstance().getFirstInactiveAlliance());
+    }
+
+    public double getStartTime(Optional<Alliance> firstInactiveOptional) {
+      switch (this) {
+        case Disabled:
+          return -1;
+        case TeleopUnknown:
+          return 0;
+        case Autonomous:
+          return MatchConstants.kAutoPeriodSeconds;
+        case Transition:
+          return MatchConstants.kTeleopPeriodSeconds - MatchConstants.kTransitionPeriodSeconds;
+        default:
+          break;
+      }
+
+      if (firstInactiveOptional.isEmpty()) return -1;
+
+      Alliance firstInactive = firstInactiveOptional.get();
+
+      MatchPeriod shiftPeriod = firstInactive == Alliance.Blue ? FirstRedShift : FirstBlueShift;
+
+      for (int i = 0; i < MatchConstants.kNumShiftPeriods; i++) {
+        if (this == shiftPeriod) {
+          return MatchConstants.kTeleopPeriodSeconds
+              - MatchConstants.kTransitionPeriodSeconds
+              - i * MatchConstants.kShiftPeriodSeconds;
+        }
+
+        shiftPeriod = shiftPeriod.getNextPeriod(firstInactiveOptional).get();
+      }
+
+      if (this == Endgame) {
+        return MatchConstants.kEndgamePeriodSeconds;
+      }
+
+      return -1;
+    }
+
+    public double getStartTime() {
+      return getStartTime(MatchTimer.getInstance().getFirstInactiveAlliance());
+    }
+
+    private static MatchPeriod getShiftPeriod(Alliance firstInactive, int i) {
+      Alliance other = firstInactive == Alliance.Blue ? Alliance.Red : Alliance.Blue;
+      Alliance activeAlliance = i % 2 == 1 ? firstInactive : other;
+
+      // 0 -> 1, 1 -> 1, 2 -> 2, 3 -> 2
+      int periodNum = i / 2 + 1;
+
+      switch (activeAlliance) {
+        case Blue:
+          return periodNum == 1 ? FirstBlueShift : SecondBlueShift;
+        case Red:
+          return periodNum == 1 ? FirstRedShift : SecondRedShift;
+        default:
+          return TeleopUnknown;
+      }
+    }
+  }
+
+  public static enum HubState {
+    Active,
+    Inactive;
+
+    public boolean isActive() {
+      return this == Active;
     }
   }
 }
