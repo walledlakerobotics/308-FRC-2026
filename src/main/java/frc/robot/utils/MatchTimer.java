@@ -137,6 +137,11 @@ public final class MatchTimer {
 
   public double getTimeUntilHubState(HubState state, Alliance alliance) {
     MatchPeriod currentPeriod = getMatchPeriod();
+    Optional<HubState> hubStateOptional = currentPeriod.getHubState(alliance);
+
+    if (hubStateOptional.isPresent() && hubStateOptional.get() == state) {
+      return 0;
+    }
 
     Optional<MatchPeriod> nextPeriodOptional = currentPeriod.getNextPeriod();
 
