@@ -135,6 +135,29 @@ public final class MatchTimer {
     return currentTime - nextStartTime;
   }
 
+  public double getTimeUntilHubState(HubState state, Alliance alliance) {
+    MatchPeriod currentPeriod = getMatchPeriod();
+
+    Optional<MatchPeriod> nextPeriodOptional = currentPeriod.getNextPeriod();
+
+    while (nextPeriodOptional.isPresent()) {
+      MatchPeriod nextPeriod = nextPeriodOptional.get();
+
+      Optional<HubState> hubStateOptional = nextPeriod.getHubState(alliance);
+
+      if (hubStateOptional.isPresent() && hubStateOptional.get() == state) {
+        double currentTime = getMatchTime();
+        double nextStartTime = nextPeriod.getStartTime();
+
+        return currentTime - nextStartTime;
+      }
+
+      nextPeriodOptional = nextPeriod.getNextPeriod();
+    }
+
+    return -1;
+  }
+
   public static enum TimerDirection {
     Up,
     Down;
