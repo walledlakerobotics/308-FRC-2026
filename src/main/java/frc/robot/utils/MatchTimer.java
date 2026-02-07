@@ -158,6 +158,14 @@ public final class MatchTimer {
     return -1;
   }
 
+  public double getTimeUntilHubState(HubState state) {
+    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+
+    if (allianceOptional.isEmpty()) return -1;
+
+    return getTimeUntilHubState(state, allianceOptional.get());
+  }
+
   public static enum TimerDirection {
     Up,
     Down;
