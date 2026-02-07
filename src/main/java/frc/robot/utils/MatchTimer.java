@@ -148,7 +148,7 @@ public final class MatchTimer {
     while (nextPeriodOptional.isPresent()) {
       MatchPeriod nextPeriod = nextPeriodOptional.get();
 
-      Optional<HubState> hubStateOptional = nextPeriod.getHubState(alliance);
+      hubStateOptional = nextPeriod.getHubState(alliance);
 
       if (hubStateOptional.isPresent() && hubStateOptional.get() == state) {
         double currentTime = getMatchTime();
