@@ -62,7 +62,9 @@ public class Vision {
       return Optional.empty();
     }
 
-    return m_visionPoseEstimator.estimateCoprocMultiTagPose(latestResult.get());
+    return m_visionPoseEstimator
+        .estimateCoprocMultiTagPose(latestResult.get())
+        .or(() -> m_visionPoseEstimator.estimateLowestAmbiguityPose(latestResult.get()));
   }
 
   /**
