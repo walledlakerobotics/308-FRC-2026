@@ -137,9 +137,20 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String[] kCameraNames = {};
-    public static final Transform3d[] kRobotToCameraTransforms = {};
-    public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs = List.of();
+    public static final String[] kCameraNames = {
+      "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
+    };
+
+    public static final Transform3d[] kRobotToCameraTransforms = {
+      Transform3d.kZero, Transform3d.kZero, Transform3d.kZero, Transform3d.kZero
+    };
+
+    public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
+        List.of(
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
 
     public static final AprilTagFieldLayout kAprilTagFieldLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
@@ -166,17 +177,15 @@ public final class Constants {
     public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
     public static final int kExtenderMotorCurrentLimit = 30; // amps
     public static final boolean kExtenderMotorInverted = false;
-
   }
+
   public static final class IntakeConstants {
-      public static final int kIntakeCanId = CANIDs.secondaryMotor(1);
-      public static final double kIntakeMotorReduction = 1.0;
+    public static final int kIntakeCanId = CANIDs.secondaryMotor(1);
+    public static final double kIntakeMotorReduction = 1.0;
 
     public static final IdleMode kIntakeMotorIdleMode = IdleMode.kBrake;
     public static final int kIntakeMotorCurrentLimit = 30; // amps
     public static final boolean kIntakeMotorInverted = false;
     public static final double kIntakeSpeed = 0.5;
-
-
-  }  
+  }
 }
