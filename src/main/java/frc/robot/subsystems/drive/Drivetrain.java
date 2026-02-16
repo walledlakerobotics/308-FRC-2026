@@ -27,6 +27,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -90,6 +93,8 @@ public class Drivetrain extends SubsystemBase {
           getModuleStates(),
           DriveFeedforwards.zeros(DriveConstants.kRobotConfig.numModules));
 
+  private final Field2d m_field = new Field2d();
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Report swerve drive to the HAL
@@ -109,6 +114,9 @@ public class Drivetrain extends SubsystemBase {
         .and(() -> !DriverStation.isFMSAttached())
         .onTrue(setIdleMode(IdleMode.kCoast))
         .onFalse(setIdleMode(IdleMode.kBrake));
+
+    ShuffleboardTab tab = Shuffleboard.getTab("Drive Train");
+    tab.add(m_field);
   }
 
   @Override
@@ -116,6 +124,8 @@ public class Drivetrain extends SubsystemBase {
     // Update vision and odometry in the periodic block
     m_vision.update();
     m_odometry.update(getGyroRotation3d(), getModulePositions());
+
+    m_field.setRobotPose(getPose());
   }
 
   /**
