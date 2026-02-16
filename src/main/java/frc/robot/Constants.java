@@ -137,10 +137,20 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String[] kCameraNames = {"Arducam OV9281 #1"};
-    public static final Transform3d[] kRobotToCameraTransforms = {Transform3d.kZero};
+    public static final String[] kCameraNames = {
+      "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
+    };
+
+    public static final Transform3d[] kRobotToCameraTransforms = {
+      Transform3d.kZero, Transform3d.kZero, Transform3d.kZero, Transform3d.kZero
+    };
+
     public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
-        List.of(VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
+        List.of(
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
+            VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
 
     public static final AprilTagFieldLayout kAprilTagFieldLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
