@@ -87,7 +87,7 @@ public final class Configs {
           .outputRange(-1.0, 1.0);
     }
   }
-  
+
   public static final class Intake {
     public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
 
@@ -107,7 +107,7 @@ public final class Configs {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(0.1, 0, 0)
-          .outputRange(-1.0, 1.0); 
+          .outputRange(-1.0, 1.0);
     }
   }
 }
