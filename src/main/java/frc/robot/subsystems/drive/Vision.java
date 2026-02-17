@@ -71,12 +71,12 @@ public class Vision {
   }
 
   /**
-   * Gets the distance to the best target from the pose estimate.
+   * Gets the average distance to the tags used for the pose estimate.
    *
    * @param poseEstimate The pose estimate.
-   * @return The distance to the best target.
+   * @return The average distance to the tags.
    */
-  private double getBestTargetDistance(EstimatedRobotPose poseEstimate) {
+  private double getAverageTagDistance(EstimatedRobotPose poseEstimate) {
     // Best target is the first target in the list
     PhotonTrackedTarget target = poseEstimate.targetsUsed.get(0);
     return target.bestCameraToTarget.getTranslation().getNorm();
@@ -95,7 +95,7 @@ public class Vision {
     double angleStdDev = stdDevs.get(3, 0);
 
     // Scale position std devs proportional to the square of the distance to target
-    stdDevs = stdDevs.times(Math.pow(getBestTargetDistance(poseEstimate), 2));
+    stdDevs = stdDevs.times(Math.pow(getAverageTagDistance(poseEstimate), 2));
     stdDevs.set(3, 0, angleStdDev);
 
     return stdDevs;
