@@ -80,6 +80,8 @@ public class Vision {
    */
   private double getAverageTagDistance(
       EstimatedRobotPose poseEstimate, Transform3d robotToCameraTransform) {
+    Pose3d cameraPose = poseEstimate.estimatedPose.transformBy(robotToCameraTransform);
+
     double averageDistance = 0.0;
     for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
       Optional<Pose3d> targetPoseOptional =
@@ -90,7 +92,6 @@ public class Vision {
       }
 
       Pose3d targetPose = targetPoseOptional.get();
-      Pose3d cameraPose = poseEstimate.estimatedPose.transformBy(robotToCameraTransform);
 
       averageDistance += targetPose.minus(cameraPose).getTranslation().getNorm();
     }
