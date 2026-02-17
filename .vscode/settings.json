@@ -60,6 +60,7 @@
     "edu.wpi.first.math.**.struct.*",
   ],
   "java.dependency.enableDependencyCheckup": false,
+  "spotlessGradle.diagnostics.enable": true,
   "spotlessGradle.format.enable": true,
   "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
   "editor.formatOnSave": true,
