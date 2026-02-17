@@ -74,9 +74,11 @@ public class Vision {
    * Gets the average distance to the tags used for the pose estimate.
    *
    * @param poseEstimate The pose estimate.
+   * @param robotToCameraTransform The transform from the robot to the camera.
    * @return The average distance to the tags.
    */
-  private double getAverageTagDistance(EstimatedRobotPose poseEstimate) {
+  private double getAverageTagDistance(
+      EstimatedRobotPose poseEstimate, Transform3d robotToCameraTransform) {
     double averageDistance = 0.0;
     for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
       averageDistance += target.getBestCameraToTarget().getTranslation().getNorm();
@@ -99,8 +101,11 @@ public class Vision {
 
     double angleStdDev = stdDevs.get(3, 0);
 
+    double distance =
+        getAverageTagDistance(poseEstimate, VisionConstants.kRobotToCameraTransforms[cameraIndex]);
+
     // Scale position std devs proportional to the square of the distance to target
-    stdDevs = stdDevs.times(Math.pow(getAverageTagDistance(poseEstimate), 2));
+    stdDevs = stdDevs.times(Math.pow(distance, 2));
     stdDevs.set(3, 0, angleStdDev);
 
     return stdDevs;
