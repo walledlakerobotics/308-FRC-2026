@@ -91,8 +91,8 @@ public class Vision {
 
     double angleStdDev = stdDevs.get(3, 0);
 
-    // Scale position std devs based on distance to target
-    stdDevs = stdDevs.times(getBestTargetDistance(poseEstimate));
+    // Scale position std devs proportional to the square of the distance to target
+    stdDevs = stdDevs.times(Math.pow(getBestTargetDistance(poseEstimate), 2));
     stdDevs.set(3, 0, angleStdDev);
 
     return stdDevs;
