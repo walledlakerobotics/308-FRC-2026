@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.PoseEstimator3d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
@@ -71,15 +72,33 @@ public class Vision {
   }
 
   /**
-   * Gets the distance to the best target from the pose estimate.
+   * Gets the average distance to the tags used for the pose estimate.
    *
    * @param poseEstimate The pose estimate.
-   * @return The distance to the best target.
+   * @param robotToCameraTransform The transform from the robot to the camera.
+   * @return The average distance to the tags.
    */
-  private double getBestTargetDistance(EstimatedRobotPose poseEstimate) {
-    // Best target is the first target in the list
-    PhotonTrackedTarget target = poseEstimate.targetsUsed.get(0);
-    return target.bestCameraToTarget.getTranslation().getNorm();
+  private double getAverageTagDistance(
+      EstimatedRobotPose poseEstimate, Transform3d robotToCameraTransform) {
+    Pose3d cameraPose = poseEstimate.estimatedPose.transformBy(robotToCameraTransform);
+
+    double averageDistance = 0.0;
+    for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
+      Optional<Pose3d> targetPoseOptional =
+          VisionConstants.kAprilTagFieldLayout.getTagPose(target.fiducialId);
+
+      if (targetPoseOptional.isEmpty()) {
+        continue;
+      }
+
+      Pose3d targetPose = targetPoseOptional.get();
+
+      averageDistance += targetPose.minus(cameraPose).getTranslation().getNorm();
+    }
+
+    averageDistance /= poseEstimate.targetsUsed.size();
+
+    return averageDistance;
   }
 
   /**
@@ -94,8 +113,11 @@ public class Vision {
 
     double angleStdDev = stdDevs.get(3, 0);
 
+    double distance =
+        getAverageTagDistance(poseEstimate, VisionConstants.kRobotToCameraTransforms[cameraIndex]);
+
     // Scale position std devs proportional to the square of the distance to target
-    stdDevs = stdDevs.times(Math.pow(getBestTargetDistance(poseEstimate), 2));
+    stdDevs = stdDevs.times(Math.pow(distance, 2));
     stdDevs.set(3, 0, angleStdDev);
 
     return stdDevs;
