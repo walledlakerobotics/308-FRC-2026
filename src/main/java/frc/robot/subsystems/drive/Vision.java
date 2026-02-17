@@ -77,9 +77,14 @@ public class Vision {
    * @return The average distance to the tags.
    */
   private double getAverageTagDistance(EstimatedRobotPose poseEstimate) {
-    // Best target is the first target in the list
-    PhotonTrackedTarget target = poseEstimate.targetsUsed.get(0);
-    return target.bestCameraToTarget.getTranslation().getNorm();
+    double averageDistance = 0.0;
+    for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
+      averageDistance += target.getBestCameraToTarget().getTranslation().getNorm();
+    }
+
+    averageDistance /= poseEstimate.targetsUsed.size();
+
+    return averageDistance;
   }
 
   /**
