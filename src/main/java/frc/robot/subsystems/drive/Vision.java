@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.PoseEstimator3d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
@@ -81,7 +82,17 @@ public class Vision {
       EstimatedRobotPose poseEstimate, Transform3d robotToCameraTransform) {
     double averageDistance = 0.0;
     for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
-      averageDistance += target.getBestCameraToTarget().getTranslation().getNorm();
+      Optional<Pose3d> targetPoseOptional =
+          VisionConstants.kAprilTagFieldLayout.getTagPose(target.fiducialId);
+
+      if (targetPoseOptional.isEmpty()) {
+        continue;
+      }
+
+      Pose3d targetPose = targetPoseOptional.get();
+      Pose3d cameraPose = poseEstimate.estimatedPose.transformBy(robotToCameraTransform);
+
+      averageDistance += targetPose.minus(cameraPose).getTranslation().getNorm();
     }
 
     averageDistance /= poseEstimate.targetsUsed.size();
