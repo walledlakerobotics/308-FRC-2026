@@ -188,4 +188,14 @@ public final class Constants {
     public static final boolean kIntakeMotorInverted = false;
     public static final double kIntakeSpeed = 0.5;
   }
+
+  public static final class ShooterConstants {
+    public static final int kShooterCanId = CANIDs.secondaryMotor(2);
+
+    public static final double kShooterMotorReduction = 1.0;
+
+    public static final IdleMode kShooterMotorIdleMode = IdleMode.kCoast;
+    public static final int kShooterMotorCurrentLimit = 30; // amps
+    public static final boolean kShooterMotorInverted = false;
+  }
 }
