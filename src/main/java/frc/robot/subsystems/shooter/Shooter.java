@@ -24,4 +24,8 @@ public class Shooter extends SubsystemBase {
   public void setVelocity(double velocity) {
     m_shooterLeader.setControl(m_velocityVoltageControl.withVelocity(velocity));
   }
+
+  public double getVelocity() {
+    return m_shooterLeader.getVelocity().getValueAsDouble();
+  }
 }
