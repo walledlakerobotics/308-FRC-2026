@@ -205,4 +205,13 @@ public final class Constants {
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
   }
+
+  public static final class AimerConstants {
+    public static final int kAimerCanId = CANIDs.secondaryMotor(4);
+
+    public static final double kAimerMotorReduction = 1.0;
+    public static final IdleMode kAimerMotorIdleMode = IdleMode.kBrake;
+    public static final int kAimerMotorCurrentLimit = 30; // amps
+    public static final boolean kAimerMotorInverted = false;
+  }
 }
