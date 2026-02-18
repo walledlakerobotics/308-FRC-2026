@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
     Translation2d virtualTarget =
         VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
     double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
-    setVelocity(TrajectoryModel.shooterSpeedRPS(distanceToVirtualTarget));
+    setVelocity(TrajectoryModel.shooterVelocityRPS(distanceToVirtualTarget));
   }
 
   /**

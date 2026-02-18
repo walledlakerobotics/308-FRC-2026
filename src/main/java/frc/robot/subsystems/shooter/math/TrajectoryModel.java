@@ -12,12 +12,13 @@ public class TrajectoryModel {
   }
 
   /**
-   * Calculates the required shooter speed in rotations per second to hit a target at the specified
+   * Calculates the required shooter velocity in rotations per second to hit a target at the
+   * specified distance.
    *
    * @param distanceMeters The distance to the target in meters.
-   * @return The required shooter speed in rotations per second.
+   * @return The required shooter velocity in rotations per second.
    */
-  public static final double shooterSpeedRPS(double distanceMeters) {
+  public static final double shooterVelocityRPS(double distanceMeters) {
     // Quadratic regression of distance vs. speed data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
