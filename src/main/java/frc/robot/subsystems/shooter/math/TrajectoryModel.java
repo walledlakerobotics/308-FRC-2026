@@ -1,0 +1,48 @@
+package frc.robot.subsystems.shooter.math;
+
+/**
+ * Provides methods for calculating shooter speed, angle, and time of flight based on the distance
+ * to the target. These methods will use quadratic regression models based on testing data to
+ * provide accurate values for hitting targets at various distances. The regression models will be
+ * implemented in the methods below once testing data is collected and analyzed.
+ */
+public class TrajectoryModel {
+  private TrajectoryModel() {
+    throw new UnsupportedOperationException("This is a utility class!");
+  }
+
+  /**
+   * Calculates the required shooter speed in rotations per second to hit a target at the specified
+   *
+   * @param distanceMeters The distance to the target in meters.
+   * @return The required shooter speed in rotations per second.
+   */
+  public static final double shooterSpeedRPS(double distanceMeters) {
+    // Quadratic regression of distance vs. speed data from testing.
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  /**
+   * Calculates the required shooter angle in radians to hit a target at the specified distance.
+   *
+   * @param distanceMeters The distance to the target in meters.
+   * @return The required shooter angle in radians.
+   */
+  public static final double trajectoryAngleRad(double distanceMeters) {
+    // Quadratic regression of distance vs. angle data from testing.
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  /**
+   * Calculates the time of flight in seconds for a projectile to hit a target at the specified
+   * distance.
+   *
+   * @param distanceMeters The distance to the target in meters.
+   * @return The time of flight in seconds for a projectile to hit a target at the specified
+   *     distance.
+   */
+  public static final double timeOfFlight(double distanceMeters) {
+    // Quadratic regression of distance vs. TOF data from testing.
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+}
