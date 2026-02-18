@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -171,21 +174,35 @@ public final class Constants {
   public static final class ExtenderConstants {
     public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
 
-    public static final double kExdenterMotorSpeed = 0.5;
     public static final double kExtenderMotorReduction = 1.0;
-
     public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
     public static final int kExtenderMotorCurrentLimit = 30; // amps
     public static final boolean kExtenderMotorInverted = false;
+
+    public static final double kExdenterMotorSpeed = 0.5;
   }
 
   public static final class IntakeConstants {
     public static final int kIntakeCanId = CANIDs.secondaryMotor(1);
-    public static final double kIntakeMotorReduction = 1.0;
 
+    public static final double kIntakeMotorReduction = 1.0;
     public static final IdleMode kIntakeMotorIdleMode = IdleMode.kBrake;
     public static final int kIntakeMotorCurrentLimit = 30; // amps
     public static final boolean kIntakeMotorInverted = false;
+
     public static final double kIntakeSpeed = 0.5;
+  }
+
+  public static final class ShooterConstants {
+    public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
+    public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
+
+    public static final double kShooterMotorReduction = 1.0;
+    public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
+    public static final int kShooterMotorStatorCurrentLimit = 120; // amps
+    public static final int kShooterMotorSupplyCurrentLimit = 70; // amps
+    public static final InvertedValue kShooterLeaderInverted =
+        InvertedValue.CounterClockwise_Positive;
+    public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
   }
 }

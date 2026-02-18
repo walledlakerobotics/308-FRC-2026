@@ -1,12 +1,19 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.ShooterConstants;
 
 /** Contains configuration objects for various robot components. */
 public final class Configs {
@@ -108,6 +115,35 @@ public final class Configs {
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(0.1, 0, 0)
           .outputRange(-1.0, 1.0);
+    }
+  }
+
+  public static final class Shooter {
+    public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+
+    static {
+      shooterConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(ShooterConstants.kShooterLeaderInverted)
+                  .withNeutralMode(ShooterConstants.kShooterMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(ShooterConstants.kShooterMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(ShooterConstants.kShooterMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(0.0)
+                  .withKA(0.0));
     }
   }
 }
