@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -191,11 +193,11 @@ public final class Constants {
 
   public static final class ShooterConstants {
     public static final int kShooterCanId = CANIDs.secondaryMotor(2);
-
     public static final double kShooterMotorReduction = 1.0;
 
-    public static final IdleMode kShooterMotorIdleMode = IdleMode.kCoast;
+    public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
     public static final int kShooterMotorCurrentLimit = 30; // amps
-    public static final boolean kShooterMotorInverted = false;
+    public static final InvertedValue kShooterMotorInverted =
+        InvertedValue.CounterClockwise_Positive;
   }
 }
