@@ -1,4 +1,4 @@
-name: Check Code Formatting
+name: Build with Gradle
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  spotless-check:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +26,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Grant execute permission to Gradle wrapper
+      - name: Grant execution permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Run Spotless check
-        run: ./gradlew spotlessCheck
+      - name: Build
+        run: ./gradlew build
