@@ -3,6 +3,14 @@ package frc.robot.subsystems.shooter.math;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
+/**
+ * Provides methods for calculating a virtual target position that accounts for the robot's movement
+ * during the time of flight of the projectile. This is important for accurately hitting targets
+ * while the robot is moving, as the projectile will take some time to reach the target and the
+ * robot will likely have moved during that time. The virtual target is calculated by iteratively
+ * estimating how far the robot will travel during the time of flight of the projectile and
+ * adjusting the target position accordingly until it converges on an accurate virtual target.
+ */
 public class VirtualTarget {
   private VirtualTarget() {
     throw new UnsupportedOperationException("This is a utility class!");
