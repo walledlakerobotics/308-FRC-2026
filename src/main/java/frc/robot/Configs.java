@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -144,6 +145,28 @@ public final class Configs {
                   .withKS(0.0)
                   .withKV(0.0)
                   .withKA(0.0));
+    }
+  }
+
+  public static final class Aimer {
+    public static final SparkMaxConfig aimerConfig = new SparkMaxConfig();
+
+    static {
+      double aimerFactor = 1.0 / AimerConstants.kAimerMotorReduction;
+      aimerConfig
+          .inverted(AimerConstants.kAimerMotorInverted)
+          .idleMode(AimerConstants.kAimerMotorIdleMode)
+          .smartCurrentLimit(AimerConstants.kAimerMotorCurrentLimit)
+          .voltageCompensation(12.0);
+      aimerConfig
+          .encoder
+          .positionConversionFactor(aimerFactor) // rotations
+          .velocityConversionFactor(aimerFactor / 60.0); // rotations per second
+      aimerConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+          .pid(0.1, 0, 0)
+          .outputRange(-1.0, 1.0);
     }
   }
 }
