@@ -165,7 +165,7 @@ public final class Configs {
       aimerConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(0.1, 0, 0)
+          .pid(1.0, 0, 0)
           .outputRange(-1.0, 1.0);
     }
   }
