@@ -196,7 +196,8 @@ public final class Constants {
     public static final double kShooterMotorReduction = 1.0;
 
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
-    public static final int kShooterMotorCurrentLimit = 30; // amps
+    public static final int kShooterMotorStatorCurrentLimit = 120; // amps
+    public static final int kShooterMotorSupplyCurrentLimit = 70; // amps
     public static final InvertedValue kShooterMotorInverted =
         InvertedValue.CounterClockwise_Positive;
   }
