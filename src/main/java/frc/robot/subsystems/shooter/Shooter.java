@@ -40,7 +40,7 @@ public class Shooter extends SubsystemBase {
     return TrajectoryModel.shooterSpeedRPS(distanceToVirtualTarget);
   }
 
-  public double shootAt(Translation2d target, Translation2d robotPose) {
-    return shootAt(target, robotPose, new ChassisSpeeds());
+  public void shootAt(Translation2d target, Translation2d robotPose) {
+    shootAt(target, robotPose, new ChassisSpeeds());
   }
 }
