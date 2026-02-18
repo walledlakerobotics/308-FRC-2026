@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -202,6 +203,6 @@ public final class Constants {
     public static final int kShooterMotorSupplyCurrentLimit = 70; // amps
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
-    public static final boolean kShooterFollowerInverted = false;
+    public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
   }
 }
