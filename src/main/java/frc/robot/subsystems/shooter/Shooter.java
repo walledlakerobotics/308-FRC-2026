@@ -3,14 +3,15 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import java.util.function.Supplier;
 
 /** Subsystem for controlling the Fuel shooter. */
 public class Shooter extends SubsystemBase {
@@ -19,8 +20,12 @@ public class Shooter extends SubsystemBase {
 
   private final VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
+  private Supplier<Pose2d> robotPoseSupplier;
+
   /** Creates a new Shooter. */
-  public Shooter() {
+  public Shooter(Supplier<Pose2d> robotPoseSupplier) {
+    this.robotPoseSupplier = robotPoseSupplier;
+
     m_shooterLeader.getConfigurator().apply(Configs.Shooter.shooterConfig);
     m_shooterFollower.getConfigurator().apply(Configs.Shooter.shooterConfig);
 
@@ -52,25 +57,11 @@ public class Shooter extends SubsystemBase {
    * time of flight.
    *
    * @param target The target position in field coordinates that the shooter should aim at.
-   * @param robotPose The current position of the robot in field coordinates.
-   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
-   *     meters per second.
    */
-  public void shootAt(Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
-    Translation2d virtualTarget =
-        VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
-    double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
+  public void shootAt(Translation2d target) {
+    Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
+    double distanceToVirtualTarget =
+        virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
     setVelocity(TrajectoryModel.shooterVelocity(distanceToVirtualTarget));
-  }
-
-  /**
-   * Shoots at the given target by calculating the appropriate shooter speed to hit the target based
-   * on the distance to the target. Assumes the robot is stationary.
-   *
-   * @param target The target position in field coordinates that the shooter should aim at.
-   * @param robotPose The current position of the robot in field coordinates.
-   */
-  public void shootAt(Translation2d target, Translation2d robotPose) {
-    shootAt(target, robotPose, new ChassisSpeeds());
   }
 }
