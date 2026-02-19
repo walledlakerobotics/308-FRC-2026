@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -50,7 +49,7 @@ public class Aimer extends SubsystemBase {
    * @return The current hood angle.
    */
   public Angle getAngle() {
-    return Rotation.of(m_aimerEncoder.get());
+    return Rotations.of(m_aimerEncoder.get()).minus(AimerConstants.kAimerEncoderOffset);
   }
 
   /**
