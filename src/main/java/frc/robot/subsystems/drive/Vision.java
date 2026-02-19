@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class Vision {
   private final PhotonCamera[] m_cameras = new PhotonCamera[VisionConstants.kCameraNames.length];
 
   private final PhotonPoseEstimator m_visionPoseEstimator =
-      new PhotonPoseEstimator(VisionConstants.kAprilTagFieldLayout, Transform3d.kZero);
+      new PhotonPoseEstimator(FieldConstants.kAprilTagFieldLayout, Transform3d.kZero);
 
   /** Create a new Vision. */
   public Vision(PoseEstimator3d<?> poseEstimator) {
@@ -85,7 +86,7 @@ public class Vision {
     double averageDistance = 0.0;
     for (PhotonTrackedTarget target : poseEstimate.targetsUsed) {
       Optional<Pose3d> targetPoseOptional =
-          VisionConstants.kAprilTagFieldLayout.getTagPose(target.fiducialId);
+          FieldConstants.kAprilTagFieldLayout.getTagPose(target.fiducialId);
 
       if (targetPoseOptional.isEmpty()) {
         continue;

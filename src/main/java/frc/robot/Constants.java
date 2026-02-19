@@ -144,6 +144,9 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
+    public static final AprilTagFieldLayout kAprilTagFieldLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
     public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
     public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
 
@@ -177,9 +180,6 @@ public final class Constants {
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
-
-    public static final AprilTagFieldLayout kAprilTagFieldLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   }
 
   public static final class MatchConstants {
