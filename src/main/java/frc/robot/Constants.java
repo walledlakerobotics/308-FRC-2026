@@ -27,6 +27,7 @@ import edu.wpi.first.math.numbers.N4;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import java.util.List;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double kPeriodSeconds = 0.02;
+  public static final double kPeriodSeconds = TimedRobot.kDefaultPeriod;
   public static final double kNominalVoltage = 12.0;
 
   public static final RobotConfig kRobotConfig;
