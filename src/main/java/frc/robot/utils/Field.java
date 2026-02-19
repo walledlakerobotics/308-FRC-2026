@@ -36,4 +36,15 @@ public class Field {
         FieldConstants.kFieldLengthMeters - translation.getX(),
         FieldConstants.kFieldWidthMeters - translation.getY());
   }
+
+  /**
+   * Flips a rotation across the field. This is useful for converting between the red and blue
+   * sides of the field, as the field is symmetrical.
+   *
+   * @param rotation The rotation to flip, in field coordinates.
+   * @return The flipped rotation, in field coordinates.
+   */
+  public static Rotation2d flip(Rotation2d rotation) {
+    return rotation.plus(Rotation2d.k180deg);
+  }
 }
