@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -28,7 +29,7 @@ public final class Configs {
       double drivingFactor =
           ModuleConstants.kWheelCircumferenceMeters / ModuleConstants.kDrivingMotorReduction;
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
-      
+
       double nominalVoltage = 12.0;
       double drivingVelocityFeedForward =
           nominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
@@ -131,6 +132,12 @@ public final class Configs {
     public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
     static {
+      double nominalVoltage = 12.0;
+      double shooterVelocityFeedForward =
+          nominalVoltage
+              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec)
+              * ShooterConstants.kShooterMotorReduction;
+
       shooterConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -151,7 +158,7 @@ public final class Configs {
                   .withKI(0.0)
                   .withKD(0.0)
                   .withKS(0.0)
-                  .withKV(0.0)
+                  .withKV(shooterVelocityFeedForward)
                   .withKA(0.0));
     }
   }
