@@ -219,6 +219,8 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+
+    public static final int kVirtualTargetIterations = 5;
   }
 
   public static final class AimerConstants {
