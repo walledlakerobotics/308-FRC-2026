@@ -143,6 +143,11 @@ public final class Constants {
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
   }
 
+  public static final class FieldConstants {
+    public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
+    public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
+  }
+
   public static final class VisionConstants {
     public static final String[] kCameraNames = {
       "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
