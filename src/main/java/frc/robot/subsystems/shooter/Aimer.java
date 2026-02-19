@@ -67,7 +67,7 @@ public class Aimer extends SubsystemBase {
     Translation2d virtualTarget =
         VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
     double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
-    setAngle(TrajectoryModel.trajectoryAngle(distanceToVirtualTarget));
+    setAngle(TrajectoryModel.hoodAngle(distanceToVirtualTarget));
   }
 
   /**

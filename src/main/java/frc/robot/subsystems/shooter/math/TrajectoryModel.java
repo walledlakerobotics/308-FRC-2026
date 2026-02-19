@@ -31,7 +31,7 @@ public class TrajectoryModel {
    * @param distanceMeters The distance to the target in meters.
    * @return The required shooter angle.
    */
-  public static final Angle trajectoryAngle(double distanceMeters) {
+  public static final Angle hoodAngle(double distanceMeters) {
     // Quadratic regression of distance vs. angle data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
