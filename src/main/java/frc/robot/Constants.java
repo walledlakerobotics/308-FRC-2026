@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -23,6 +25,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import frc.robot.utils.CANIDs;
 import java.util.List;
 
@@ -204,5 +207,24 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+  }
+
+  public static final class AimerConstants {
+    public static final int kAimerPWMChannel = 0;
+    public static final int kEncoderDIOChannel = 0;
+
+    public static final boolean kAimerMotorInverted = false;
+    public static final boolean kAimerEncoderInverted = false;
+
+    public static final double kAimerEncoderDutyCycleMin = 1.0 / 1025.0;
+    public static final double kAimerEncoderDutyCycleMax = 1024.0 / 1025.0;
+
+    public static final double kAimerEncoderFrequencyHz = 975.6;
+
+    public static final Angle kAimerEncoderOffset = Rotations.of(0.0);
+
+    public static final double kAimerP = 1.0;
+    public static final double kAimerI = 0.0;
+    public static final double kAimerD = 0.0;
   }
 }

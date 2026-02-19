@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
@@ -28,11 +29,11 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Sets the shooter velocity in rotations per second.
+   * Sets the shooter velocity.
    *
-   * @param velocity The desired shooter velocity in rotations per second.
+   * @param velocity The desired shooter velocity.
    */
-  public void setVelocity(double velocity) {
+  public void setVelocity(AngularVelocity velocity) {
     m_shooterLeader.setControl(m_velocityVoltageControl.withVelocity(velocity));
   }
 
@@ -41,8 +42,8 @@ public class Shooter extends SubsystemBase {
    *
    * @return The current shooter velocity in rotations per second.
    */
-  public double getVelocity() {
-    return m_shooterLeader.getVelocity().getValueAsDouble();
+  public AngularVelocity getVelocity() {
+    return m_shooterLeader.getVelocity().getValue();
   }
 
   /**
@@ -59,7 +60,7 @@ public class Shooter extends SubsystemBase {
     Translation2d virtualTarget =
         VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
     double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
-    setVelocity(TrajectoryModel.shooterVelocityRPS(distanceToVirtualTarget));
+    setVelocity(TrajectoryModel.shooterVelocity(distanceToVirtualTarget));
   }
 
   /**
