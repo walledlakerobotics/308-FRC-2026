@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter.math;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.Constants.ShooterConstants;
 import java.util.HashMap;
 
@@ -17,7 +18,7 @@ import java.util.HashMap;
 public class VirtualTarget {
   private static final VirtualTarget instance = new VirtualTarget();
 
-  private final HashMap<Translation2d, Translation2d> virtualTargetCache = new HashMap<>();
+  private final HashMap<ScoringTarget, Translation2d> virtualTargetCache = new HashMap<>();
 
   private VirtualTarget() {}
 
@@ -36,21 +37,22 @@ public class VirtualTarget {
   }
 
   /**
-   * Updates the virtual target cache with the given targets, robot pose, and robot speeds. This
-   * should be called periodically (e.g. in the robot's periodic method) to ensure the virtual
+   * Updates the virtual target cache for the scoring targets with the robot pose and robot speeds.
+   * This should be called periodically (e.g. in the robot's periodic method) to ensure the virtual
    * targets are updated as the robot moves and its speeds change.
    *
-   * @param targets An array of target positions in field coordinates that the shooter should aim
-   *     at.
    * @param robotPose The current position of the robot in field coordinates.
    * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
    *     meters per second.
    */
-  public void update(Translation2d[] targets, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
-    for (Translation2d target : targets) {
+  public void update(Pose2d robotPose, ChassisSpeeds robotSpeeds) {
+    for (ScoringTarget target : ScoringTarget.values()) {
       Translation2d virtualTarget =
           calculateVirtualTarget(
-              target, robotPose, robotSpeeds, ShooterConstants.kVirtualTargetIterations);
+              target.getTranslation(),
+              robotPose,
+              robotSpeeds,
+              ShooterConstants.kVirtualTargetIterations);
       virtualTargetCache.put(target, virtualTarget);
     }
   }
@@ -62,8 +64,8 @@ public class VirtualTarget {
    * @param target The original target position in field coordinates.
    * @return The virtual target position in field coordinates.
    */
-  public Translation2d getVirtualTarget(Translation2d target) {
-    return virtualTargetCache.getOrDefault(target, target);
+  public Translation2d getVirtualTarget(ScoringTarget target) {
+    return virtualTargetCache.getOrDefault(target, target.getTranslation());
   }
 
   /**
