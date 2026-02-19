@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
 import java.util.function.DoubleSupplier;
@@ -130,8 +129,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_field.setRobotPose(getPose());
 
-    VirtualTarget.getInstance()
-        .update(FieldConstants.kScoringTargets, getPose(), getChassisSpeeds());
+    VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
   }
 
   /**
