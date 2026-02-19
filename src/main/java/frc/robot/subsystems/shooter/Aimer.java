@@ -21,7 +21,7 @@ public class Aimer extends SubsystemBase {
       new DutyCycleEncoder(AimerConstants.kEncoderDIOChannel);
 
   private final PIDController m_controller =
-      new PIDController(1.0, 0.0, 0.0); // PID values will need to be tuned based on testing.
+      new PIDController(AimerConstants.kAimerP, AimerConstants.kAimerI, AimerConstants.kAimerD);
 
   /** Creates a new Aimer */
   public Aimer() {
