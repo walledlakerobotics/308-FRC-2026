@@ -212,5 +212,10 @@ public final class Constants {
 
     public static final boolean kAimerMotorInverted = false;
     public static final boolean kAimerEncoderInverted = false;
+
+    public static final double kAimerEncoderDutyCycleMin = 1.0 / 1025.0;
+    public static final double kAimerEncoderDutyCycleMax = 1024.0 / 1025.0;
+
+    public static final double kAimerEncoderFrequencyHz = 975.6;
   }
 }
