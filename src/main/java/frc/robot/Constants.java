@@ -209,5 +209,8 @@ public final class Constants {
   public static final class AimerConstants {
     public static final int kAimerPWMChannel = 0;
     public static final int kEncoderDIOChannel = 0;
+
+    public static final boolean kAimerMotorInverted = false;
+    public static final boolean kAimerEncoderInverted = false;
   }
 }
