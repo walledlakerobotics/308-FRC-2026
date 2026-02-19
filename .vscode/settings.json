@@ -64,5 +64,9 @@
   "spotlessGradle.format.enable": true,
   "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": true,
+  "editor.autoIndentOnPaste": true,
+  "[java]": {
+    "editor.tabSize": 2
+  }
 }
