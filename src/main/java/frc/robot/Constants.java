@@ -42,6 +42,16 @@ public final class Constants {
   public static final double kPeriodSeconds = 0.02;
   public static final double kNominalVoltage = 12.0;
 
+  public static final RobotConfig kRobotConfig;
+
+  static {
+    try {
+      kRobotConfig = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to load robot configuration", e);
+    }
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds
     // of the robot, rather the allowed maximum speeds
@@ -87,19 +97,8 @@ public final class Constants {
     public static final int kFrontRightTurningEncoderId = CANIDs.frontRightEncoder();
     public static final int kRearRightTurningEncoderId = CANIDs.rearRightEncoder();
 
-    public static final RobotConfig kRobotConfig;
-
-    static {
-      try {
-        kRobotConfig = RobotConfig.fromGUISettings();
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to load robot configuration", e);
-      }
-    }
-
     public static final SwerveSetpointGenerator kSetpointGenerator =
-        new SwerveSetpointGenerator(
-            DriveConstants.kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
+        new SwerveSetpointGenerator(kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
   }
 
   public static final class ModuleConstants {

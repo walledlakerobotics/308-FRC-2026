@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -91,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
       new SwerveSetpoint(
           getChassisSpeeds(),
           getModuleStates(),
-          DriveFeedforwards.zeros(DriveConstants.kRobotConfig.numModules));
+          DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
 
@@ -106,7 +107,7 @@ public class Drivetrain extends SubsystemBase {
         this::getChassisSpeeds,
         this::drive,
         AutoConstants.kPathFollowingController,
-        DriveConstants.kRobotConfig,
+        Constants.kRobotConfig,
         () -> false,
         this);
 
