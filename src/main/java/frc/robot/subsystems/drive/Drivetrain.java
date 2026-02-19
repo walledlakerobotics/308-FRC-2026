@@ -16,11 +16,13 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -40,6 +42,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /** Subsystem to control a swerve drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -395,5 +398,48 @@ public class Drivetrain extends SubsystemBase {
               m_rearRight.setIdleMode(idleMode);
             })
         .ignoringDisable(true);
+  }
+
+  /**
+   * Creates a {@link Command} that uses a PID controller to turn the robot to face a supplied point
+   * while allowing translation in the x and y directions.
+   *
+   * @param point The point for the robot to face, in field coordinates.
+   * @param translationXSupplier Supplier of the speed of the robot in the x direction (forward)
+   *     from -1 to 1.
+   * @param translationYSupplier Supplier of the speed of the robot in the y direction (left) from
+   *     -1 to 1.
+   * @return The command.
+   */
+  public Command faceTowards(
+      Supplier<Translation2d> point,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      boolean fieldRelative) {
+    try (PIDController angleController =
+        new PIDController(
+            AutoConstants.kRotationConstants.kP,
+            AutoConstants.kRotationConstants.kI,
+            AutoConstants.kRotationConstants.kD)) {
+      return run(
+          () -> {
+            Translation2d robotTranslation = getPose().getTranslation();
+            Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
+
+            double xSpeed = translationXSupplier.getAsDouble();
+            double ySpeed = translationYSupplier.getAsDouble();
+
+            xSpeed = -MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband);
+            ySpeed = -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband);
+
+            xSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+            ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+
+            double rot =
+                angleController.calculate(getHeading().getRadians(), angleToTarget.getRadians());
+
+            drive(xSpeed, ySpeed, rot, fieldRelative);
+          });
+    }
   }
 }
