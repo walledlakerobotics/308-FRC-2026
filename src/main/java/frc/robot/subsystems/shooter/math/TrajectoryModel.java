@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter.math;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 
 /**
  * Provides methods for calculating shooter speed, angle, and time of flight based on the distance
@@ -14,13 +15,12 @@ public class TrajectoryModel {
   }
 
   /**
-   * Calculates the required shooter velocity in rotations per second to hit a target at the
-   * specified distance.
+   * Calculates the required shooter velocity to hit a target at the specified distance.
    *
    * @param distanceMeters The distance to the target in meters.
-   * @return The required shooter velocity in rotations per second.
+   * @return The required shooter velocity.
    */
-  public static final double shooterVelocityRPS(double distanceMeters) {
+  public static final AngularVelocity shooterVelocity(double distanceMeters) {
     // Quadratic regression of distance vs. speed data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
