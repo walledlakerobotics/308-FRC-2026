@@ -144,12 +144,32 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
-    public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
+    public static final AprilTagFieldLayout kAprilTagFieldLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-    public static final Translation2d[] kScoringTargets = {
-      new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2) // Hub
-    };
+    public static final double kFieldLengthMeters = kAprilTagFieldLayout.getFieldLength();
+    public static final double kFieldWidthMeters = kAprilTagFieldLayout.getFieldWidth();
+
+    public static final double kHubLengthMeters = Units.inchesToMeters(47.0);
+    public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
+
+    public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
+
+    public static enum ScoringTarget {
+      Hub(
+          new Translation2d(
+              kAllianceZoneLengthMeters + kHubLengthMeters / 2, kFieldWidthMeters / 2));
+
+      private final Translation2d pose;
+
+      ScoringTarget(Translation2d pose) {
+        this.pose = pose;
+      }
+
+      public Translation2d getTranslation() {
+        return pose;
+      }
+    }
   }
 
   public static final class VisionConstants {
@@ -167,9 +187,6 @@ public final class Constants {
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
             VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
-
-    public static final AprilTagFieldLayout kAprilTagFieldLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   }
 
   public static final class MatchConstants {
