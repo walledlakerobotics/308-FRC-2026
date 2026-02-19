@@ -156,7 +156,9 @@ public final class Constants {
     public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
 
     public static enum ScoringTarget {
-      Hub(new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2));
+      Hub(
+          new Translation2d(
+              kAllianceZoneLengthMeters + kHubLengthMeters / 2, kFieldWidthMeters / 2));
 
       private final Translation2d pose;
 
