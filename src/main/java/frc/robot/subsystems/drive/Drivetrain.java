@@ -26,7 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -91,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
       new SwerveSetpoint(
           getChassisSpeeds(),
           getModuleStates(),
-          DriveFeedforwards.zeros(DriveConstants.kRobotConfig.numModules));
+          DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
 
@@ -106,8 +107,8 @@ public class Drivetrain extends SubsystemBase {
         this::getChassisSpeeds,
         this::drive,
         AutoConstants.kPathFollowingController,
-        DriveConstants.kRobotConfig,
-        () -> false,
+        Constants.kRobotConfig,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
 
     RobotModeTriggers.disabled()
@@ -280,7 +281,7 @@ public class Drivetrain extends SubsystemBase {
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_previousSetpoint =
         DriveConstants.kSetpointGenerator.generateSetpoint(
-            m_previousSetpoint, chassisSpeeds, TimedRobot.kDefaultPeriod);
+            m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
 
     setModuleStates(m_previousSetpoint.moduleStates());
   }

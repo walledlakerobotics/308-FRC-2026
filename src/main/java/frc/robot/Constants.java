@@ -24,8 +24,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
 
@@ -38,6 +40,19 @@ import java.util.List;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kPeriodSeconds = TimedRobot.kDefaultPeriod;
+  public static final double kNominalVoltage = 12.0;
+
+  public static final RobotConfig kRobotConfig;
+
+  static {
+    try {
+      kRobotConfig = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to load robot configuration", e);
+    }
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds
     // of the robot, rather the allowed maximum speeds
@@ -83,19 +98,8 @@ public final class Constants {
     public static final int kFrontRightTurningEncoderId = CANIDs.frontRightEncoder();
     public static final int kRearRightTurningEncoderId = CANIDs.rearRightEncoder();
 
-    public static final RobotConfig kRobotConfig;
-
-    static {
-      try {
-        kRobotConfig = RobotConfig.fromGUISettings();
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to load robot configuration", e);
-      }
-    }
-
     public static final SwerveSetpointGenerator kSetpointGenerator =
-        new SwerveSetpointGenerator(
-            DriveConstants.kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
+        new SwerveSetpointGenerator(kRobotConfig, ModuleConstants.kMaxSteerSpeedRadPerSec);
   }
 
   public static final class ModuleConstants {
@@ -104,14 +108,16 @@ public final class Constants {
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
 
+    public static final DCMotor kDrivingMotor = DCMotor.getNEO(1);
+
     public static final double kDrivingMotorReduction = 6.75;
     public static final double kDriveFreeSpeedMetersPerSecond =
-        (NeoMotorConstants.kFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
+        (kDrivingMotor.freeSpeedRadPerSec * kWheelRadiusMeters) / kDrivingMotorReduction;
 
     public static final double kTurningMotorReduction = 150.0 / 7;
 
     public static final double kMaxSteerSpeedRadPerSec =
-        0.9 * Units.rotationsToRadians(NeoMotorConstants.kFreeSpeedRps / kTurningMotorReduction);
+        0.9 * kDrivingMotor.freeSpeedRadPerSec / kTurningMotorReduction;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
@@ -135,11 +141,6 @@ public final class Constants {
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
-  }
-
-  public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
-    public static final double kFreeSpeedRps = kFreeSpeedRpm / 60;
   }
 
   public static final class VisionConstants {
@@ -199,6 +200,8 @@ public final class Constants {
   public static final class ShooterConstants {
     public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
     public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
+
+    public static final DCMotor kShooterMotor = DCMotor.getKrakenX60(2);
 
     public static final double kShooterMotorReduction = 1.0;
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;

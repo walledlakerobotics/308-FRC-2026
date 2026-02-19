@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -28,18 +29,20 @@ public final class Configs {
       double drivingFactor =
           ModuleConstants.kWheelCircumferenceMeters / ModuleConstants.kDrivingMotorReduction;
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
-      double nominalVoltage = 12.0;
+
       double drivingVelocityFeedForward =
-          nominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
+          Constants.kNominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
 
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
           .idleMode(ModuleConstants.kDrivingMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
+
       drivingConfig
           .encoder
           .positionConversionFactor(drivingFactor) // meters
           .velocityConversionFactor(drivingFactor / 60.0); // meters per second
+
       drivingConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -52,10 +55,12 @@ public final class Configs {
           .inverted(ModuleConstants.kTurningMotorsInverted)
           .idleMode(ModuleConstants.kTurningMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
+
       turningConfig
           .encoder
           .positionConversionFactor(turningFactor) // rotations
           .velocityConversionFactor(turningFactor / 60.0); // rotations per second
+
       turningConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -83,10 +88,12 @@ public final class Configs {
           .inverted(ExtenderConstants.kExtenderMotorInverted)
           .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
           .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit);
+
       extenderConfig
           .absoluteEncoder
           .positionConversionFactor(extenderFactor) // rotations
           .velocityConversionFactor(extenderFactor / 60.0); // rotations per second
+
       extenderConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -106,10 +113,12 @@ public final class Configs {
           .idleMode(IntakeConstants.kIntakeMotorIdleMode)
           .smartCurrentLimit(IntakeConstants.kIntakeMotorCurrentLimit)
           .voltageCompensation(12.0);
+
       intakeConfig
           .encoder
           .positionConversionFactor(intakeFactor) // rotations
           .velocityConversionFactor(intakeFactor / 60.0); // rotations per second
+
       intakeConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -122,6 +131,11 @@ public final class Configs {
     public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
     static {
+      double shooterVelocityFeedForward =
+          Constants.kNominalVoltage
+              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec)
+              * ShooterConstants.kShooterMotorReduction;
+
       shooterConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -142,7 +156,7 @@ public final class Configs {
                   .withKI(0.0)
                   .withKD(0.0)
                   .withKS(0.0)
-                  .withKV(0.0)
+                  .withKV(shooterVelocityFeedForward)
                   .withKA(0.0));
     }
   }
