@@ -26,7 +26,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -281,7 +280,7 @@ public class Drivetrain extends SubsystemBase {
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_previousSetpoint =
         DriveConstants.kSetpointGenerator.generateSetpoint(
-            m_previousSetpoint, chassisSpeeds, TimedRobot.kDefaultPeriod);
+            m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
 
     setModuleStates(m_previousSetpoint.moduleStates());
   }
