@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter.math;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants.ShooterConstants;
 import java.util.HashMap;
 
 /**
@@ -47,7 +48,9 @@ public class VirtualTarget {
    */
   public void update(Translation2d[] targets, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
     for (Translation2d target : targets) {
-      Translation2d virtualTarget = calculateVirtualTarget(target, robotPose, robotSpeeds);
+      Translation2d virtualTarget =
+          calculateVirtualTarget(
+              target, robotPose, robotSpeeds, ShooterConstants.kVirtualTargetIterations);
       virtualTargetCache.put(target, virtualTarget);
     }
   }
