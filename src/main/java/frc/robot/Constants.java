@@ -147,8 +147,8 @@ public final class Constants {
     public static final AprilTagFieldLayout kAprilTagFieldLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-    public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
-    public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
+    public static final double kFieldLengthMeters = kAprilTagFieldLayout.getFieldLength();
+    public static final double kFieldWidthMeters = kAprilTagFieldLayout.getFieldWidth();
 
     public static enum ScoringTarget {
       Hub(new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2));
