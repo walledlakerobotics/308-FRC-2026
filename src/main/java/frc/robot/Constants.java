@@ -150,6 +150,11 @@ public final class Constants {
     public static final double kFieldLengthMeters = kAprilTagFieldLayout.getFieldLength();
     public static final double kFieldWidthMeters = kAprilTagFieldLayout.getFieldWidth();
 
+    public static final double kHubLengthMeters = Units.inchesToMeters(47.0);
+    public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
+
+    public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
+
     public static enum ScoringTarget {
       Hub(new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2));
 
