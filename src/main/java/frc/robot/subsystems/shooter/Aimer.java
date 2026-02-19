@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.AimerConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
@@ -82,9 +83,7 @@ public class Aimer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double nominalVoltage = 12.0;
-
     double output = m_controller.calculate(getAngle().in(Rotations));
-    m_aimerMotor.setVoltage(output * nominalVoltage);
+    m_aimerMotor.setVoltage(output * Constants.kNominalVoltage);
   }
 }

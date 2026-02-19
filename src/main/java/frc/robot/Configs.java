@@ -30,9 +30,8 @@ public final class Configs {
           ModuleConstants.kWheelCircumferenceMeters / ModuleConstants.kDrivingMotorReduction;
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
 
-      double nominalVoltage = 12.0;
       double drivingVelocityFeedForward =
-          nominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
+          Constants.kNominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
 
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
@@ -132,9 +131,8 @@ public final class Configs {
     public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
     static {
-      double nominalVoltage = 12.0;
       double shooterVelocityFeedForward =
-          nominalVoltage
+          Constants.kNominalVoltage
               / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec)
               * ShooterConstants.kShooterMotorReduction;
 
