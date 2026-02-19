@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter.math;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import java.util.HashMap;
 
 /**
  * Provides methods for calculating a virtual target position that accounts for the robot's movement
@@ -14,6 +15,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class VirtualTarget {
   private static final VirtualTarget instance = new VirtualTarget();
 
+  private final HashMap<Translation2d, Translation2d> virtualTargetCache = new HashMap<>();
+
   private VirtualTarget() {}
 
   /**
@@ -23,6 +26,40 @@ public class VirtualTarget {
    */
   public static VirtualTarget getInstance() {
     return instance;
+  }
+
+  /** Clears the virtual target cache. */
+  public void clear() {
+    virtualTargetCache.clear();
+  }
+
+  /**
+   * Updates the virtual target cache with the given targets, robot pose, and robot speeds. This
+   * should be called periodically (e.g. in the robot's periodic method) to ensure the virtual
+   * targets are updated as the robot moves and its speeds change.
+   *
+   * @param targets An array of target positions in field coordinates that the shooter should aim
+   *     at.
+   * @param robotPose The current position of the robot in field coordinates.
+   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
+   *     meters per second.
+   */
+  public void update(Translation2d[] targets, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
+    for (Translation2d target : targets) {
+      Translation2d virtualTarget = calculateVirtualTarget(target, robotPose, robotSpeeds);
+      virtualTargetCache.put(target, virtualTarget);
+    }
+  }
+
+  /**
+   * Gets the virtual target position for the given target. Assumes update has been called recently
+   * to populate the cache with the latest virtual target positions.
+   *
+   * @param target The original target position in field coordinates.
+   * @return The virtual target position in field coordinates.
+   */
+  public Translation2d getVirtualTarget(Translation2d target) {
+    return virtualTargetCache.getOrDefault(target, target);
   }
 
   /**
