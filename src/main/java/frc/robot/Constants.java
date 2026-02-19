@@ -198,6 +198,8 @@ public final class Constants {
     public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
     public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
 
+    public static final DCMotor kShooterMotor = DCMotor.getKrakenX60(2);
+
     public static final double kShooterMotorReduction = 1.0;
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
     public static final int kShooterMotorStatorCurrentLimit = 120; // amps
