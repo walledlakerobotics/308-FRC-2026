@@ -21,10 +21,7 @@ public class Field {
    * @return The flipped pose, in field coordinates.
    */
   public static Pose2d flip(Pose2d pose) {
-    return new Pose2d(
-        FieldConstants.kFieldLengthMeters - pose.getX(),
-        FieldConstants.kFieldWidthMeters - pose.getY(),
-        pose.getRotation().plus(Rotation2d.k180deg));
+    return new Pose2d(flip(pose.getTranslation()), flip(pose.getRotation()));
   }
 
   /**
@@ -35,11 +32,7 @@ public class Field {
    * @return The flipped pose, in field coordinates.
    */
   public static Pose3d flip(Pose3d pose) {
-    return new Pose3d(
-        FieldConstants.kFieldLengthMeters - pose.getX(),
-        FieldConstants.kFieldWidthMeters - pose.getY(),
-        pose.getZ(),
-        pose.getRotation().plus(new Rotation3d(Rotation2d.k180deg)));
+    return new Pose3d(flip(pose.getTranslation()), flip(pose.getRotation()));
   }
 
   /**
