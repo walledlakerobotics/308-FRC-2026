@@ -3,8 +3,8 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AimerConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
 public class Aimer extends SubsystemBase {
@@ -24,8 +25,12 @@ public class Aimer extends SubsystemBase {
   private final PIDController m_controller =
       new PIDController(AimerConstants.kAimerP, AimerConstants.kAimerI, AimerConstants.kAimerD);
 
+  private Supplier<Pose2d> robotPoseSupplier;
+
   /** Creates a new Aimer */
-  public Aimer() {
+  public Aimer(Supplier<Pose2d> robotPoseSupplier) {
+    this.robotPoseSupplier = robotPoseSupplier;
+
     m_aimerMotor.setInverted(AimerConstants.kAimerMotorInverted);
     m_aimerEncoder.setInverted(AimerConstants.kAimerEncoderInverted);
 
@@ -59,26 +64,12 @@ public class Aimer extends SubsystemBase {
    * flight.
    *
    * @param target The target position in field coordinates that the shooter should aim at.
-   * @param robotPose The current position of the robot in field coordinates.
-   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
-   *     meters per second.
    */
-  public void aimAt(Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
-    Translation2d virtualTarget =
-        VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
-    double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
+  public void aimAt(Translation2d target) {
+    Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
+    double distanceToVirtualTarget =
+        virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
     setAngle(TrajectoryModel.hoodAngle(distanceToVirtualTarget));
-  }
-
-  /**
-   * Aims at the given target by calculating the appropriate angle to hit the target based on the
-   * distance to the target. Assumes the robot is stationary.
-   *
-   * @param target The target position in field coordinates that the shooter should aim at.
-   * @param robotPose The current position of the robot in field coordinates.
-   */
-  public void aimAt(Translation2d target, Translation2d robotPose) {
-    aimAt(target, robotPose, new ChassisSpeeds());
   }
 
   @Override
