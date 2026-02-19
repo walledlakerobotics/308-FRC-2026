@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AimerConstants;
+import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
 import java.util.function.Supplier;
@@ -65,7 +66,7 @@ public class Aimer extends SubsystemBase {
    *
    * @param target The target position in field coordinates that the shooter should aim at.
    */
-  public void aimAt(Translation2d target) {
+  public void aimAt(ScoringTarget target) {
     Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
