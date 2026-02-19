@@ -222,5 +222,9 @@ public final class Constants {
     public static final double kAimerEncoderFrequencyHz = 975.6;
 
     public static final Angle kAimerEncoderOffset = Rotations.of(0.0);
+
+    public static final double kAimerP = 1.0;
+    public static final double kAimerI = 0.0;
+    public static final double kAimerD = 0.0;
   }
 }
