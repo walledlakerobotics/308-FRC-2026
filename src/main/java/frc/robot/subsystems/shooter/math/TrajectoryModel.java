@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter.math;
 
+import edu.wpi.first.units.measure.Angle;
+
 /**
  * Provides methods for calculating shooter speed, angle, and time of flight based on the distance
  * to the target. These methods will use quadratic regression models based on testing data to
@@ -24,12 +26,12 @@ public class TrajectoryModel {
   }
 
   /**
-   * Calculates the required shooter angle in radians to hit a target at the specified distance.
+   * Calculates the required shooter angle to hit a target at the specified distance.
    *
    * @param distanceMeters The distance to the target in meters.
-   * @return The required shooter angle in radians.
+   * @return The required shooter angle.
    */
-  public static final double trajectoryAngleRad(double distanceMeters) {
+  public static final Angle trajectoryAngle(double distanceMeters) {
     // Quadratic regression of distance vs. angle data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
