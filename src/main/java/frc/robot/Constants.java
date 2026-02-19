@@ -207,11 +207,7 @@ public final class Constants {
   }
 
   public static final class AimerConstants {
-    public static final int kAimerCanId = CANIDs.secondaryMotor(4);
-
-    public static final double kAimerMotorReduction = 1.0;
-    public static final IdleMode kAimerMotorIdleMode = IdleMode.kBrake;
-    public static final int kAimerMotorCurrentLimit = 30; // amps
-    public static final boolean kAimerMotorInverted = false;
+    public static final int kAimerPWMChannel = 0;
+    public static final int kEncoderDIOChannel = 0;
   }
 }
