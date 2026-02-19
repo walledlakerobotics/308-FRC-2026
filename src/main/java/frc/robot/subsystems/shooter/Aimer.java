@@ -4,11 +4,15 @@ import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AimerConstants;
+import frc.robot.subsystems.shooter.math.TrajectoryModel;
+import frc.robot.subsystems.shooter.math.VirtualTarget;
 
 public class Aimer extends SubsystemBase {
   private final Spark m_aimerMotor = new Spark(AimerConstants.kAimerPWMChannel);
@@ -35,6 +39,34 @@ public class Aimer extends SubsystemBase {
 
   public Angle getAngle() {
     return Rotation.of(m_aimerEncoder.get());
+  }
+
+  /**
+   * Aims at the given target by calculating the appropriate angle to hit the target based on the
+   * distance to the target and accounting for the robot's movement during the projectile's time of
+   * flight.
+   *
+   * @param target The target position in field coordinates that the shooter should aim at.
+   * @param robotPose The current position of the robot in field coordinates.
+   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
+   *     meters per second.
+   */
+  public void aimAt(Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
+    Translation2d virtualTarget =
+        VirtualTarget.calculateVirtualTarget(target, robotPose, robotSpeeds);
+    double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
+    setAngle(TrajectoryModel.trajectoryAngle(distanceToVirtualTarget));
+  }
+
+  /**
+   * Aims at the given target by calculating the appropriate angle to hit the target based on the
+   * distance to the target. Assumes the robot is stationary.
+   *
+   * @param target The target position in field coordinates that the shooter should aim at.
+   * @param robotPose The current position of the robot in field coordinates.
+   */
+  public void aimAt(Translation2d target, Translation2d robotPose) {
+    aimAt(target, robotPose, new ChassisSpeeds());
   }
 
   @Override
