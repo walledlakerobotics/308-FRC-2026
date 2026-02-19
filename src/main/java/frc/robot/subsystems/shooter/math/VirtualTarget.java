@@ -1,7 +1,10 @@
 package frc.robot.subsystems.shooter.math;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants.ShooterConstants;
+import java.util.HashMap;
 
 /**
  * Provides methods for calculating a virtual target position that accounts for the robot's movement
@@ -12,8 +15,55 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
  * adjusting the target position accordingly until it converges on an accurate virtual target.
  */
 public class VirtualTarget {
-  private VirtualTarget() {
-    throw new UnsupportedOperationException("This is a utility class!");
+  private static final VirtualTarget instance = new VirtualTarget();
+
+  private final HashMap<Translation2d, Translation2d> virtualTargetCache = new HashMap<>();
+
+  private VirtualTarget() {}
+
+  /**
+   * Gets the singleton instance of the VirtualTarget class.
+   *
+   * @return The singleton instance of the VirtualTarget class.
+   */
+  public static VirtualTarget getInstance() {
+    return instance;
+  }
+
+  /** Clears the virtual target cache. */
+  public void clear() {
+    virtualTargetCache.clear();
+  }
+
+  /**
+   * Updates the virtual target cache with the given targets, robot pose, and robot speeds. This
+   * should be called periodically (e.g. in the robot's periodic method) to ensure the virtual
+   * targets are updated as the robot moves and its speeds change.
+   *
+   * @param targets An array of target positions in field coordinates that the shooter should aim
+   *     at.
+   * @param robotPose The current position of the robot in field coordinates.
+   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
+   *     meters per second.
+   */
+  public void update(Translation2d[] targets, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
+    for (Translation2d target : targets) {
+      Translation2d virtualTarget =
+          calculateVirtualTarget(
+              target, robotPose, robotSpeeds, ShooterConstants.kVirtualTargetIterations);
+      virtualTargetCache.put(target, virtualTarget);
+    }
+  }
+
+  /**
+   * Gets the virtual target position for the given target. Assumes update has been called recently
+   * to populate the cache with the latest virtual target positions.
+   *
+   * @param target The original target position in field coordinates.
+   * @return The virtual target position in field coordinates.
+   */
+  public Translation2d getVirtualTarget(Translation2d target) {
+    return virtualTargetCache.getOrDefault(target, target);
   }
 
   /**
@@ -32,7 +82,9 @@ public class VirtualTarget {
    *     robot's movement during the time of flight of the projectile.
    */
   public static final Translation2d calculateVirtualTarget(
-      Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds, int maxIterations) {
+      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds, int maxIterations) {
+    Translation2d robotTranslation = robotPose.getTranslation();
+
     Translation2d virtualTarget = target; // virtual target to account for robot's speed
 
     double targetTOF; // seconds, time for projectile to reach target
@@ -40,7 +92,7 @@ public class VirtualTarget {
 
     // Iterate a few times to converge on an accurate virtual target
     for (int i = 0; i < maxIterations; i++) {
-      double distanceToTarget = target.minus(robotPose).getNorm();
+      double distanceToTarget = target.minus(robotTranslation).getNorm();
 
       // Calculate how far bot will travel during the time of flight of the projectile
       targetTOF = TrajectoryModel.timeOfFlight(distanceToTarget);
@@ -53,7 +105,7 @@ public class VirtualTarget {
       virtualTarget = target.minus(robotDisplacement);
 
       // Calculate how far bot will travel during the time of flight to the virtual target
-      double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
+      double distanceToVirtualTarget = virtualTarget.minus(robotTranslation).getNorm();
       virtualTargetTOF = TrajectoryModel.timeOfFlight(distanceToVirtualTarget);
 
       // If the time of flight to the virtual target is close enough to the time of flight to the
@@ -81,7 +133,7 @@ public class VirtualTarget {
    *     robot's movement during the time of flight of the projectile.
    */
   public static final Translation2d calculateVirtualTarget(
-      Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
+      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
     return calculateVirtualTarget(target, robotPose, robotSpeeds, 5);
   }
 }

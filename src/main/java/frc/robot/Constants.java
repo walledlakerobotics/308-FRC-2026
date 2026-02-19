@@ -143,6 +143,15 @@ public final class Constants {
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
   }
 
+  public static final class FieldConstants {
+    public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
+    public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
+
+    public static final Translation2d[] kScoringTargets = {
+      new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2) // Hub
+    };
+  }
+
   public static final class VisionConstants {
     public static final String[] kCameraNames = {
       "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
@@ -210,6 +219,8 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+
+    public static final int kVirtualTargetIterations = 5;
   }
 
   public static final class AimerConstants {
