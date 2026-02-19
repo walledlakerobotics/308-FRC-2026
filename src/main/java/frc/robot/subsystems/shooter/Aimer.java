@@ -14,6 +14,7 @@ import frc.robot.Constants.AimerConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
 
+/** Subsystem for controlling the adjustable shooter hood. */
 public class Aimer extends SubsystemBase {
   private final Spark m_aimerMotor = new Spark(AimerConstants.kAimerPWMChannel);
 
@@ -23,6 +24,7 @@ public class Aimer extends SubsystemBase {
   private final PIDController m_controller =
       new PIDController(1.0, 0.0, 0.0); // PID values will need to be tuned based on testing.
 
+  /** Creates a new Aimer */
   public Aimer() {
     m_aimerMotor.setInverted(AimerConstants.kAimerMotorInverted);
     m_aimerEncoder.setInverted(AimerConstants.kAimerEncoderInverted);
@@ -33,10 +35,20 @@ public class Aimer extends SubsystemBase {
     m_aimerEncoder.setAssumedFrequency(AimerConstants.kAimerEncoderFrequencyHz);
   }
 
+  /**
+   * Sets the hood angle setpoint.
+   *
+   * @param angle The desired hood angle.
+   */
   public void setAngle(Angle angle) {
     m_controller.setSetpoint(angle.in(Rotations));
   }
 
+  /**
+   * Gets the current hood angle.
+   *
+   * @return The current hood angle.
+   */
   public Angle getAngle() {
     return Rotation.of(m_aimerEncoder.get());
   }
