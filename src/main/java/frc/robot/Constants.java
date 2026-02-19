@@ -146,6 +146,10 @@ public final class Constants {
   public static final class FieldConstants {
     public static final double kFieldLengthMeters = Units.inchesToMeters(650.12);
     public static final double kFieldWidthMeters = Units.inchesToMeters(316.64);
+
+    public static final Translation2d[] kScoringTargets = {
+      new Translation2d(Units.inchesToMeters(179.56), kFieldWidthMeters / 2) // Hub
+    };
   }
 
   public static final class VisionConstants {
