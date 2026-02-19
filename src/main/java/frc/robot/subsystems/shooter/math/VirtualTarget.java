@@ -12,8 +12,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
  * adjusting the target position accordingly until it converges on an accurate virtual target.
  */
 public class VirtualTarget {
-  private VirtualTarget() {
-    throw new UnsupportedOperationException("This is a utility class!");
+  private static final VirtualTarget instance = new VirtualTarget();
+
+  private VirtualTarget() {}
+
+  /**
+   * Gets the singleton instance of the VirtualTarget class.
+   *
+   * @return The singleton instance of the VirtualTarget class.
+   */
+  public static VirtualTarget getInstance() {
+    return instance;
   }
 
   /**
