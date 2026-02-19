@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N4;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.utils.CANIDs;
@@ -104,14 +105,16 @@ public final class Constants {
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
 
+    public static final DCMotor kDrivingMotor = DCMotor.getNEO(1);
+
     public static final double kDrivingMotorReduction = 6.75;
     public static final double kDriveFreeSpeedMetersPerSecond =
-        (NeoMotorConstants.kFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
+        (kDrivingMotor.freeSpeedRadPerSec * kWheelRadiusMeters) / kDrivingMotorReduction;
 
     public static final double kTurningMotorReduction = 150.0 / 7;
 
     public static final double kMaxSteerSpeedRadPerSec =
-        0.9 * Units.rotationsToRadians(NeoMotorConstants.kFreeSpeedRps / kTurningMotorReduction);
+        0.9 * kDrivingMotor.freeSpeedRadPerSec / kTurningMotorReduction;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
@@ -135,11 +138,6 @@ public final class Constants {
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
-  }
-
-  public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
-    public static final double kFreeSpeedRps = kFreeSpeedRpm / 60;
   }
 
   public static final class VisionConstants {
