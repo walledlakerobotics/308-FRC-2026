@@ -131,7 +131,7 @@ public class Drivetrain extends SubsystemBase {
     m_field.setRobotPose(getPose());
 
     VirtualTarget.getInstance()
-        .update(FieldConstants.kScoringTargets, getPose().getTranslation(), getChassisSpeeds());
+        .update(FieldConstants.kScoringTargets, getPose(), getChassisSpeeds());
   }
 
   /**

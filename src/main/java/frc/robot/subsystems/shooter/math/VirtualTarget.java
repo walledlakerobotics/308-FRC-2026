@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.math;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class VirtualTarget {
    * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
    *     meters per second.
    */
-  public void update(Translation2d[] targets, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
+  public void update(Translation2d[] targets, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
     for (Translation2d target : targets) {
       Translation2d virtualTarget = calculateVirtualTarget(target, robotPose, robotSpeeds);
       virtualTargetCache.put(target, virtualTarget);
@@ -78,7 +79,9 @@ public class VirtualTarget {
    *     robot's movement during the time of flight of the projectile.
    */
   public static final Translation2d calculateVirtualTarget(
-      Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds, int maxIterations) {
+      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds, int maxIterations) {
+    Translation2d robotTranslation = robotPose.getTranslation();
+
     Translation2d virtualTarget = target; // virtual target to account for robot's speed
 
     double targetTOF; // seconds, time for projectile to reach target
@@ -86,7 +89,7 @@ public class VirtualTarget {
 
     // Iterate a few times to converge on an accurate virtual target
     for (int i = 0; i < maxIterations; i++) {
-      double distanceToTarget = target.minus(robotPose).getNorm();
+      double distanceToTarget = target.minus(robotTranslation).getNorm();
 
       // Calculate how far bot will travel during the time of flight of the projectile
       targetTOF = TrajectoryModel.timeOfFlight(distanceToTarget);
@@ -99,7 +102,7 @@ public class VirtualTarget {
       virtualTarget = target.minus(robotDisplacement);
 
       // Calculate how far bot will travel during the time of flight to the virtual target
-      double distanceToVirtualTarget = virtualTarget.minus(robotPose).getNorm();
+      double distanceToVirtualTarget = virtualTarget.minus(robotTranslation).getNorm();
       virtualTargetTOF = TrajectoryModel.timeOfFlight(distanceToVirtualTarget);
 
       // If the time of flight to the virtual target is close enough to the time of flight to the
@@ -127,7 +130,7 @@ public class VirtualTarget {
    *     robot's movement during the time of flight of the projectile.
    */
   public static final Translation2d calculateVirtualTarget(
-      Translation2d target, Translation2d robotPose, ChassisSpeeds robotSpeeds) {
+      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
     return calculateVirtualTarget(target, robotPose, robotSpeeds, 5);
   }
 }
