@@ -421,7 +421,9 @@ public class Drivetrain extends SubsystemBase {
             AutoConstants.kRotationConstants.kP,
             AutoConstants.kRotationConstants.kI,
             AutoConstants.kRotationConstants.kD)) {
-      return run(
+
+      return startRun(
+          angleController::reset,
           () -> {
             Translation2d robotTranslation = getPose().getTranslation();
             Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
