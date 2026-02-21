@@ -108,23 +108,6 @@ public final class Configs {
     static {
       double intakeFactor = 1.0 / IntakeConstants.kIntakeMotorReduction;
 
-      //   intakeConfig
-      //       .inverted(IntakeConstants.kIntakeMotorInverted)
-      //       .idleMode(IntakeConstants.kIntakeMotorIdleMode)
-      //       .smartCurrentLimit(IntakeConstants.kIntakeMotorCurrentLimit)
-      //       .voltageCompensation(12.0);
-
-      //   intakeConfig
-      //       .encoder
-      //       .positionConversionFactor(intakeFactor) // rotations
-      //       .velocityConversionFactor(intakeFactor / 60.0); // rotations per second
-
-      //   intakeConfig
-      //       .closedLoop
-      //       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      //       .pid(0.1, 0, 0)
-      //       .outputRange(-1.0, 1.0);
-
       intakeConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -138,7 +121,7 @@ public final class Configs {
               new FeedbackConfigs()
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
                   .withRotorToSensorRatio(1.0)
-                  .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction));
+                  .withSensorToMechanismRatio(IntakeConstants.kIntakeMotorReduction));
     }
   }
 
