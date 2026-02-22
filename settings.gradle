@@ -26,5 +26,13 @@ pluginManagement {
     }
 }
 
+// Agree to Gradle T.O.S.
+gradleEnterprise {
+    buildScan {
+        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+        licenseAgree = 'yes'
+    }
+}
+
 Properties props = System.getProperties();
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
