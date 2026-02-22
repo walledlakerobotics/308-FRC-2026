@@ -27,10 +27,10 @@ pluginManagement {
 }
 
 // Agree to Gradle T.O.S.
-gradleEnterprise {
+develocity {
     buildScan {
-        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-        licenseAgree = 'yes'
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
 
