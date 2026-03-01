@@ -2,14 +2,11 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.function.Supplier;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,16 +18,22 @@ import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
 public class Aimer extends SubsystemBase {
-  private final SparkMax m_aimerLeader = new SparkMax(AimerConstants.kAimerLeaderCanId, MotorType.kBrushed);
-  private final SparkMax m_aimerFollower = new SparkMax(AimerConstants.kAimerFollowerCanId, MotorType.kBrushed);
+  private final SparkMax m_aimerLeader =
+      new SparkMax(AimerConstants.kAimerLeaderCanId, MotorType.kBrushed);
+  private final SparkMax m_aimerFollower =
+      new SparkMax(AimerConstants.kAimerFollowerCanId, MotorType.kBrushed);
 
   private final AbsoluteEncoder m_aimerEncoder = m_aimerLeader.getAbsoluteEncoder();
 
   private final PIDController m_controller =
-      new PIDController(AimerConstants.kAimerPIDConstants.kP, AimerConstants.kAimerPIDConstants.kI, AimerConstants.kAimerPIDConstants.kD);
+      new PIDController(
+          AimerConstants.kAimerPIDConstants.kP,
+          AimerConstants.kAimerPIDConstants.kI,
+          AimerConstants.kAimerPIDConstants.kD);
 
   private Supplier<Pose2d> robotPoseSupplier;
 
@@ -38,8 +41,14 @@ public class Aimer extends SubsystemBase {
   public Aimer(Supplier<Pose2d> robotPoseSupplier) {
     this.robotPoseSupplier = robotPoseSupplier;
 
-    m_aimerLeader.configure(Configs.Aimer.aimerLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_aimerFollower.configure(Configs.Aimer.aimerFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_aimerLeader.configure(
+        Configs.Aimer.aimerLeaderConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    m_aimerFollower.configure(
+        Configs.Aimer.aimerFollowerConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
   }
 
   /**
