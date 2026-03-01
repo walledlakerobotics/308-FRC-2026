@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
-import frc.robot.Constants;
 import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
@@ -86,6 +85,6 @@ public class Aimer extends SubsystemBase {
   @Override
   public void periodic() {
     double output = m_controller.calculate(getAngle().in(Rotations));
-    m_aimerLeader.setVoltage(output * Constants.kNominalVoltage);
+    m_aimerLeader.set(output);
   }
 }
