@@ -27,12 +27,6 @@ pluginManagement {
 }
 
 // Agree to Gradle T.O.U.
-develocity {
-    buildScan {
-        termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
-        termsOfUseAgree = 'yes'
-    }
-}
 
 Properties props = System.getProperties();
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
