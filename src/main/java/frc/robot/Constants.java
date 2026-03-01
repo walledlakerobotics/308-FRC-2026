@@ -260,5 +260,8 @@ public final class Constants {
 
     public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
     public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
+
+    public static final PIDConstants kAimerPIDConstants =
+        new PIDConstants(0.1, 0.0, 0.0);
   }
 }
