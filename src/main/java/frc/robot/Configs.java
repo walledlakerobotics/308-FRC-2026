@@ -36,7 +36,8 @@ public final class Configs {
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
           .idleMode(ModuleConstants.kDrivingMotorIdleMode)
-          .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
+          .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit)
+          .voltageCompensation(Constants.kNominalVoltage);
 
       drivingConfig
           .encoder
@@ -54,7 +55,8 @@ public final class Configs {
       turningConfig
           .inverted(ModuleConstants.kTurningMotorsInverted)
           .idleMode(ModuleConstants.kTurningMotorIdleMode)
-          .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
+          .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit)
+          .voltageCompensation(Constants.kNominalVoltage);
 
       turningConfig
           .encoder
@@ -87,7 +89,8 @@ public final class Configs {
       extenderConfig
           .inverted(ExtenderConstants.kExtenderMotorInverted)
           .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
-          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit);
+          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit)
+          .voltageCompensation(Constants.kNominalVoltage);
 
       extenderConfig
           .absoluteEncoder
