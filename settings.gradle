@@ -26,11 +26,18 @@ pluginManagement {
     }
 }
 
-// Agree to Gradle T.O.U.
-develocity {
-    buildScan {
-        termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
-        termsOfUseAgree = 'yes'
+// Only use Develocity in CI
+if (System.getenv('CI') == 'true') {
+    plugins {
+        id "com.gradle.develocity" version "4.3.2"
+    }
+
+    // Agree to Gradle T.O.U.
+    develocity {
+        buildScan {
+            termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
+            termsOfUseAgree = 'yes'
+        }
     }
 }
 
