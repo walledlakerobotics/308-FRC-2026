@@ -256,6 +256,8 @@ public final class Constants {
     // angle between horizontal line and the line between the axle of hood and mount point of the actuator
     public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
 
+    public static final double kAimerEncoderReduction = 1.0;
+
     public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
     public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
   }
