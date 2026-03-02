@@ -6,8 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.List;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -17,7 +15,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -32,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
+import java.util.List;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -253,7 +251,8 @@ public final class Constants {
     public static final boolean kAimerLeaderInverted = false;
     public static final boolean kAimerFollowerInverted = false;
 
-    // angle between horizontal line and the line between the axle of hood and mount point of the actuator
+    // angle between horizontal line and the line between the axle of hood and mount point of the
+    // actuator
     public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
 
     public static final double kAimerEncoderReduction = 1.0;
@@ -261,7 +260,6 @@ public final class Constants {
     public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
     public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
 
-    public static final PIDConstants kAimerPIDConstants =
-        new PIDConstants(0.1, 0.0, 0.0);
+    public static final PIDConstants kAimerPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
   }
 }
