@@ -35,6 +35,22 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
+   * Sets the shooter motor voltage.
+   * @param voltage The desired voltage to apply to the shooter motors.
+   */
+  public void setVoltage(Voltage voltage) {
+    m_shooterLeader.setVoltage(voltage.in(Volts));;
+  }
+
+  /**
+   * Sets the shooter motor voltage.
+   * @param voltage The desired voltage to apply to the shooter motors.
+   */
+  public void setVoltage(double voltage) {
+    m_shooterLeader.setVoltage(voltage);
+  }
+
+  /**
    * Sets the shooter velocity.
    *
    * @param velocity The desired shooter velocity.
