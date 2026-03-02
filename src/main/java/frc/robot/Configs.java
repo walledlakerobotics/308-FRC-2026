@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -157,6 +158,31 @@ public final class Configs {
                   .withKS(0.0)
                   .withKV(shooterVelocityFeedForward)
                   .withKA(0.0));
+    }
+  }
+
+  public static final class Aimer {
+    public static final SparkMaxConfig aimerLeaderConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig aimerFollowerConfig = new SparkMaxConfig();
+
+    static {
+      double aimerFactor = 1.0 / AimerConstants.kAimerEncoderReduction;
+
+      aimerLeaderConfig
+          .inverted(AimerConstants.kAimerLeaderInverted)
+          .idleMode(AimerConstants.kAimerMotorIdleMode)
+          .smartCurrentLimit(AimerConstants.kAimerMotorCurrentLimit)
+          .voltageCompensation(Constants.kNominalVoltage);
+
+      aimerLeaderConfig
+          .absoluteEncoder
+          .positionConversionFactor(aimerFactor) // rotations
+          .velocityConversionFactor(aimerFactor / 60.0); // rotations per second
+
+      aimerFollowerConfig
+          .apply(aimerLeaderConfig)
+          .follow(AimerConstants.kAimerLeaderCanId)
+          .inverted(AimerConstants.kAimerFollowerInverted);
     }
   }
 }
