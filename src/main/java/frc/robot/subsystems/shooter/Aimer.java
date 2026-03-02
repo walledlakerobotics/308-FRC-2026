@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -66,6 +67,32 @@ public class Aimer extends SubsystemBase {
    */
   public Angle getAngle() {
     return Rotations.of(m_aimerEncoder.getPosition());
+  }
+
+  /**
+   * Calculates the length of the actuator based on the given hood angle using the law of cosines.
+   *
+   * @param hoodAngle The angle of the hood, which is used to calculate the actuator length.
+   * @return The current length of the actuator in meters.
+   */
+  public double getActuatorLength(Angle hoodAngle) {
+    return Math.sqrt(
+        Math.pow(AimerConstants.kDistanceToMountPointMeters, 2)
+            + Math.pow(AimerConstants.kRotationRadiusMeters, 2)
+            - 2
+                * AimerConstants.kDistanceToMountPointMeters
+                * AimerConstants.kRotationRadiusMeters
+                * Math.cos(hoodAngle.plus(AimerConstants.kActuatorAngleOffset).in(Radians)));
+  }
+
+  /**
+   * Calculates the current length of the actuator based on the current hood angle using the law of
+   * cosines.
+   *
+   * @return The current length of the actuator in meters.
+   */
+  public double getActuatorLength() {
+    return getActuatorLength(getAngle());
   }
 
   /**
