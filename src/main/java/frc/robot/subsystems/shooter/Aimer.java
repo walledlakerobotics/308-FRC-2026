@@ -57,7 +57,7 @@ public class Aimer extends SubsystemBase {
    * @param angle The desired hood angle.
    */
   public void setAngle(Angle angle) {
-    m_controller.setSetpoint(angle.in(Rotations));
+    m_controller.setSetpoint(getActuatorLength(angle));
   }
 
   /**
@@ -111,7 +111,7 @@ public class Aimer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double output = m_controller.calculate(getAngle().in(Rotations));
+    double output = m_controller.calculate(getActuatorLength());
     m_aimerLeader.set(output);
   }
 }
