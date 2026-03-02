@@ -1,12 +1,20 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Configs;
 import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.Constants.ShooterConstants;
@@ -39,14 +47,17 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Sets the shooter motor voltage.
+   *
    * @param voltage The desired voltage to apply to the shooter motors.
    */
   public void setVoltage(Voltage voltage) {
-    m_shooterLeader.setVoltage(voltage.in(Volts));;
+    m_shooterLeader.setVoltage(voltage.in(Volts));
+    ;
   }
 
   /**
    * Sets the shooter motor voltage.
+   *
    * @param voltage The desired voltage to apply to the shooter motors.
    */
   public void setVoltage(double voltage) {
@@ -83,5 +94,25 @@ public class Shooter extends SubsystemBase {
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
     setVelocity(TrajectoryModel.shooterVelocity(distanceToVirtualTarget));
+  }
+
+  /**
+   * Generates a SysId command for the shooter subsystem to perform a quasistatic test.
+   *
+   * @param direction The direction of the quasistatic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdQuasiStatic(Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Generates a SysId command for the shooter subsystem to perform a dynamic test.
+   *
+   * @param direction The direction of the dynamic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdDynamic(Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 }
