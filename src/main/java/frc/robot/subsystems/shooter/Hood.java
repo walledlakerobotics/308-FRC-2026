@@ -14,39 +14,39 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
-import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.FieldConstants.ScoringTarget;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
-public class Aimer extends SubsystemBase {
-  private final SparkMax m_aimerLeader =
-      new SparkMax(AimerConstants.kAimerLeaderCanId, MotorType.kBrushed);
-  private final SparkMax m_aimerFollower =
-      new SparkMax(AimerConstants.kAimerFollowerCanId, MotorType.kBrushed);
+public class Hood extends SubsystemBase {
+  private final SparkMax m_hoodLeader =
+      new SparkMax(HoodConstants.kHoodLeaderCanId, MotorType.kBrushed);
+  private final SparkMax m_hoodFollower =
+      new SparkMax(HoodConstants.kHoodFollowerCanId, MotorType.kBrushed);
 
-  private final AbsoluteEncoder m_aimerEncoder = m_aimerLeader.getAbsoluteEncoder();
+  private final AbsoluteEncoder m_hoodEncoder = m_hoodLeader.getAbsoluteEncoder();
 
   private final PIDController m_controller =
       new PIDController(
-          AimerConstants.kAimerPIDConstants.kP,
-          AimerConstants.kAimerPIDConstants.kI,
-          AimerConstants.kAimerPIDConstants.kD);
+          HoodConstants.kHoodPIDConstants.kP,
+          HoodConstants.kHoodPIDConstants.kI,
+          HoodConstants.kHoodPIDConstants.kD);
 
   private Supplier<Pose2d> robotPoseSupplier;
 
-  /** Creates a new Aimer */
-  public Aimer(Supplier<Pose2d> robotPoseSupplier) {
+  /** Creates a new Hood */
+  public Hood(Supplier<Pose2d> robotPoseSupplier) {
     this.robotPoseSupplier = robotPoseSupplier;
 
-    m_aimerLeader.configure(
-        Configs.Aimer.aimerLeaderConfig,
+    m_hoodLeader.configure(
+        Configs.Hood.hoodLeaderConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    m_aimerFollower.configure(
-        Configs.Aimer.aimerFollowerConfig,
+    m_hoodFollower.configure(
+        Configs.Hood.hoodFollowerConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
   }
@@ -66,7 +66,7 @@ public class Aimer extends SubsystemBase {
    * @return The current hood angle.
    */
   public Angle getAngle() {
-    return Rotations.of(m_aimerEncoder.getPosition());
+    return Rotations.of(m_hoodEncoder.getPosition());
   }
 
   /**
@@ -77,12 +77,12 @@ public class Aimer extends SubsystemBase {
    */
   public double getActuatorLength(Angle hoodAngle) {
     return Math.sqrt(
-        Math.pow(AimerConstants.kDistanceToMountPointMeters, 2)
-            + Math.pow(AimerConstants.kRotationRadiusMeters, 2)
+        Math.pow(HoodConstants.kDistanceToMountPointMeters, 2)
+            + Math.pow(HoodConstants.kRotationRadiusMeters, 2)
             - 2
-                * AimerConstants.kDistanceToMountPointMeters
-                * AimerConstants.kRotationRadiusMeters
-                * Math.cos(hoodAngle.plus(AimerConstants.kActuatorAngleOffset).in(Radians)));
+                * HoodConstants.kDistanceToMountPointMeters
+                * HoodConstants.kRotationRadiusMeters
+                * Math.cos(hoodAngle.plus(HoodConstants.kActuatorAngleOffset).in(Radians)));
   }
 
   /**
@@ -112,6 +112,6 @@ public class Aimer extends SubsystemBase {
   @Override
   public void periodic() {
     double output = m_controller.calculate(getActuatorLength());
-    m_aimerLeader.set(output);
+    m_hoodLeader.set(output);
   }
 }

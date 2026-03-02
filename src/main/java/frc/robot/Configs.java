@@ -11,8 +11,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.ExtenderConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -161,28 +161,28 @@ public final class Configs {
     }
   }
 
-  public static final class Aimer {
-    public static final SparkMaxConfig aimerLeaderConfig = new SparkMaxConfig();
-    public static final SparkMaxConfig aimerFollowerConfig = new SparkMaxConfig();
+  public static final class Hood {
+    public static final SparkMaxConfig hoodLeaderConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig hoodFollowerConfig = new SparkMaxConfig();
 
     static {
-      double aimerFactor = 1.0 / AimerConstants.kAimerEncoderReduction;
+      double hoodFactor = 1.0 / HoodConstants.kHoodEncoderReduction;
 
-      aimerLeaderConfig
-          .inverted(AimerConstants.kAimerLeaderInverted)
-          .idleMode(AimerConstants.kAimerMotorIdleMode)
-          .smartCurrentLimit(AimerConstants.kAimerMotorCurrentLimit)
+      hoodLeaderConfig
+          .inverted(HoodConstants.kHoodLeaderInverted)
+          .idleMode(HoodConstants.kHoodMotorIdleMode)
+          .smartCurrentLimit(HoodConstants.kHoodMotorCurrentLimit)
           .voltageCompensation(Constants.kNominalVoltage);
 
-      aimerLeaderConfig
+      hoodLeaderConfig
           .absoluteEncoder
-          .positionConversionFactor(aimerFactor) // rotations
-          .velocityConversionFactor(aimerFactor / 60.0); // rotations per second
+          .positionConversionFactor(hoodFactor) // rotations
+          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
 
-      aimerFollowerConfig
-          .apply(aimerLeaderConfig)
-          .follow(AimerConstants.kAimerLeaderCanId)
-          .inverted(AimerConstants.kAimerFollowerInverted);
+      hoodFollowerConfig
+          .apply(hoodLeaderConfig)
+          .follow(HoodConstants.kHoodLeaderCanId)
+          .inverted(HoodConstants.kHoodFollowerInverted);
     }
   }
 }

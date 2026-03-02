@@ -241,25 +241,25 @@ public final class Constants {
     public static final int kVirtualTargetIterations = 5;
   }
 
-  public static final class AimerConstants {
-    public static final int kAimerLeaderCanId = CANIDs.secondaryMotor(4);
-    public static final int kAimerFollowerCanId = CANIDs.secondaryMotor(5);
+  public static final class HoodConstants {
+    public static final int kHoodLeaderCanId = CANIDs.secondaryMotor(4);
+    public static final int kHoodFollowerCanId = CANIDs.secondaryMotor(5);
 
-    public static final IdleMode kAimerMotorIdleMode = IdleMode.kBrake;
-    public static final int kAimerMotorCurrentLimit = 40; // amps
+    public static final IdleMode kHoodMotorIdleMode = IdleMode.kBrake;
+    public static final int kHoodMotorCurrentLimit = 40; // amps
 
-    public static final boolean kAimerLeaderInverted = false;
-    public static final boolean kAimerFollowerInverted = false;
+    public static final boolean kHoodLeaderInverted = false;
+    public static final boolean kHoodFollowerInverted = false;
 
     // angle between horizontal line and the line between the axle of hood and mount point of the
     // actuator
     public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
 
-    public static final double kAimerEncoderReduction = 1.0;
+    public static final double kHoodEncoderReduction = 1.0;
 
     public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
     public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
 
-    public static final PIDConstants kAimerPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+    public static final PIDConstants kHoodPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
   }
 }
