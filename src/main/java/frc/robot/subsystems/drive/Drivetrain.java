@@ -474,7 +474,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * Generates a SysId command for the drivetrain to perform a angular quasistatic test.
+   * Generates a SysId command for the drivetrain to perform an angular quasistatic test.
    *
    * @param direction The direction of the quasistatic test (forward or backward).
    * @return The command.
@@ -484,7 +484,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * Generates a SysId command for the drivetrain to perform a angular dynamic test.
+   * Generates a SysId command for the drivetrain to perform an angular dynamic test.
    *
    * @param direction The direction of the dynamic test (forward or backward).
    * @return The command.
