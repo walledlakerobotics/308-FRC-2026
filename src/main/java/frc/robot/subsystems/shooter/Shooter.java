@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
   private Supplier<Pose2d> robotPoseSupplier;
 
   private final SysIdRoutine m_sysIdRoutine =
-      new SysIdRoutine(new Config(), new Mechanism(this::setVoltage, null, this));
+      new SysIdRoutine(new Config(), new Mechanism(this::setVoltage, null, this, "shooter"));
 
   /** Creates a new Shooter. */
   public Shooter(Supplier<Pose2d> robotPoseSupplier) {
