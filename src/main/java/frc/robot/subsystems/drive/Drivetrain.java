@@ -130,7 +130,9 @@ public class Drivetrain extends SubsystemBase {
                         new ChassisSpeeds(0.0, 0.0, 1.0));
 
                 for (SwerveModuleState state : states) {
-                  state.speedMetersPerSecond = volts.in(Volts);
+                  // Apply voltage in the direction of the wheel's speed
+                  state.speedMetersPerSecond =
+                      Math.copySign(volts.in(Volts), state.speedMetersPerSecond);
                 }
 
                 setModuleStates(states, ControlType.kVoltage);
