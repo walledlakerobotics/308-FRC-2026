@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
@@ -450,6 +451,46 @@ public class Drivetrain extends SubsystemBase {
               m_rearRight.setIdleMode(idleMode);
             })
         .ignoringDisable(true);
+  }
+
+  /**
+   * Generates a SysId command for the drivetrain to perform a linear quasistatic test.
+   *
+   * @param direction The direction of the quasistatic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdQuasistaticTranslation(Direction direction) {
+    return m_translationRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Generates a SysId command for the drivetrain to perform a linear dynamic test.
+   *
+   * @param direction The direction of the dynamic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdDynamicTranslation(Direction direction) {
+    return m_translationRoutine.dynamic(direction);
+  }
+
+  /**
+   * Generates a SysId command for the drivetrain to perform a angular quasistatic test.
+   *
+   * @param direction The direction of the quasistatic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdQuasistaticRotation(Direction direction) {
+    return m_rotationRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Generates a SysId command for the drivetrain to perform a angular dynamic test.
+   *
+   * @param direction The direction of the dynamic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdDynamicRotation(Direction direction) {
+    return m_rotationRoutine.dynamic(direction);
   }
 
   /**
