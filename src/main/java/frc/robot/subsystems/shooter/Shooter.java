@@ -1,10 +1,9 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,6 +27,7 @@ public class Shooter extends SubsystemBase {
   TalonFX m_shooterLeader = new TalonFX(ShooterConstants.kShooterLeaderCanId);
   TalonFX m_shooterFollower = new TalonFX(ShooterConstants.kShooterFollowerCanId);
 
+  private final VoltageOut m_voltageControl = new VoltageOut(0.0);
   private final VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
   private Supplier<Pose2d> robotPoseSupplier;
@@ -60,8 +60,7 @@ public class Shooter extends SubsystemBase {
    * @param voltage The desired voltage to apply to the shooter motors.
    */
   public void setVoltage(Voltage voltage) {
-    m_shooterLeader.setVoltage(voltage.in(Volts));
-    ;
+    m_shooterLeader.setControl(m_voltageControl.withOutput(voltage));
   }
 
   /**
@@ -70,7 +69,7 @@ public class Shooter extends SubsystemBase {
    * @param voltage The desired voltage to apply to the shooter motors.
    */
   public void setVoltage(double voltage) {
-    m_shooterLeader.setVoltage(voltage);
+    m_shooterLeader.setControl(m_voltageControl.withOutput(voltage));
   }
 
   /**
