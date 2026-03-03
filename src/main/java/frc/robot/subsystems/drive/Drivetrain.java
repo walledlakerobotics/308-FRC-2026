@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -37,6 +39,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -100,6 +105,38 @@ public class Drivetrain extends SubsystemBase {
           DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
+
+  private final SysIdRoutine m_translationRoutine =
+      new SysIdRoutine(
+          new Config(),
+          new Mechanism(
+              volts -> {
+                SwerveModuleState[] states =
+                    DriveConstants.kDriveKinematics.toSwerveModuleStates(
+                        new ChassisSpeeds(volts.in(Volts), 0.0, 0.0));
+
+                setModuleStates(states, ControlType.kVoltage);
+              },
+              null,
+              this));
+
+  private final SysIdRoutine m_rotationRoutine =
+      new SysIdRoutine(
+          new Config(),
+          new Mechanism(
+              volts -> {
+                SwerveModuleState[] states =
+                    DriveConstants.kDriveKinematics.toSwerveModuleStates(
+                        new ChassisSpeeds(0.0, 0.0, 1.0));
+
+                for (SwerveModuleState state : states) {
+                  state.speedMetersPerSecond = volts.in(Volts);
+                }
+
+                setModuleStates(states, ControlType.kVoltage);
+              },
+              null,
+              this));
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
