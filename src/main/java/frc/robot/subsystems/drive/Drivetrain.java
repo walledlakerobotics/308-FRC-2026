@@ -118,7 +118,8 @@ public class Drivetrain extends SubsystemBase {
                 setModuleStates(states, ControlType.kVoltage);
               },
               null,
-              this));
+              this,
+              "drivetrain-translation"));
 
   private final SysIdRoutine m_rotationRoutine =
       new SysIdRoutine(
@@ -138,7 +139,8 @@ public class Drivetrain extends SubsystemBase {
                 setModuleStates(states, ControlType.kVoltage);
               },
               null,
-              this));
+              this,
+              "drivetrain-rotation"));
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
