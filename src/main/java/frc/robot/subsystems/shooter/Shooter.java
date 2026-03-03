@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -32,7 +33,15 @@ public class Shooter extends SubsystemBase {
   private Supplier<Pose2d> robotPoseSupplier;
 
   private final SysIdRoutine m_sysIdRoutine =
-      new SysIdRoutine(new Config(), new Mechanism(this::setVoltage, null, this, "shooter"));
+      new SysIdRoutine(
+          new Config(
+              null,
+              null,
+              null,
+              state -> {
+                SignalLogger.writeString("sysid-test-state-shooter", state.toString());
+              }),
+          new Mechanism(this::setVoltage, null, this, "shooter"));
 
   /** Creates a new Shooter. */
   public Shooter(Supplier<Pose2d> robotPoseSupplier) {
