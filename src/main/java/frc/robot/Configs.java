@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -183,6 +184,27 @@ public final class Configs {
           .apply(hoodLeaderConfig)
           .follow(HoodConstants.kHoodLeaderCanId)
           .inverted(HoodConstants.kHoodFollowerInverted);
+    }
+  }
+
+  public static final class Indexer {
+    public static final TalonFXConfiguration indexConfig = new TalonFXConfiguration();
+
+    static {
+      indexConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(IndexerConstants.kMotorInvertedValue)
+                  .withNeutralMode(IndexerConstants.kMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(IndexerConstants.kIndexerMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(IndexerConstants.kIndexerMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(IndexerConstants.kReduction));
     }
   }
 }

@@ -262,4 +262,20 @@ public final class Constants {
 
     public static final PIDConstants kHoodPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
   }
+
+  public static final class IndexerConstants {
+
+    public static final int kMotorCANId = CANIDs.secondaryMotor(0);
+    public static final double kMotorSpeed = 0.5;
+    public static final double kReduction = 1.0;
+
+    public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
+    public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
+
+    public static final int kIndexerMotorStatorCurrentLimit = 120; // amps
+    public static final int kIndexerMotorSupplyCurrentLimit = 70; // amps
+
+    public static final int kLeftLightSensorChannel = 0;
+    public static final int kRightLightSensorChannel = 0;
+  }
 }
