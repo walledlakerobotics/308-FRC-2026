@@ -1,12 +1,20 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Configs;
 import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.Constants.ShooterConstants;
@@ -19,9 +27,21 @@ public class Shooter extends SubsystemBase {
   TalonFX m_shooterLeader = new TalonFX(ShooterConstants.kShooterLeaderCanId);
   TalonFX m_shooterFollower = new TalonFX(ShooterConstants.kShooterFollowerCanId);
 
+  private final VoltageOut m_voltageControl = new VoltageOut(0.0);
   private final VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
   private Supplier<Pose2d> robotPoseSupplier;
+
+  private final SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          new Config(
+              null,
+              null,
+              null,
+              state -> {
+                SignalLogger.writeString("sysid-test-state-shooter", state.toString());
+              }),
+          new Mechanism(this::setVoltage, null, this, "shooter"));
 
   /** Creates a new Shooter. */
   public Shooter(Supplier<Pose2d> robotPoseSupplier) {
@@ -32,6 +52,24 @@ public class Shooter extends SubsystemBase {
 
     m_shooterFollower.setControl(
         new Follower(m_shooterLeader.getDeviceID(), ShooterConstants.kShooterFollowerAlignment));
+  }
+
+  /**
+   * Sets the shooter motor voltage.
+   *
+   * @param volts The desired voltage to apply to the shooter motors.
+   */
+  public void setVoltage(Voltage volts) {
+    m_shooterLeader.setControl(m_voltageControl.withOutput(volts));
+  }
+
+  /**
+   * Sets the shooter motor voltage.
+   *
+   * @param volts The desired voltage to apply to the shooter motors.
+   */
+  public void setVoltage(double volts) {
+    m_shooterLeader.setControl(m_voltageControl.withOutput(volts));
   }
 
   /**
@@ -64,5 +102,25 @@ public class Shooter extends SubsystemBase {
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
     setVelocity(TrajectoryModel.shooterVelocity(distanceToVirtualTarget));
+  }
+
+  /**
+   * Generates a SysId command for the shooter subsystem to perform a quasistatic test.
+   *
+   * @param direction The direction of the quasistatic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdQuasiStatic(Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Generates a SysId command for the shooter subsystem to perform a dynamic test.
+   *
+   * @param direction The direction of the dynamic test (forward or backward).
+   * @return The command.
+   */
+  public Command sysIdDynamic(Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 }

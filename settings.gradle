@@ -26,7 +26,5 @@ pluginManagement {
     }
 }
 
-// Agree to Gradle T.O.U.
-
 Properties props = System.getProperties();
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
