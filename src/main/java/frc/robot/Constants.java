@@ -259,4 +259,15 @@ public final class Constants {
     public static final double kAimerI = 0.0;
     public static final double kAimerD = 0.0;
   }
+
+  public static final class FeederConstants{
+    public static final int kFeederCanId = CANIDs.secondaryMotor(0);
+    public static final double kFeederMotorReduction = 1.0;
+    public static final NeutralModeValue kFeederIntakeNeutralMode = NeutralModeValue.Brake;
+    public static final int kFeederMotorStatorCurrentLimit = 120;
+    public static final int kFeederMotorSupplyCurrentLimit = 70;
+    public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
+    public static final double kfeederspeed = 0.5;
+    
+  }
 }
