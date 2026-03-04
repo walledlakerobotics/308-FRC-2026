@@ -9,7 +9,7 @@ import frc.robot.Constants.FeederConstants;
 
 public class Feeder extends SubsystemBase {
 
-  private TalonFX m_motor = new TalonFX(0); 
+  private TalonFX m_motor = new TalonFX(FeederConstants.kFeederCanId); 
 
 
   public Feeder() {
