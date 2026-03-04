@@ -164,7 +164,7 @@ public final class Configs {
             feederConfig
                 .withMotorOutput(
                     new MotorOutputConfigs()
-                     .withInverted(FeederConstants.kFeederMotorInverted)
+                     .withInverted(FeederConstants.kFeederInverted)
                     .withNeutralMode(FeederConstants.kFeederIntakeNeutralMode))
                     .withCurrentLimits(
                         new CurrentLimitsConfigs()
