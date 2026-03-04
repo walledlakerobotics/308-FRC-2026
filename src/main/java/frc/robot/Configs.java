@@ -162,10 +162,20 @@ public final class Configs {
     public static final TalonFXConfiguration indexConfig = new TalonFXConfiguration();
 
     static {
-      indexConfig.withMotorOutput(
-          new MotorOutputConfigs()
-              .withInverted(IndexerConstants.kMotorInvertedValue)
-              .withNeutralMode(IndexerConstants.kMotorNeutralMode));
+      indexConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(IndexerConstants.kMotorInvertedValue)
+                  .withNeutralMode(IndexerConstants.kMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(IndexerConstants.kIndexerMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(IndexerConstants.kIndexerMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(IndexerConstants.kReduction));
     }
   }
 }

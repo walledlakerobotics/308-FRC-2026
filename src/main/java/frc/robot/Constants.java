@@ -264,6 +264,7 @@ public final class Constants {
 
     public static final int kMotorCANId = CANIDs.secondaryMotor(0);
     public static final double kMotorSpeed = 0.5;
+    public static final double kReduction = 1.0;
 
     public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
     public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
