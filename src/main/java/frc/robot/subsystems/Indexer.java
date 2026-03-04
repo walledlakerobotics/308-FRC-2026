@@ -57,18 +57,9 @@ public class Indexer extends SubsystemBase {
    * @return Command
    */
   public Command index() {
-    return runOnce(
-            () -> {
-              run();
-            })
-        .andThen(
-            () -> {
-              Commands.waitUntil(this::isBallNotDetected);
-            })
-        .finallyDo(
-            () -> {
-              stop();
-            });
+    return runOnce(this::run)
+        .andThen(Commands.waitUntil(this::isBallNotDetected))
+        .finallyDo(this::stop);
   }
 
   @Override
