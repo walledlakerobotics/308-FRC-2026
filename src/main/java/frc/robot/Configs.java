@@ -13,8 +13,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.FeederConstants;
-import frc.robot.Constants.HoodConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -39,8 +37,7 @@ public final class Configs {
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
           .idleMode(ModuleConstants.kDrivingMotorIdleMode)
-          .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
 
       drivingConfig
           .encoder
@@ -58,8 +55,7 @@ public final class Configs {
       turningConfig
           .inverted(ModuleConstants.kTurningMotorsInverted)
           .idleMode(ModuleConstants.kTurningMotorIdleMode)
-          .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
       turningConfig
           .encoder
@@ -92,8 +88,7 @@ public final class Configs {
       extenderConfig
           .inverted(ExtenderConstants.kExtenderMotorInverted)
           .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
-          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit);
 
       extenderConfig
           .absoluteEncoder
@@ -187,49 +182,4 @@ public final class Configs {
         }
    }
     
-  public static final class Hood {
-    public static final SparkMaxConfig hoodLeaderConfig = new SparkMaxConfig();
-    public static final SparkMaxConfig hoodFollowerConfig = new SparkMaxConfig();
-
-    static {
-      double hoodFactor = 1.0 / HoodConstants.kHoodEncoderReduction;
-
-      hoodLeaderConfig
-          .inverted(HoodConstants.kHoodLeaderInverted)
-          .idleMode(HoodConstants.kHoodMotorIdleMode)
-          .smartCurrentLimit(HoodConstants.kHoodMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
-
-      hoodLeaderConfig
-          .absoluteEncoder
-          .positionConversionFactor(hoodFactor) // rotations
-          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
-
-      hoodFollowerConfig
-          .apply(hoodLeaderConfig)
-          .follow(HoodConstants.kHoodLeaderCanId)
-          .inverted(HoodConstants.kHoodFollowerInverted);
-    }
-  }
-
-  public static final class Indexer {
-    public static final TalonFXConfiguration indexConfig = new TalonFXConfiguration();
-
-    static {
-      indexConfig
-          .withMotorOutput(
-              new MotorOutputConfigs()
-                  .withInverted(IndexerConstants.kMotorInvertedValue)
-                  .withNeutralMode(IndexerConstants.kMotorNeutralMode))
-          .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                  .withStatorCurrentLimit(IndexerConstants.kIndexerMotorStatorCurrentLimit)
-                  .withSupplyCurrentLimit(IndexerConstants.kIndexerMotorSupplyCurrentLimit))
-          .withFeedback(
-              new FeedbackConfigs()
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                  .withRotorToSensorRatio(1.0)
-                  .withSensorToMechanismRatio(IndexerConstants.kReduction));
-    }
-  }
 }

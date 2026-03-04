@@ -241,42 +241,23 @@ public final class Constants {
     public static final int kVirtualTargetIterations = 5;
   }
 
-  public static final class HoodConstants {
-    public static final int kHoodLeaderCanId = CANIDs.secondaryMotor(4);
-    public static final int kHoodFollowerCanId = CANIDs.secondaryMotor(5);
+  public static final class AimerConstants {
+    public static final int kAimerPWMChannel = 0;
+    public static final int kEncoderDIOChannel = 0;
 
-    public static final IdleMode kHoodMotorIdleMode = IdleMode.kBrake;
-    public static final int kHoodMotorCurrentLimit = 40; // amps
+    public static final boolean kAimerMotorInverted = false;
+    public static final boolean kAimerEncoderInverted = false;
 
-    public static final boolean kHoodLeaderInverted = false;
-    public static final boolean kHoodFollowerInverted = false;
+    public static final double kAimerEncoderDutyCycleMin = 1.0 / 1025.0;
+    public static final double kAimerEncoderDutyCycleMax = 1024.0 / 1025.0;
 
-    // angle between horizontal line and the line between the axle of hood and mount point of the
-    // actuator
-    public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
+    public static final double kAimerEncoderFrequencyHz = 975.6;
 
-    public static final double kHoodEncoderReduction = 1.0;
+    public static final Angle kAimerEncoderOffset = Rotations.of(0.0);
 
-    public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
-    public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
-
-    public static final PIDConstants kHoodPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-  }
-
-  public static final class IndexerConstants {
-
-    public static final int kMotorCANId = CANIDs.secondaryMotor(0);
-    public static final double kMotorSpeed = 0.5;
-    public static final double kReduction = 1.0;
-
-    public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
-    public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
-
-    public static final int kIndexerMotorStatorCurrentLimit = 120; // amps
-    public static final int kIndexerMotorSupplyCurrentLimit = 70; // amps
-
-    public static final int kLeftLightSensorChannel = 0;
-    public static final int kRightLightSensorChannel = 0;
+    public static final double kAimerP = 1.0;
+    public static final double kAimerI = 0.0;
+    public static final double kAimerD = 0.0;
   }
 
   public static final class FeederConstants{

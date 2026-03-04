@@ -124,9 +124,8 @@ public class SwerveModule {
    * Sets the desired state for the module.
    *
    * @param desiredState Desired state with speed and angle.
-   * @param driveControlType The control type for driving (e.g., kVelocity or kVoltage).
    */
-  public void setDesiredState(SwerveModuleState desiredState, ControlType driveControlType) {
+  public void setDesiredState(SwerveModuleState desiredState) {
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
@@ -137,20 +136,11 @@ public class SwerveModule {
 
     // Command driving and turning SPARKS towards their respective setpoints.
     m_drivingClosedLoopController.setSetpoint(
-        correctedDesiredState.speedMetersPerSecond, driveControlType);
+        correctedDesiredState.speedMetersPerSecond, ControlType.kVelocity);
     m_turningClosedLoopController.setSetpoint(
         correctedDesiredState.angle.getRotations(), ControlType.kPosition);
 
     m_desiredState = desiredState;
-  }
-
-  /**
-   * Sets the desired state for the module.
-   *
-   * @param desiredState Desired state with speed and angle.
-   */
-  public void setDesiredState(SwerveModuleState desiredState) {
-    setDesiredState(desiredState, ControlType.kVelocity);
   }
 
   /** Zeroes all the SwerveModule encoders. */

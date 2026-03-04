@@ -4,12 +4,9 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -39,10 +36,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -106,42 +99,6 @@ public class Drivetrain extends SubsystemBase {
           DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
-
-  private final SysIdRoutine m_translationRoutine =
-      new SysIdRoutine(
-          new Config(),
-          new Mechanism(
-              volts -> {
-                SwerveModuleState[] states =
-                    DriveConstants.kDriveKinematics.toSwerveModuleStates(
-                        new ChassisSpeeds(volts.in(Volts), 0.0, 0.0));
-
-                setModuleStates(states, ControlType.kVoltage);
-              },
-              null,
-              this,
-              "drivetrain-translation"));
-
-  private final SysIdRoutine m_rotationRoutine =
-      new SysIdRoutine(
-          new Config(),
-          new Mechanism(
-              volts -> {
-                SwerveModuleState[] states =
-                    DriveConstants.kDriveKinematics.toSwerveModuleStates(
-                        new ChassisSpeeds(0.0, 0.0, 1.0));
-
-                for (SwerveModuleState state : states) {
-                  // Apply voltage in the direction of the wheel's speed
-                  state.speedMetersPerSecond =
-                      Math.copySign(volts.in(Volts), state.speedMetersPerSecond);
-                }
-
-                setModuleStates(states, ControlType.kVoltage);
-              },
-              null,
-              this,
-              "drivetrain-rotation"));
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -388,24 +345,14 @@ public class Drivetrain extends SubsystemBase {
    * Sets the swerve ModuleStates.
    *
    * @param desiredStates The desired SwerveModule states.
-   * @param driveControlType The control type for driving (e.g., kVelocity or kVoltage).
-   */
-  public void setModuleStates(SwerveModuleState[] desiredStates, ControlType driveControlType) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0], driveControlType);
-    m_frontRight.setDesiredState(desiredStates[1], driveControlType);
-    m_rearLeft.setDesiredState(desiredStates[2], driveControlType);
-    m_rearRight.setDesiredState(desiredStates[3], driveControlType);
-  }
-
-  /**
-   * Sets the swerve ModuleStates.
-   *
-   * @param desiredStates The desired SwerveModule states.
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    setModuleStates(desiredStates, ControlType.kVelocity);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontRight.setDesiredState(desiredStates[1]);
+    m_rearLeft.setDesiredState(desiredStates[2]);
+    m_rearRight.setDesiredState(desiredStates[3]);
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -451,46 +398,6 @@ public class Drivetrain extends SubsystemBase {
               m_rearRight.setIdleMode(idleMode);
             })
         .ignoringDisable(true);
-  }
-
-  /**
-   * Generates a SysId command for the drivetrain to perform a linear quasistatic test.
-   *
-   * @param direction The direction of the quasistatic test (forward or backward).
-   * @return The command.
-   */
-  public Command sysIdQuasistaticTranslation(Direction direction) {
-    return m_translationRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Generates a SysId command for the drivetrain to perform a linear dynamic test.
-   *
-   * @param direction The direction of the dynamic test (forward or backward).
-   * @return The command.
-   */
-  public Command sysIdDynamicTranslation(Direction direction) {
-    return m_translationRoutine.dynamic(direction);
-  }
-
-  /**
-   * Generates a SysId command for the drivetrain to perform an angular quasistatic test.
-   *
-   * @param direction The direction of the quasistatic test (forward or backward).
-   * @return The command.
-   */
-  public Command sysIdQuasistaticRotation(Direction direction) {
-    return m_rotationRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Generates a SysId command for the drivetrain to perform an angular dynamic test.
-   *
-   * @param direction The direction of the dynamic test (forward or backward).
-   * @return The command.
-   */
-  public Command sysIdDynamicRotation(Direction direction) {
-    return m_rotationRoutine.dynamic(direction);
   }
 
   /**
