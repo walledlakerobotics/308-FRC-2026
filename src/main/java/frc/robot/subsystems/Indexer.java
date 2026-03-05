@@ -38,19 +38,6 @@ public class Indexer extends SubsystemBase {
     return m_lightDetectorLeft.get() || m_lightDetectorRight.get();
   }
 
-  public boolean isBallNotDetected() {
-    return !isBallDetected();
-  }
-
-  /**
-   * checks if the motors are running or not.
-   *
-   * @return bool
-   */
-  public boolean isMotorRunning() {
-    return m_motor.get() != 0;
-  }
-
   /**
    * This runs the motor until no balls are detected.
    *
@@ -58,15 +45,7 @@ public class Indexer extends SubsystemBase {
    */
   public Command index() {
     return runOnce(this::run)
-        .andThen(Commands.waitUntil(this::isBallNotDetected))
+        .andThen(Commands.waitUntil(this::isBallDetected))
         .finallyDo(this::stop);
-  }
-
-  @Override
-  public void periodic() {
-    // checks if the motor is already running.
-    if (!isMotorRunning()) {
-      index();
-    }
   }
 }
