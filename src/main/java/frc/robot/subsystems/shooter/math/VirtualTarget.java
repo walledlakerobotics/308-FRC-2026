@@ -3,8 +3,8 @@ package frc.robot.subsystems.shooter.math;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import frc.robot.Constants.FieldConstants.Landmark;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.utils.Field.Landmark;
 import java.util.HashMap;
 
 /**

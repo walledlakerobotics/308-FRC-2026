@@ -83,4 +83,21 @@ public class Field {
   public static Rotation3d flip(Rotation3d rotation) {
     return rotation.plus(new Rotation3d(Rotation2d.k180deg));
   }
+
+  public static enum Landmark {
+    Hub(
+        new Translation2d(
+            FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kHubLengthMeters / 2,
+            FieldConstants.kFieldWidthMeters / 2));
+
+    private final Translation2d pose;
+
+    Landmark(Translation2d pose) {
+      this.pose = pose;
+    }
+
+    public Translation2d getTranslation() {
+      return pose;
+    }
+  }
 }

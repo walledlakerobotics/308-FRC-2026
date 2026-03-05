@@ -154,22 +154,6 @@ public final class Constants {
     public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
 
     public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
-
-    public static enum Landmark {
-      Hub(
-          new Translation2d(
-              kAllianceZoneLengthMeters + kHubLengthMeters / 2, kFieldWidthMeters / 2));
-
-      private final Translation2d pose;
-
-      Landmark(Translation2d pose) {
-        this.pose = pose;
-      }
-
-      public Translation2d getTranslation() {
-        return pose;
-      }
-    }
   }
 
   public static final class VisionConstants {
