@@ -7,6 +7,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Constants.FieldConstants;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 public class Field {
   private Field() {
@@ -102,9 +105,15 @@ public class Field {
   }
 
   public static enum Zone {
-    Alliance,
-    Neutral,
-    Bump,
-    Tower;
+    Alliance(RegionBSPTree2D.empty()),
+    Neutral(RegionBSPTree2D.empty()),
+    Bump(RegionBSPTree2D.empty()),
+    Tower(RegionBSPTree2D.empty());
+
+    private final Region<Vector2D> region;
+
+    private Zone(Region<Vector2D> region) {
+      this.region = region;
+    }
   }
 }
