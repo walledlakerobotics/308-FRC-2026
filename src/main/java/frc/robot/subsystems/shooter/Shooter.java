@@ -16,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Configs;
-import frc.robot.Constants.FieldConstants.Landmark;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the Fuel shooter. */

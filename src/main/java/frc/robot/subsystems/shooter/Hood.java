@@ -17,6 +17,7 @@ import frc.robot.Configs;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
