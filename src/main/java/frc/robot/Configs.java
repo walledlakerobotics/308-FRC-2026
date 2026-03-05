@@ -163,30 +163,27 @@ public final class Configs {
     }
   }
 
-   public static final class Feeder{
+  public static final class Feeder {
     public static final TalonFXConfiguration feederConfig = new TalonFXConfiguration();
-        static { 
-            feederConfig
-                .withMotorOutput(
-                    new MotorOutputConfigs()
-                     .withInverted(FeederConstants.kFeederInverted)
-                    .withNeutralMode(FeederConstants.kFeederIntakeNeutralMode))
-                    .withCurrentLimits(
-                        new CurrentLimitsConfigs()
-                        .withStatorCurrentLimit(FeederConstants.kFeederMotorStatorCurrentLimit)
-                        .withSupplyCurrentLimit(FeederConstants.kFeederMotorSupplyCurrentLimit) )  
-                    .withFeedback(
-                        new FeedbackConfigs()
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                        .withRotorToSensorRatio(0)
-                        .withSensorToMechanismRatio(FeederConstants.kFeederMotorReduction) );
 
+    static {
+      feederConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(FeederConstants.kFeederInverted)
+                  .withNeutralMode(FeederConstants.kFeederIntakeNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(FeederConstants.kFeederMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(FeederConstants.kFeederMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(0)
+                  .withSensorToMechanismRatio(FeederConstants.kFeederMotorReduction));
+    }
+  }
 
-                    
-                 
-        }
-   }
-    
   public static final class Hood {
     public static final SparkMaxConfig hoodLeaderConfig = new SparkMaxConfig();
     public static final SparkMaxConfig hoodFollowerConfig = new SparkMaxConfig();
