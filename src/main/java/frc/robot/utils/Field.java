@@ -10,6 +10,8 @@ import frc.robot.Constants.FieldConstants;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
+import org.apache.commons.numbers.core.Precision;
 
 public class Field {
   private Field() {
@@ -105,9 +107,23 @@ public class Field {
   }
 
   public static enum Zone {
-    Alliance(RegionBSPTree2D.empty()),
-    Neutral(RegionBSPTree2D.empty()),
-    Bump(RegionBSPTree2D.empty()),
+    Alliance(
+        Parallelogram.axisAligned(
+            Vector2D.ZERO,
+            Vector2D.of(FieldConstants.kAllianceZoneLengthMeters, FieldConstants.kFieldWidthMeters),
+            Precision.doubleEquivalenceOfEpsilon(0.01))),
+    Neutral(
+        Parallelogram.axisAligned(
+            Vector2D.of(FieldConstants.kAllianceZoneLengthMeters, 0.0),
+            Vector2D.of(FieldConstants.kFieldLengthMeters / 2, FieldConstants.kFieldWidthMeters),
+            Precision.doubleEquivalenceOfEpsilon(0.01))),
+    Bump(
+        Parallelogram.axisAligned(
+            Vector2D.of(FieldConstants.kAllianceZoneLengthMeters, 0.0),
+            Vector2D.of(
+                FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kBumpLengthMeters,
+                FieldConstants.kFieldWidthMeters),
+            Precision.doubleEquivalenceOfEpsilon(0.01))),
     Tower(RegionBSPTree2D.empty());
 
     private final Region<Vector2D> region;
