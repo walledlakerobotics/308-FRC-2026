@@ -30,6 +30,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
+import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -154,6 +156,9 @@ public final class Constants {
     public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
 
     public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
+
+    public static final DoubleEquivalence kRegionPrecision =
+        Precision.doubleEquivalenceOfEpsilon(0.01);
   }
 
   public static final class VisionConstants {
