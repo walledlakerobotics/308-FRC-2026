@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Configs;
-import frc.robot.Constants.FieldConstants.ScoringTarget;
+import frc.robot.Constants.FieldConstants.Landmark;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
@@ -97,7 +97,7 @@ public class Shooter extends SubsystemBase {
    *
    * @param target The target position in field coordinates that the shooter should aim at.
    */
-  public void shootAt(ScoringTarget target) {
+  public void shootAt(Landmark target) {
     Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();

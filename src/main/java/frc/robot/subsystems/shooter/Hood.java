@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
-import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
@@ -102,7 +101,7 @@ public class Hood extends SubsystemBase {
    *
    * @param target The target position in field coordinates that the shooter should aim at.
    */
-  public void aimAt(ScoringTarget target) {
+  public void aimAt(Landmark target) {
     Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
