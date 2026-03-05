@@ -100,4 +100,11 @@ public class Field {
       return pose;
     }
   }
+
+  public static enum Zone {
+    Alliance,
+    Neutral,
+    Bump,
+    Tower;
+  }
 }
