@@ -12,6 +12,7 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -159,6 +160,27 @@ public final class Configs {
                   .withKS(0.0)
                   .withKV(shooterVelocityFeedForward)
                   .withKA(0.0));
+    }
+  }
+
+  public static final class Feeder {
+    public static final TalonFXConfiguration feederConfig = new TalonFXConfiguration();
+
+    static {
+      feederConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(FeederConstants.kFeederInverted)
+                  .withNeutralMode(FeederConstants.kFeederIntakeNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(FeederConstants.kFeederMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(FeederConstants.kFeederMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(0)
+                  .withSensorToMechanismRatio(FeederConstants.kFeederMotorReduction));
     }
   }
 
