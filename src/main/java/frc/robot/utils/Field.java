@@ -129,5 +129,9 @@ public class Field {
     private Zone(Region<Vector2D> region) {
       this.region = region;
     }
+
+    public Region<Vector2D> getRegion() {
+      return region;
+    }
   }
 }
