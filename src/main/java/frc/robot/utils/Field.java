@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Constants.FieldConstants;
 import org.apache.commons.geometry.core.Region;
-import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.core.Precision;
@@ -123,8 +122,7 @@ public class Field {
             Vector2D.of(
                 FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kBumpLengthMeters,
                 FieldConstants.kFieldWidthMeters),
-            Precision.doubleEquivalenceOfEpsilon(0.01))),
-    Tower(RegionBSPTree2D.empty());
+            Precision.doubleEquivalenceOfEpsilon(0.01)));
 
     private final Region<Vector2D> region;
 
