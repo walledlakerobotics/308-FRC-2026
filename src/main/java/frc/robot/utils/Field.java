@@ -6,10 +6,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.FieldConstants;
 import java.util.EnumSet;
-import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 
@@ -206,22 +208,38 @@ public class Field {
                 FieldConstants.kFieldWidthMeters),
             FieldConstants.kRegionPrecision));
 
-    private final Region<Vector2D> region;
+    private final ConvexArea region;
 
-    private Zone(Region<Vector2D> region) {
+    private Zone(ConvexArea region) {
       this.region = region;
     }
 
-    public Region<Vector2D> getRegion() {
+    public ConvexArea getRegion(Alliance alliance) {
+      if (alliance == DriverStation.Alliance.Red) {
+        AffineTransformMatrix2D transform =
+            AffineTransformMatrix2D.createScale(-1.0)
+                .translate(FieldConstants.kFieldLengthMeters, FieldConstants.kFieldWidthMeters);
+
+        return region.transform(transform);
+      }
+
       return region;
     }
 
+    public boolean contains(Alliance alliance, Translation2d translation) {
+      return getRegion(alliance).contains(Vector2D.of(translation.getX(), translation.getY()));
+    }
+
+    public boolean contains(Alliance alliance, Pose2d pose) {
+      return contains(alliance, pose.getTranslation());
+    }
+
     public boolean contains(Translation2d translation) {
-      return region.contains(Vector2D.of(translation.getX(), translation.getY()));
+      return contains(getAllianceFor(translation), translation);
     }
 
     public boolean contains(Pose2d pose) {
-      return contains(pose.getTranslation());
+      return contains(getAllianceFor(pose), pose);
     }
   }
 }
