@@ -7,6 +7,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Constants.FieldConstants;
+
+import java.util.EnumSet;
+
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
@@ -85,6 +88,20 @@ public class Field {
    */
   public static Rotation3d flip(Rotation3d rotation) {
     return rotation.plus(new Rotation3d(Rotation2d.k180deg));
+  }
+
+  public EnumSet<Zone> getZones(Translation2d translation) {
+    EnumSet<Zone> zones = EnumSet.noneOf(Zone.class);
+    for (Zone zone : Zone.values()) {
+      if (zone.contains(translation)) {
+        zones.add(zone);
+      }
+    }
+    return zones;
+  }
+
+  public EnumSet<Zone> getZones(Pose2d pose) {
+    return getZones(pose.getTranslation());
   }
 
   public static enum Landmark {
