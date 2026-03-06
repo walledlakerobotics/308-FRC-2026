@@ -6,10 +6,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.FieldConstants;
-
 import java.util.EnumSet;
-
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
@@ -108,6 +107,53 @@ public class Field {
    */
   public static Rotation3d flip(Rotation3d rotation) {
     return rotation.plus(new Rotation3d(Rotation2d.k180deg));
+  }
+
+  /**
+   * Flips a {@link Pose2d} to the given alliance. This is useful for converting between the red and
+   * blue sides of the field, as the field is symmetrical.
+   *
+   * @param pose The pose to flip, in field coordinates.
+   * @param alliance The alliance to flip to.
+   * @return The flipped pose, in field coordinates.
+   */
+  public static Pose2d flipTo(Pose2d pose, Alliance alliance) {
+    return alliance == getAllianceFor(pose) ? pose : flip(pose);
+  }
+
+  /**
+   * Flips a {@link Pose3d} to the given alliance. This is useful for converting between the red and
+   * blue sides of the field, as the field is symmetrical.
+   *
+   * @param pose The pose to flip, in field coordinates.
+   * @param alliance The alliance to flip to.
+   * @return The flipped pose, in field coordinates.
+   */
+  public static Pose3d flipTo(Pose3d pose, Alliance alliance) {
+    return alliance == getAllianceFor(pose) ? pose : flip(pose);
+  }
+
+  /**
+   * Flips a {@link Translation2d} to the given alliance. This is useful for converting between the
+   * red and blue sides of the field, as the field is symmetrical.
+   *
+   * @param translation The translation to flip, in field coordinates.
+   * @param alliance The alliance to flip to.
+   * @return The flipped translation, in field coordinates.
+   */
+  public static Translation2d flipTo(Translation2d translation, Alliance alliance) {
+    return alliance == getAllianceFor(translation) ? translation : flip(translation);
+  }
+
+  /**
+   * Flips a {@link Translation3d} to the given alliance. This is useful for converting between the
+   * red and blue sides of the field, as the field is symmetrical.
+   *
+   * @param translation The translation to flip, in field coordinates.
+   * @return The flipped translation, in field coordinates.
+   */
+  public static Translation3d flipTo(Translation3d translation, Alliance alliance) {
+    return alliance == getAllianceFor(translation) ? translation : flip(translation);
   }
 
   public EnumSet<Zone> getZones(Translation2d translation) {
