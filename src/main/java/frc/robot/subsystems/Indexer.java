@@ -43,9 +43,18 @@ public class Indexer extends SubsystemBase {
    *
    * @return Command
    */
-  public Command index() {
+  public Command indexing() {
     return runOnce(this::run)
         .andThen(Commands.waitUntil(this::isBallDetected))
         .finallyDo(this::stop);
+  }
+
+  /***
+   * Runs the motor until input is stopped.
+   *
+   * @return Command
+   */
+  public Command runIndex() {
+    return runEnd(this::run, this::stop);
   }
 }
