@@ -19,6 +19,26 @@ public class Field {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+  public Alliance getAllianceFor(Translation2d pose) {
+    if (pose.getX() > FieldConstants.kFieldLengthMeters / 2) {
+      return Alliance.Red;
+    } else {
+      return Alliance.Blue;
+    }
+  }
+
+  public Alliance getAllianceFor(Translation3d pose) {
+    return getAllianceFor(pose.toTranslation2d());
+  }
+
+  public Alliance getAllianceFor(Pose2d pose) {
+    return getAllianceFor(pose.getTranslation());
+  }
+
+  public Alliance getAllianceFor(Pose3d pose) {
+    return getAllianceFor(pose.getTranslation());
+  }
+
   /**
    * Flips a {@link Pose2d} across the field. This is useful for converting between the red and blue
    * sides of the field, as the field is symmetrical.
