@@ -20,6 +20,10 @@ public class Field {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+  public static Alliance getAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue);
+  }
+
   public static Alliance getAllianceFor(Translation2d pose) {
     if (pose.getX() > FieldConstants.kFieldLengthMeters / 2) {
       return Alliance.Red;
