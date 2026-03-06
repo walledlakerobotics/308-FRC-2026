@@ -182,8 +182,8 @@ public class Field {
       this.pose = pose;
     }
 
-    public Translation2d getTranslation() {
-      return pose;
+    public Translation2d getTranslation(Alliance alliance) {
+      return flipTo(pose, alliance);
     }
   }
 
