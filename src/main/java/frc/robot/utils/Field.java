@@ -19,7 +19,7 @@ public class Field {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
-  public Alliance getAllianceFor(Translation2d pose) {
+  public static Alliance getAllianceFor(Translation2d pose) {
     if (pose.getX() > FieldConstants.kFieldLengthMeters / 2) {
       return Alliance.Red;
     } else {
@@ -27,15 +27,15 @@ public class Field {
     }
   }
 
-  public Alliance getAllianceFor(Translation3d pose) {
+  public static Alliance getAllianceFor(Translation3d pose) {
     return getAllianceFor(pose.toTranslation2d());
   }
 
-  public Alliance getAllianceFor(Pose2d pose) {
+  public static Alliance getAllianceFor(Pose2d pose) {
     return getAllianceFor(pose.getTranslation());
   }
 
-  public Alliance getAllianceFor(Pose3d pose) {
+  public static Alliance getAllianceFor(Pose3d pose) {
     return getAllianceFor(pose.getTranslation());
   }
 
