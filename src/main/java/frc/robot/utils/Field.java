@@ -132,5 +132,13 @@ public class Field {
     public Region<Vector2D> getRegion() {
       return region;
     }
+
+    public boolean contains(Translation2d translation) {
+      return region.contains(Vector2D.of(translation.getX(), translation.getY()));
+    }
+
+    public boolean contains(Pose2d pose) {
+      return contains(pose.getTranslation());
+    }
   }
 }
