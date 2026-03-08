@@ -245,18 +245,19 @@ public class Field {
   /** Represents a specific landmark or element of the field. */
   public static enum Landmark {
     Hub(
-        new Translation2d(
+        new Translation3d(
             FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kHubLengthMeters / 2,
-            FieldConstants.kFieldWidthMeters / 2));
+            FieldConstants.kFieldWidthMeters / 2,
+            FieldConstants.kHubHeightMeters));
 
-    private final Translation2d m_translation;
+    private final Translation3d m_translation;
 
-    Landmark(Translation2d translation) {
+    Landmark(Translation3d translation) {
       m_translation = translation;
     }
 
     /** Gets the translation of this landmark for the given alliance. */
-    public Translation2d getTranslation(Alliance alliance) {
+    public Translation3d getTranslation(Alliance alliance) {
       return flipTo(m_translation, alliance);
     }
   }
