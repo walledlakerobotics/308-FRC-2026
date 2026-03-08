@@ -182,14 +182,14 @@ public class Field {
             FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kHubLengthMeters / 2,
             FieldConstants.kFieldWidthMeters / 2));
 
-    private final Translation2d pose;
+    private final Translation2d m_pose;
 
     Landmark(Translation2d pose) {
-      this.pose = pose;
+      m_pose = pose;
     }
 
     public Translation2d getTranslation(Alliance alliance) {
-      return flipTo(pose, alliance);
+      return flipTo(m_pose, alliance);
     }
   }
 
@@ -212,10 +212,10 @@ public class Field {
                 FieldConstants.kFieldWidthMeters),
             FieldConstants.kRegionPrecision));
 
-    private final ConvexArea region;
+    private final ConvexArea m_region;
 
     private Zone(ConvexArea region) {
-      this.region = region;
+      m_region = region;
     }
 
     public ConvexArea getRegion(Alliance alliance) {
@@ -224,10 +224,10 @@ public class Field {
             AffineTransformMatrix2D.createScale(-1.0)
                 .translate(FieldConstants.kFieldLengthMeters, FieldConstants.kFieldWidthMeters);
 
-        return region.transform(transform);
+        return m_region.transform(transform);
       }
 
-      return region;
+      return m_region;
     }
 
     public boolean contains(Alliance alliance, Translation2d translation) {
