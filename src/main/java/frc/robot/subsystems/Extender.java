@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -8,6 +10,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants;
@@ -39,9 +42,13 @@ public class Extender extends SubsystemBase {
         PersistMode.kPersistParameters);
   }
 
-  // gets the position of the encoder.
-  public double getPosition() {
-    return m_encoder.getPosition();
+  /**
+   * Gets the current angle of the extender based on the encoder position.
+   *
+   * @return The current angle of the extender as an Angle object.
+   */
+  public Angle getAngle() {
+    return Rotations.of(m_encoder.getPosition());
   }
 
   // gets the velocity of the encoder.
