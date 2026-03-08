@@ -153,7 +153,10 @@ public final class Constants {
     public static final double kFieldWidthMeters = kAprilTagFieldLayout.getFieldWidth();
 
     public static final double kHubLengthMeters = Units.inchesToMeters(47.0);
-    public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
+    public static final double kHubHeightMeters = Units.inchesToMeters(72.0);
+
+    public static final double kBumpLengthMeters = Units.inchesToMeters(44.4);
+    public static final double kBumpWidthMeters = Units.inchesToMeters(73.0);
 
     public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
 
