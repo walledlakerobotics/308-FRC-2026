@@ -50,7 +50,7 @@ public class VirtualTarget {
     for (Landmark target : Landmark.values()) {
       Translation2d virtualTarget =
           calculateVirtualTarget(
-              target.getTranslation(Field.getAlliance()),
+              target.getTranslation(Field.getAlliance()).toTranslation2d(),
               robotPose,
               robotSpeeds,
               ShooterConstants.kVirtualTargetIterations);
@@ -66,7 +66,8 @@ public class VirtualTarget {
    * @return The virtual target position in field coordinates.
    */
   public Translation2d getVirtualTarget(Landmark target) {
-    return virtualTargetCache.getOrDefault(target, target.getTranslation(Field.getAlliance()));
+    return virtualTargetCache.getOrDefault(
+        target, target.getTranslation(Field.getAlliance()).toTranslation2d());
   }
 
   /**
