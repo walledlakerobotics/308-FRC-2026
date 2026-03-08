@@ -203,6 +203,12 @@ public final class Constants {
     public static final boolean kExtenderMotorInverted = false;
 
     public static final double kExdenterMotorSpeed = 0.5;
+
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMaxSpeed = 1.0; // rotations per second
+    public static final double kMaxAcceleration = 1.0; // rotations per second squared
   }
 
   public static final class IntakeConstants {
