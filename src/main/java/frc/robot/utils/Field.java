@@ -20,10 +20,21 @@ public class Field {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+  /**
+   * Gets the current alliance from the driver station.
+   *
+   * @return The current alliance, or blue if the alliance cannot be determined.
+   */
   public static Alliance getAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Blue);
   }
 
+  /**
+   * Gets the alliance corresponding to the given translation on the field.
+   *
+   * @param pose The translation to get the alliance for, in field coordinates.
+   * @return The alliance for the given translation.
+   */
   public static Alliance getAllianceFor(Translation2d pose) {
     if (pose.getX() > FieldConstants.kFieldLengthMeters / 2) {
       return Alliance.Red;
@@ -32,14 +43,32 @@ public class Field {
     }
   }
 
+  /**
+   * Gets the alliance corresponding to the given translation on the field.
+   *
+   * @param pose The translation to get the alliance for, in field coordinates.
+   * @return The alliance for the given translation.
+   */
   public static Alliance getAllianceFor(Translation3d pose) {
     return getAllianceFor(pose.toTranslation2d());
   }
 
+  /**
+   * Gets the alliance corresponding to the given pose on the field.
+   *
+   * @param pose The pose to get the alliance for, in field coordinates.
+   * @return The alliance for the given pose.
+   */
   public static Alliance getAllianceFor(Pose2d pose) {
     return getAllianceFor(pose.getTranslation());
   }
 
+  /**
+   * Gets the alliance corresponding to the given pose on the field.
+   *
+   * @param pose The pose to get the alliance for, in field coordinates.
+   * @return The alliance for the given pose.
+   */
   public static Alliance getAllianceFor(Pose3d pose) {
     return getAllianceFor(pose.getTranslation());
   }
@@ -162,6 +191,13 @@ public class Field {
     return alliance == getAllianceFor(translation) ? translation : flip(translation);
   }
 
+  /**
+   * Gets the zones that the given translation is within for the alliance corresponding to the
+   * translation's position on the field.
+   *
+   * @param translation The translation to check, in field coordinates.
+   * @return The zones that the translation is within.
+   */
   public EnumSet<Zone> getZones(Translation2d translation) {
     EnumSet<Zone> zones = EnumSet.noneOf(Zone.class);
     for (Zone zone : Zone.values()) {
@@ -172,10 +208,18 @@ public class Field {
     return zones;
   }
 
+  /**
+   * Gets the zones that the given pose is within for the alliance corresponding to the pose's
+   * position on the field.
+   *
+   * @param pose The pose to check, in field coordinates.
+   * @return The zones that the pose is within.
+   */
   public EnumSet<Zone> getZones(Pose2d pose) {
     return getZones(pose.getTranslation());
   }
 
+  /** Represents a specific landmark or element of the field. */
   public static enum Landmark {
     Hub(
         new Translation2d(
@@ -193,6 +237,7 @@ public class Field {
     }
   }
 
+  /** Represents a zone on the field. */
   public static enum Zone {
     Alliance(
         Parallelogram.axisAligned(
@@ -218,6 +263,12 @@ public class Field {
       m_region = region;
     }
 
+    /**
+     * Gets the region of the field this zone covers, flipping to the given alliance.
+     *
+     * @param alliance The alliance to get the region for.
+     * @return The region of the field this zone covers for the given alliance.
+     */
     public ConvexArea getRegion(Alliance alliance) {
       if (alliance == DriverStation.Alliance.Red) {
         AffineTransformMatrix2D transform =
@@ -230,18 +281,46 @@ public class Field {
       return m_region;
     }
 
+    /**
+     * Checks if the given translation is within this zone for the given alliance.
+     *
+     * @param alliance The alliance to check for.
+     * @param translation The translation to check.
+     * @return True if the translation is within this zone for the given alliance, false otherwise.
+     */
     public boolean contains(Alliance alliance, Translation2d translation) {
       return getRegion(alliance).contains(Vector2D.of(translation.getX(), translation.getY()));
     }
 
+    /**
+     * Checks if the given pose is within this zone for the given alliance.
+     *
+     * @param alliance The alliance to check for.
+     * @param pose The pose to check.
+     * @return True if the pose is within this zone for the given alliance, false otherwise.
+     */
     public boolean contains(Alliance alliance, Pose2d pose) {
       return contains(alliance, pose.getTranslation());
     }
 
+    /**
+     * Checks if the given translation is within this zone for the alliance corresponding to the
+     * translation's position on the field.
+     *
+     * @param translation The translation to check.
+     * @return True if the translation is within this zone, false otherwise.
+     */
     public boolean contains(Translation2d translation) {
       return contains(getAllianceFor(translation), translation);
     }
 
+    /**
+     * Checks if the given pose is within this zone for the alliance corresponding to the pose's
+     * position on the field.
+     *
+     * @param pose The pose to check.
+     * @return True if the pose is within this zone, false otherwise.
+     */
     public boolean contains(Pose2d pose) {
       return contains(getAllianceFor(pose), pose);
     }
