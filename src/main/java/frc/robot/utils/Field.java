@@ -209,6 +209,17 @@ public class Field {
   }
 
   /**
+   * Gets the zones that the given translation is within for the alliance corresponding to the
+   * translation's position on the field.
+   *
+   * @param translation The translation to check, in field coordinates.
+   * @return The zones that the translation is within.
+   */
+  public EnumSet<Zone> getZones(Translation3d translation) {
+    return getZones(translation.toTranslation2d());
+  }
+
+  /**
    * Gets the zones that the given pose is within for the alliance corresponding to the pose's
    * position on the field.
    *
@@ -216,6 +227,17 @@ public class Field {
    * @return The zones that the pose is within.
    */
   public EnumSet<Zone> getZones(Pose2d pose) {
+    return getZones(pose.getTranslation());
+  }
+
+  /**
+   * Gets the zones that the given pose is within for the alliance corresponding to the pose's
+   * position on the field.
+   *
+   * @param pose The pose to check, in field coordinates.
+   * @return The zones that the pose is within.
+   */
+  public EnumSet<Zone> getZones(Pose3d pose) {
     return getZones(pose.getTranslation());
   }
 
@@ -293,6 +315,17 @@ public class Field {
     }
 
     /**
+     * Checks if the given translation is within this zone for the given alliance.
+     *
+     * @param alliance The alliance to check for.
+     * @param translation The translation to check.
+     * @return True if the translation is within this zone for the given alliance, false otherwise.
+     */
+    public boolean contains(Alliance alliance, Translation3d translation) {
+      return contains(alliance, translation.toTranslation2d());
+    }
+
+    /**
      * Checks if the given pose is within this zone for the given alliance.
      *
      * @param alliance The alliance to check for.
@@ -300,6 +333,17 @@ public class Field {
      * @return True if the pose is within this zone for the given alliance, false otherwise.
      */
     public boolean contains(Alliance alliance, Pose2d pose) {
+      return contains(alliance, pose.getTranslation());
+    }
+
+    /**
+     * Checks if the given pose is within this zone for the given alliance.
+     *
+     * @param alliance The alliance to check for.
+     * @param pose The pose to check.
+     * @return True if the pose is within this zone for the given alliance, false otherwise.
+     */
+    public boolean contains(Alliance alliance, Pose3d pose) {
       return contains(alliance, pose.getTranslation());
     }
 
@@ -315,6 +359,17 @@ public class Field {
     }
 
     /**
+     * Checks if the given translation is within this zone for the alliance corresponding to the
+     * translation's position on the field.
+     *
+     * @param translation The translation to check.
+     * @return True if the translation is within this zone, false otherwise.
+     */
+    public boolean contains(Translation3d translation) {
+      return contains(translation.toTranslation2d());
+    }
+
+    /**
      * Checks if the given pose is within this zone for the alliance corresponding to the pose's
      * position on the field.
      *
@@ -323,6 +378,17 @@ public class Field {
      */
     public boolean contains(Pose2d pose) {
       return contains(getAllianceFor(pose), pose);
+    }
+
+    /**
+     * Checks if the given pose is within this zone for the alliance corresponding to the pose's
+     * position on the field.
+     *
+     * @param pose The pose to check.
+     * @return True if the pose is within this zone, false otherwise.
+     */
+    public boolean contains(Pose3d pose) {
+      return contains(pose.getTranslation());
     }
   }
 }
