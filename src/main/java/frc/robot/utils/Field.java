@@ -273,12 +273,29 @@ public class Field {
             Vector2D.of(FieldConstants.kAllianceZoneLengthMeters, 0.0),
             Vector2D.of(FieldConstants.kFieldLengthMeters / 2, FieldConstants.kFieldWidthMeters),
             FieldConstants.kRegionPrecision)),
-    Bump(
+    LeftBump(
         Parallelogram.axisAligned(
-            Vector2D.of(FieldConstants.kAllianceZoneLengthMeters, 0.0),
             Vector2D.of(
-                FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kBumpLengthMeters,
-                FieldConstants.kFieldWidthMeters),
+                FieldConstants.kAllianceZoneLengthMeters
+                    + (FieldConstants.kHubLengthMeters - FieldConstants.kBumpLengthMeters) / 2,
+                (FieldConstants.kFieldWidthMeters + FieldConstants.kHubWidthMeters) / 2
+                    + FieldConstants.kBumpWidthMeters),
+            Vector2D.of(
+                FieldConstants.kAllianceZoneLengthMeters
+                    + (FieldConstants.kHubLengthMeters + FieldConstants.kBumpLengthMeters) / 2,
+                (FieldConstants.kFieldWidthMeters + FieldConstants.kHubWidthMeters) / 2),
+            FieldConstants.kRegionPrecision)),
+    RightBump(
+        Parallelogram.axisAligned(
+            Vector2D.of(
+                FieldConstants.kAllianceZoneLengthMeters
+                    + (FieldConstants.kHubLengthMeters - FieldConstants.kBumpLengthMeters) / 2,
+                (FieldConstants.kFieldWidthMeters - FieldConstants.kHubWidthMeters) / 2
+                    - FieldConstants.kBumpWidthMeters),
+            Vector2D.of(
+                FieldConstants.kAllianceZoneLengthMeters
+                    + (FieldConstants.kHubLengthMeters + FieldConstants.kBumpLengthMeters) / 2,
+                (FieldConstants.kFieldWidthMeters - FieldConstants.kHubWidthMeters) / 2),
             FieldConstants.kRegionPrecision));
 
     private final ConvexArea m_region;
