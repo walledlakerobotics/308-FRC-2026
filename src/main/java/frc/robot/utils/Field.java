@@ -15,6 +15,7 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 
+/** Utility class for working with the field. */
 public class Field {
   private Field() {
     throw new UnsupportedOperationException("This is a utility class!");
@@ -254,6 +255,7 @@ public class Field {
       m_translation = translation;
     }
 
+    /** Gets the translation of this landmark for the given alliance. */
     public Translation2d getTranslation(Alliance alliance) {
       return flipTo(m_translation, alliance);
     }
