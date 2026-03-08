@@ -197,7 +197,13 @@ public final class Constants {
   public static final class ExtenderConstants {
     public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
 
+    public static final double kExtenderWinchRadiusMeters = Units.inchesToMeters(0.5);
+    public static final double kExtenderWinchDiamaterMeters = 2 * kExtenderWinchRadiusMeters;
+    public static final double kExtenderWinchCircumferenceMeters =
+        kExtenderWinchDiamaterMeters * Math.PI;
+
     public static final double kExtenderMotorReduction = 1.0;
+
     public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
     public static final int kExtenderMotorCurrentLimit = 30; // amps
     public static final boolean kExtenderMotorInverted = false;
@@ -213,6 +219,14 @@ public final class Constants {
     public static final double kA = 0.0;
     public static final double kMaxSpeed = 1.0; // rotations per second
     public static final double kMaxAcceleration = 1.0; // rotations per second squared
+
+    // angle between horizontal line and the line between the axle of arm and axle of motor
+    public static final Angle kMotorAngleOffset = Rotations.of(0.0);
+
+    public static final double kHoodEncoderReduction = 1.0;
+
+    public static final double kDistanceToMotorMeters = Units.inchesToMeters(5.0);
+    public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
   }
 
   public static final class IntakeConstants {
