@@ -248,14 +248,14 @@ public class Field {
             FieldConstants.kAllianceZoneLengthMeters + FieldConstants.kHubLengthMeters / 2,
             FieldConstants.kFieldWidthMeters / 2));
 
-    private final Translation2d m_pose;
+    private final Translation2d m_translation;
 
-    Landmark(Translation2d pose) {
-      m_pose = pose;
+    Landmark(Translation2d translation) {
+      m_translation = translation;
     }
 
     public Translation2d getTranslation(Alliance alliance) {
-      return flipTo(m_pose, alliance);
+      return flipTo(m_translation, alliance);
     }
   }
 
