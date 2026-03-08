@@ -3,8 +3,9 @@ package frc.robot.subsystems.shooter.math;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import frc.robot.Constants.FieldConstants.ScoringTarget;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.utils.Field;
+import frc.robot.utils.Field.Landmark;
 import java.util.HashMap;
 
 /**
@@ -18,7 +19,7 @@ import java.util.HashMap;
 public class VirtualTarget {
   private static final VirtualTarget instance = new VirtualTarget();
 
-  private final HashMap<ScoringTarget, Translation2d> virtualTargetCache = new HashMap<>();
+  private final HashMap<Landmark, Translation2d> virtualTargetCache = new HashMap<>();
 
   private VirtualTarget() {}
 
@@ -46,10 +47,10 @@ public class VirtualTarget {
    *     meters per second.
    */
   public void update(Pose2d robotPose, ChassisSpeeds robotSpeeds) {
-    for (ScoringTarget target : ScoringTarget.values()) {
+    for (Landmark target : Landmark.values()) {
       Translation2d virtualTarget =
           calculateVirtualTarget(
-              target.getTranslation(),
+              target.getTranslation(Field.getAlliance()).toTranslation2d(),
               robotPose,
               robotSpeeds,
               ShooterConstants.kVirtualTargetIterations);
@@ -64,8 +65,9 @@ public class VirtualTarget {
    * @param target The original target position in field coordinates.
    * @return The virtual target position in field coordinates.
    */
-  public Translation2d getVirtualTarget(ScoringTarget target) {
-    return virtualTargetCache.getOrDefault(target, target.getTranslation());
+  public Translation2d getVirtualTarget(Landmark target) {
+    return virtualTargetCache.getOrDefault(
+        target, target.getTranslation(Field.getAlliance()).toTranslation2d());
   }
 
   /**

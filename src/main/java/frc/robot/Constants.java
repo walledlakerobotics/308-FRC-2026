@@ -30,6 +30,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
+import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -151,25 +153,16 @@ public final class Constants {
     public static final double kFieldWidthMeters = kAprilTagFieldLayout.getFieldWidth();
 
     public static final double kHubLengthMeters = Units.inchesToMeters(47.0);
-    public static final double kBumpLengthMeters = Units.inchesToMeters(47.0);
+    public static final double kHubWidthMeters = Units.inchesToMeters(47.0);
+    public static final double kHubHeightMeters = Units.inchesToMeters(72.0);
+
+    public static final double kBumpLengthMeters = Units.inchesToMeters(44.4);
+    public static final double kBumpWidthMeters = Units.inchesToMeters(73.0);
 
     public static final double kAllianceZoneLengthMeters = Units.inchesToMeters(158.61);
 
-    public static enum ScoringTarget {
-      Hub(
-          new Translation2d(
-              kAllianceZoneLengthMeters + kHubLengthMeters / 2, kFieldWidthMeters / 2));
-
-      private final Translation2d pose;
-
-      ScoringTarget(Translation2d pose) {
-        this.pose = pose;
-      }
-
-      public Translation2d getTranslation() {
-        return pose;
-      }
-    }
+    public static final DoubleEquivalence kRegionPrecision =
+        Precision.doubleEquivalenceOfEpsilon(0.01);
   }
 
   public static final class VisionConstants {
