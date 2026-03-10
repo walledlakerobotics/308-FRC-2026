@@ -204,9 +204,14 @@ public final class Constants {
 
     public static final double kExtenderMotorReduction = 1.0;
 
-    public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
-    public static final int kExtenderMotorCurrentLimit = 30; // amps
-    public static final boolean kExtenderMotorInverted = false;
+    public static final DCMotor kExtenderMotor =
+        DCMotor.getKrakenX60(1).withReduction(kExtenderMotorReduction);
+
+    public static final NeutralModeValue kExtenderMotorNeutralMode = NeutralModeValue.Brake;
+    public static final int kExtenderMotorStatorCurrentLimit = 60; // amps
+    public static final int kExtenderMotorSupplyCurrentLimit = 30; // amps
+    public static final InvertedValue kExtenderMotorInverted =
+        InvertedValue.CounterClockwise_Positive;
 
     public static final double kExdenterMotorSpeed = 0.5;
 
@@ -245,8 +250,6 @@ public final class Constants {
     public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
     public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
 
-    public static final DCMotor kShooterMotor = DCMotor.getKrakenX60(2);
-
     public static final double kShooterMotorReduction = 1.0;
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
     public static final int kShooterMotorStatorCurrentLimit = 120; // amps
@@ -254,6 +257,9 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+
+    public static final DCMotor kShooterMotor =
+        DCMotor.getKrakenX60(1).withReduction(kShooterMotorReduction);
 
     public static final int kVirtualTargetIterations = 5;
   }
