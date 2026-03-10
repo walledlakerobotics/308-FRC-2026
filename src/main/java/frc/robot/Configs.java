@@ -119,7 +119,7 @@ public final class Configs {
                   .withKA(0.0));
 
       encoderConfig
-          .inverted(ExtenderConstants.kExdenterEncoderInverted)
+          .inverted(ExtenderConstants.kExtenderEncoderInverted)
           .positionConversionFactor(extenderEncoderFactor)
           .velocityConversionFactor(extenderEncoderFactor / 60)
           .apply(DIOAbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
