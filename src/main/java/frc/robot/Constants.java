@@ -215,6 +215,7 @@ public final class Constants {
 
     public static final double kExdenterMotorSpeed = 0.5;
 
+    public static final int kExtenderEncoderChannel = 0;
     public static final boolean kExdenterEncoderInverted = false;
 
     public static final double kP = 1.0;
