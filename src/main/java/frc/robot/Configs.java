@@ -93,6 +93,7 @@ public final class Configs {
       double extenderVelocityFeedForward =
           Constants.kNominalVoltage
               / Units.radiansToRotations(ExtenderConstants.kExtenderMotor.freeSpeedRadPerSec);
+      double extenderEncoderFactor = 1.0 / ExtenderConstants.kExtenderMotorReduction;
 
       extenderConfig
           .withMotorOutput(
@@ -119,8 +120,8 @@ public final class Configs {
 
       encoderConfig
           .inverted(ExtenderConstants.kExdenterEncoderInverted)
-          .positionConversionFactor(1.0)
-          .velocityConversionFactor(1.0 / 60)
+          .positionConversionFactor(extenderEncoderFactor)
+          .velocityConversionFactor(extenderEncoderFactor / 60)
           .apply(DIOAbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
     }
   }
@@ -215,6 +216,7 @@ public final class Configs {
 
       hoodLeaderConfig
           .absoluteEncoder
+          .inverted(HoodConstants.kHoodEncoderInverted)
           .positionConversionFactor(hoodFactor) // rotations
           .velocityConversionFactor(hoodFactor / 60.0) // rotations per second
           .apply(AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
