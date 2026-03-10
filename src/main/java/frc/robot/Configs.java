@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
@@ -18,6 +19,7 @@ import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.utils.DIOAbsoluteEncoder.DIOAbsoluteEncoderConfig;
 
 /** Contains configuration objects for various robot components. */
 public final class Configs {
@@ -85,6 +87,7 @@ public final class Configs {
 
   public static final class Extender {
     public static final TalonFXConfiguration extenderConfig = new TalonFXConfiguration();
+    public static final DIOAbsoluteEncoderConfig encoderConfig = new DIOAbsoluteEncoderConfig();
 
     static {
       double extenderVelocityFeedForward =
@@ -113,6 +116,12 @@ public final class Configs {
                   .withKS(0.0)
                   .withKV(extenderVelocityFeedForward)
                   .withKA(0.0));
+
+      encoderConfig
+          .inverted(ExtenderConstants.kExdenterEncoderInverted)
+          .positionConversionFactor(1.0)
+          .velocityConversionFactor(1.0 / 60)
+          .apply(DIOAbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
     }
   }
 
@@ -207,7 +216,8 @@ public final class Configs {
       hoodLeaderConfig
           .absoluteEncoder
           .positionConversionFactor(hoodFactor) // rotations
-          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
+          .velocityConversionFactor(hoodFactor / 60.0) // rotations per second
+          .apply(AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
 
       hoodFollowerConfig
           .apply(hoodLeaderConfig)
