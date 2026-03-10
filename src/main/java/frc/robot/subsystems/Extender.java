@@ -64,12 +64,12 @@ public class Extender extends SubsystemBase {
     double a = ExtenderConstants.kDistanceToMotorMeters;
     double b = ExtenderConstants.kRotationRadiusMeters;
     // law of cosines to find the distance from the motor to the winch attachment point
-    double c =
+    double cSquared =
         Math.sqrt(
             Math.pow(a, 2) + Math.pow(b, 2) - 2 * a * b * Math.cos(extenderAngle.in(Radians)));
 
     // pythagorean theorem to find the length of the winch string
-    return Math.sqrt(Math.pow(c, 2) - Math.pow(ExtenderConstants.kExtenderWinchRadiusMeters, 2));
+    return Math.sqrt(cSquared - Math.pow(ExtenderConstants.kExtenderWinchRadiusMeters, 2));
   }
 
   /**
