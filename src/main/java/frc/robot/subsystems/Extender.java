@@ -3,11 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -16,10 +12,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants;
 import frc.robot.Constants.ExtenderConstants;
+import frc.robot.utils.DIOAbsoluteEncoder;
 
 public class Extender extends SubsystemBase {
-  private SparkMax m_motor = new SparkMax(ExtenderConstants.kExtenderCanId, MotorType.kBrushless);
-  private AbsoluteEncoder m_encoder = m_motor.getAbsoluteEncoder();
+  private TalonFX m_motor = new TalonFX(ExtenderConstants.kExtenderCanId);
+  private DIOAbsoluteEncoder m_encoder =
+      new DIOAbsoluteEncoder(ExtenderConstants.kExtenderEncoderChannel);
 
   private ProfiledPIDController m_pidController =
       new ProfiledPIDController(
@@ -37,10 +35,7 @@ public class Extender extends SubsystemBase {
           Constants.kPeriodSeconds);
 
   public Extender() {
-    m_motor.configure(
-        Configs.Extender.extenderConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    m_motor.getConfigurator().apply(Configs.Extender.extenderConfig);
   }
 
   /**
