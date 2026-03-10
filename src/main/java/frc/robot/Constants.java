@@ -231,7 +231,7 @@ public final class Constants {
     // angle between horizontal line and the line between the axle of arm and axle of motor
     public static final Angle kMotorAngleOffset = Rotations.of(0.0);
 
-    public static final double kHoodEncoderReduction = 1.0;
+    public static final double kExtenderEncoderReduction = 1.0;
 
     public static final double kDistanceToMotorMeters = Units.inchesToMeters(5.0);
     public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
@@ -281,6 +281,7 @@ public final class Constants {
     // actuator
     public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
 
+    public static final boolean kHoodEncoderInverted = false;
     public static final double kHoodEncoderReduction = 1.0;
 
     public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
