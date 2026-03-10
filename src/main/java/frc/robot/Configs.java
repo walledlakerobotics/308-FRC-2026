@@ -84,27 +84,35 @@ public final class Configs {
   }
 
   public static final class Extender {
-    public static final SparkMaxConfig extenderConfig = new SparkMaxConfig();
+    public static final TalonFXConfiguration extenderConfig = new TalonFXConfiguration();
 
     static {
-      double extenderFactor = 1.0 / ExtenderConstants.kExtenderMotorReduction;
+      double extenderVelocityFeedForward =
+          Constants.kNominalVoltage
+              / Units.radiansToRotations(ExtenderConstants.kExtenderMotor.freeSpeedRadPerSec);
 
       extenderConfig
-          .inverted(ExtenderConstants.kExtenderMotorInverted)
-          .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
-          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
-
-      extenderConfig
-          .absoluteEncoder
-          .positionConversionFactor(extenderFactor) // rotations
-          .velocityConversionFactor(extenderFactor / 60.0); // rotations per second
-
-      extenderConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(0.1, 0, 0)
-          .outputRange(-1.0, 1.0);
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(ExtenderConstants.kExtenderMotorInverted)
+                  .withNeutralMode(ExtenderConstants.kExtenderMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(ExtenderConstants.kExtenderMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(ExtenderConstants.kExtenderMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(ExtenderConstants.kExtenderMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(extenderVelocityFeedForward)
+                  .withKA(0.0));
     }
   }
 
@@ -135,8 +143,7 @@ public final class Configs {
     static {
       double shooterVelocityFeedForward =
           Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec)
-              * ShooterConstants.kShooterMotorReduction;
+              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
 
       shooterConfig
           .withMotorOutput(
