@@ -71,11 +71,11 @@ public class Indexer extends SubsystemBase {
   }
 
   /**
-   * This runs the motor until no balls are detected.
+   * Creates a command that runs the indexer until fuel is detected.
    *
-   * @return Command
+   * @return The command.
    */
-  public Command indexing() {
+  public Command index() {
     return runOnce(this::run)
         .andThen(Commands.waitUntil(this::isBallDetected))
         .finallyDo(this::stop);
