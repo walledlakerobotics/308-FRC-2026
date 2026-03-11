@@ -1,7 +1,10 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,6 +30,7 @@ public class Shooter extends SubsystemBase {
   TalonFX m_shooterLeader = new TalonFX(ShooterConstants.kShooterLeaderCanId);
   TalonFX m_shooterFollower = new TalonFX(ShooterConstants.kShooterFollowerCanId);
 
+  private final NeutralOut m_neutralControl = new NeutralOut();
   private final VoltageOut m_voltageControl = new VoltageOut(0.0);
   private final VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
@@ -79,6 +83,16 @@ public class Shooter extends SubsystemBase {
    */
   public void setVelocity(AngularVelocity velocity) {
     m_shooterLeader.setControl(m_velocityVoltageControl.withVelocity(velocity));
+  }
+
+  /** Stops the shooter. */
+  public void stop() {
+    setVelocity(RotationsPerSecond.of(0.0));
+  }
+
+  /** Sets the shooter to neutral mode, allowing it to coast. */
+  public void coast() {
+    m_shooterLeader.setControl(m_neutralControl);
   }
 
   /**
