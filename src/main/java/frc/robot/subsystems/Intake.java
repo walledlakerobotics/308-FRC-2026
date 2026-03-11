@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,6 +21,7 @@ import frc.robot.Constants.IntakeConstants;
 public class Intake extends SubsystemBase {
   private TalonFX m_motor = new TalonFX(IntakeConstants.kIntakeCanId);
 
+  private NeutralOut m_neutralControl = new NeutralOut();
   private VoltageOut m_voltageControl = new VoltageOut(0.0);
   private VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
@@ -45,15 +49,19 @@ public class Intake extends SubsystemBase {
   }
 
   public void run() {
-    m_motor.setControl(m_velocityVoltageControl.withVelocity(IntakeConstants.kIntakeVelocity));
+    setVelocity(IntakeConstants.kIntakeVelocity);
   }
 
   public void stop() {
-    m_motor.set(0.0);
+    setVelocity(RotationsPerSecond.of(0.0));
+  }
+
+  public void coast() {
+    m_motor.setControl(m_neutralControl);
   }
 
   public Command intake() {
-    return startEnd(this::run, this::stop);
+    return startEnd(this::run, this::coast);
   }
 
   /**
