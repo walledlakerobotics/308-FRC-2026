@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -129,7 +130,8 @@ public final class Constants {
 
     public static final boolean kDrivingMotorsInverted = true;
     public static final boolean kTurningMotorsInverted = true;
-    public static final boolean kTurningEncoderInverted = false;
+    public static final SensorDirectionValue kTurningEncoderDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
   }
 
   public static final class OIConstants {

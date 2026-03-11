@@ -7,7 +7,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
@@ -75,10 +74,7 @@ public final class Configs {
           .positionWrappingInputRange(-0.5, 0.5);
 
       turningEncoderConfig
-          .withSensorDirection(
-              ModuleConstants.kTurningEncoderInverted
-                  ? SensorDirectionValue.Clockwise_Positive
-                  : SensorDirectionValue.CounterClockwise_Positive)
+          .withSensorDirection(ModuleConstants.kTurningEncoderDirection)
           .withAbsoluteSensorDiscontinuityPoint(0.5);
     }
   }
