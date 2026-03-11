@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,8 +11,9 @@ import frc.robot.Configs;
 import frc.robot.Constants.IndexerConstants;
 
 public class Indexer extends SubsystemBase {
-
   private TalonFX m_motor = new TalonFX(IndexerConstants.kMotorCANId);
+
+  private VoltageOut m_voltageControl = new VoltageOut(0.0);
 
   private DigitalInput m_lightDetectorLeft =
       new DigitalInput(IndexerConstants.kLeftLightSensorChannel);
@@ -19,6 +22,10 @@ public class Indexer extends SubsystemBase {
 
   public Indexer() {
     m_motor.getConfigurator().apply(Configs.Indexer.indexConfig);
+  }
+
+  public void setVoltage(Voltage volts) {
+    m_motor.setControl(m_voltageControl.withOutput(volts));
   }
 
   public void run() {
