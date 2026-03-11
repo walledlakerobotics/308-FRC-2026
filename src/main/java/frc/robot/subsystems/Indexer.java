@@ -82,11 +82,11 @@ public class Indexer extends SubsystemBase {
   }
 
   /***
-   * Runs the motor until input is stopped.
+   * Creates a command that feeds fuel in the indexer into the shooter.
    *
-   * @return Command
+   * @return The command.
    */
-  public Command runIndex() {
+  public Command feed() {
     return runEnd(this::run, this::stop);
   }
 
