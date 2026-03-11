@@ -284,5 +284,8 @@ public final class Constants {
     public static final int kFeederMotorSupplyCurrentLimit = 70;
     public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
     public static final double kfeederspeed = 0.5;
+
+    public static final DCMotor kFeederMotor =
+        DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
   }
 }
