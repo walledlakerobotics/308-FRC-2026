@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -28,6 +29,7 @@ import edu.wpi.first.math.numbers.N4;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
@@ -219,7 +221,7 @@ public final class Constants {
     public static final DCMotor kIntakeMotor =
         DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
 
-    public static final double kIntakeSpeed = 0.5;
+    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(3000.0);
   }
 
   public static final class ShooterConstants {
@@ -265,7 +267,6 @@ public final class Constants {
   public static final class IndexerConstants {
 
     public static final int kMotorCANId = CANIDs.secondaryMotor(0);
-    public static final double kMotorSpeed = 0.5;
     public static final double kIndexerMotorReduction = 1.0;
 
     public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
@@ -279,6 +280,8 @@ public final class Constants {
 
     public static final int kLeftLightSensorChannel = 0;
     public static final int kRightLightSensorChannel = 0;
+
+    public static final AngularVelocity kIndexerVelocity = RotationsPerSecond.of(3000.0);
   }
 
   public static final class FeederConstants {
@@ -288,9 +291,11 @@ public final class Constants {
     public static final int kFeederMotorStatorCurrentLimit = 120;
     public static final int kFeederMotorSupplyCurrentLimit = 70;
     public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
-    public static final double kfeederspeed = 0.5;
 
     public static final DCMotor kFeederMotor =
         DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
+
+    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(1.0);
+    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3000.0);
   }
 }
