@@ -141,39 +141,6 @@ public final class Configs {
     }
   }
 
-  public static final class Shooter {
-    public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-
-    static {
-      double shooterVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
-
-      shooterConfig
-          .withMotorOutput(
-              new MotorOutputConfigs()
-                  .withInverted(ShooterConstants.kShooterLeaderInverted)
-                  .withNeutralMode(ShooterConstants.kShooterMotorNeutralMode))
-          .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                  .withStatorCurrentLimit(ShooterConstants.kShooterMotorStatorCurrentLimit)
-                  .withSupplyCurrentLimit(ShooterConstants.kShooterMotorSupplyCurrentLimit))
-          .withFeedback(
-              new FeedbackConfigs()
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                  .withRotorToSensorRatio(1.0)
-                  .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction))
-          .withSlot0(
-              new Slot0Configs()
-                  .withKP(0.1)
-                  .withKI(0.0)
-                  .withKD(0.0)
-                  .withKS(0.0)
-                  .withKV(shooterVelocityFeedForward)
-                  .withKA(0.0));
-    }
-  }
-
   public static final class Feeder {
     public static final TalonFXConfiguration feederConfig = new TalonFXConfiguration();
 
@@ -207,31 +174,6 @@ public final class Configs {
     }
   }
 
-  public static final class Hood {
-    public static final SparkMaxConfig hoodLeaderConfig = new SparkMaxConfig();
-    public static final SparkMaxConfig hoodFollowerConfig = new SparkMaxConfig();
-
-    static {
-      double hoodFactor = 1.0 / HoodConstants.kHoodEncoderReduction;
-
-      hoodLeaderConfig
-          .inverted(HoodConstants.kHoodLeaderInverted)
-          .idleMode(HoodConstants.kHoodMotorIdleMode)
-          .smartCurrentLimit(HoodConstants.kHoodMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
-
-      hoodLeaderConfig
-          .absoluteEncoder
-          .positionConversionFactor(hoodFactor) // rotations
-          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
-
-      hoodFollowerConfig
-          .apply(hoodLeaderConfig)
-          .follow(HoodConstants.kHoodLeaderCanId)
-          .inverted(HoodConstants.kHoodFollowerInverted);
-    }
-  }
-
   public static final class Indexer {
     public static final TalonFXConfiguration indexConfig = new TalonFXConfiguration();
 
@@ -262,6 +204,64 @@ public final class Configs {
                   .withKS(0.0)
                   .withKV(indexerVelocityFeedForward)
                   .withKA(0.0));
+    }
+  }
+
+  public static final class Shooter {
+    public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+
+    static {
+      double shooterVelocityFeedForward =
+          Constants.kNominalVoltage
+              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
+
+      shooterConfig
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(ShooterConstants.kShooterLeaderInverted)
+                  .withNeutralMode(ShooterConstants.kShooterMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(ShooterConstants.kShooterMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(ShooterConstants.kShooterMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(shooterVelocityFeedForward)
+                  .withKA(0.0));
+    }
+  }
+
+  public static final class Hood {
+    public static final SparkMaxConfig hoodLeaderConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig hoodFollowerConfig = new SparkMaxConfig();
+
+    static {
+      double hoodFactor = 1.0 / HoodConstants.kHoodEncoderReduction;
+
+      hoodLeaderConfig
+          .inverted(HoodConstants.kHoodLeaderInverted)
+          .idleMode(HoodConstants.kHoodMotorIdleMode)
+          .smartCurrentLimit(HoodConstants.kHoodMotorCurrentLimit)
+          .voltageCompensation(Constants.kNominalVoltage);
+
+      hoodLeaderConfig
+          .absoluteEncoder
+          .positionConversionFactor(hoodFactor) // rotations
+          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
+
+      hoodFollowerConfig
+          .apply(hoodLeaderConfig)
+          .follow(HoodConstants.kHoodLeaderCanId)
+          .inverted(HoodConstants.kHoodFollowerInverted);
     }
   }
 }
