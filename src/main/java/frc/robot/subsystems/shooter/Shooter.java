@@ -110,7 +110,7 @@ public class Shooter extends SubsystemBase {
    * @param direction The direction of the quasistatic test (forward or backward).
    * @return The command.
    */
-  public Command sysIdQuasiStatic(Direction direction) {
+  public Command sysIdQuasistatic(Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
 
