@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ExtenderConstants;
@@ -254,7 +255,8 @@ public final class Configs {
       hoodLeaderConfig
           .absoluteEncoder
           .positionConversionFactor(hoodFactor) // rotations
-          .velocityConversionFactor(hoodFactor / 60.0); // rotations per second
+          .velocityConversionFactor(hoodFactor / 60.0) // rotations per second
+          .apply(AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoder);
 
       hoodFollowerConfig
           .apply(hoodLeaderConfig)
