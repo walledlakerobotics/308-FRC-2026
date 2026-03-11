@@ -5,10 +5,12 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -27,6 +29,7 @@ import edu.wpi.first.math.numbers.N4;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.utils.CANIDs;
 import java.util.List;
@@ -110,16 +113,16 @@ public final class Constants {
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
 
-    public static final DCMotor kDrivingMotor = DCMotor.getNEO(1);
-
     public static final double kDrivingMotorReduction = 6.75;
-    public static final double kDriveFreeSpeedMetersPerSecond =
-        (kDrivingMotor.freeSpeedRadPerSec * kWheelRadiusMeters) / kDrivingMotorReduction;
-
     public static final double kTurningMotorReduction = 150.0 / 7;
 
-    public static final double kMaxSteerSpeedRadPerSec =
-        0.9 * kDrivingMotor.freeSpeedRadPerSec / kTurningMotorReduction;
+    public static final DCMotor kDrivingMotor =
+        DCMotor.getNEO(1).withReduction(kDrivingMotorReduction);
+
+    public static final DCMotor kTurningMotor =
+        DCMotor.getNEO(1).withReduction(kTurningMotorReduction);
+
+    public static final double kMaxSteerSpeedRadPerSec = 0.9 * kDrivingMotor.freeSpeedRadPerSec;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
@@ -129,7 +132,8 @@ public final class Constants {
 
     public static final boolean kDrivingMotorsInverted = true;
     public static final boolean kTurningMotorsInverted = true;
-    public static final boolean kTurningEncoderInverted = false;
+    public static final SensorDirectionValue kTurningEncoderDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
   }
 
   public static final class OIConstants {
@@ -214,14 +218,15 @@ public final class Constants {
     public static final int kIntakeMotorSupplyCurrentLimit = 70; // amps
     public static final InvertedValue kIntakeMotorInverted = InvertedValue.Clockwise_Positive;
 
-    public static final double kIntakeSpeed = 0.5;
+    public static final DCMotor kIntakeMotor =
+        DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
+
+    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(3000.0);
   }
 
   public static final class ShooterConstants {
     public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
     public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
-
-    public static final DCMotor kShooterMotor = DCMotor.getKrakenX60(2);
 
     public static final double kShooterMotorReduction = 1.0;
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
@@ -230,6 +235,9 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+
+    public static final DCMotor kShooterMotor =
+        DCMotor.getKrakenX60(1).withReduction(kShooterMotorReduction);
 
     public static final int kVirtualTargetIterations = 5;
   }
@@ -259,17 +267,21 @@ public final class Constants {
   public static final class IndexerConstants {
 
     public static final int kMotorCANId = CANIDs.secondaryMotor(0);
-    public static final double kMotorSpeed = 0.5;
-    public static final double kReduction = 1.0;
+    public static final double kIndexerMotorReduction = 1.0;
 
     public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
     public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
+
+    public static final DCMotor kIndexerMotor =
+        DCMotor.getKrakenX44(1).withReduction(kIndexerMotorReduction);
 
     public static final int kIndexerMotorStatorCurrentLimit = 120; // amps
     public static final int kIndexerMotorSupplyCurrentLimit = 70; // amps
 
     public static final int kLeftLightSensorChannel = 0;
     public static final int kRightLightSensorChannel = 0;
+
+    public static final AngularVelocity kIndexerVelocity = RotationsPerSecond.of(3000.0);
   }
 
   public static final class FeederConstants {
@@ -279,6 +291,11 @@ public final class Constants {
     public static final int kFeederMotorStatorCurrentLimit = 120;
     public static final int kFeederMotorSupplyCurrentLimit = 70;
     public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
-    public static final double kfeederspeed = 0.5;
+
+    public static final DCMotor kFeederMotor =
+        DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
+
+    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(1.0);
+    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3000.0);
   }
 }
