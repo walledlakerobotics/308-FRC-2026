@@ -214,14 +214,15 @@ public final class Constants {
     public static final int kIntakeMotorSupplyCurrentLimit = 70; // amps
     public static final InvertedValue kIntakeMotorInverted = InvertedValue.Clockwise_Positive;
 
+    public static final DCMotor kIntakeMotor =
+        DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
+
     public static final double kIntakeSpeed = 0.5;
   }
 
   public static final class ShooterConstants {
     public static final int kShooterLeaderCanId = CANIDs.secondaryMotor(2);
     public static final int kShooterFollowerCanId = CANIDs.secondaryMotor(3);
-
-    public static final DCMotor kShooterMotor = DCMotor.getKrakenX60(2);
 
     public static final double kShooterMotorReduction = 1.0;
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
@@ -230,6 +231,9 @@ public final class Constants {
     public static final InvertedValue kShooterLeaderInverted =
         InvertedValue.CounterClockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
+
+    public static final DCMotor kShooterMotor =
+        DCMotor.getKrakenX60(1).withReduction(kShooterMotorReduction);
 
     public static final int kVirtualTargetIterations = 5;
   }
