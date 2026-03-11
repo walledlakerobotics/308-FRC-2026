@@ -1,8 +1,12 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,6 +20,7 @@ import frc.robot.Constants.FeederConstants;
 public class Feeder extends SubsystemBase {
   private TalonFX m_motor = new TalonFX(FeederConstants.kFeederCanId);
   private VoltageOut m_voltageControl = new VoltageOut(0.0);
+  private VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
   private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
@@ -36,16 +41,28 @@ public class Feeder extends SubsystemBase {
     m_motor.setControl(m_voltageControl.withOutput(volts));
   }
 
+  public void setVelocity(AngularVelocity velocity) {
+    m_motor.setControl(m_velocityVoltageControl.withVelocity(velocity));
+  }
+
   public void run() {
-    m_motor.set(FeederConstants.kfeederspeed);
+    setVelocity(FeederConstants.kFeedingVelocity);
+  }
+
+  public void runIdle() {
+    setVelocity(FeederConstants.kIdleVelocity);
   }
 
   public void stop() {
-    m_motor.set(0.0);
+    setVelocity(RotationsPerSecond.of(0.0));
   }
 
-  public Command feeder() {
+  public Command feed() {
     return startEnd(this::run, this::stop);
+  }
+
+  public Command idlePush() {
+    return startEnd(this::runIdle, this::stop);
   }
 
   /**
