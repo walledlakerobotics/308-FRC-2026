@@ -236,6 +236,10 @@ public final class Configs {
     public static final TalonFXConfiguration indexConfig = new TalonFXConfiguration();
 
     static {
+      double indexerVelocityFeedForward =
+          Constants.kNominalVoltage
+              / Units.radiansToRotations(IndexerConstants.kIndexerMotor.freeSpeedRadPerSec);
+
       indexConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -249,7 +253,15 @@ public final class Configs {
               new FeedbackConfigs()
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
                   .withRotorToSensorRatio(1.0)
-                  .withSensorToMechanismRatio(IndexerConstants.kReduction));
+                  .withSensorToMechanismRatio(IndexerConstants.kIndexerMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(indexerVelocityFeedForward)
+                  .withKA(0.0));
     }
   }
 }
