@@ -117,6 +117,9 @@ public final class Constants {
     public static final DCMotor kDrivingMotor =
         DCMotor.getNEO(1).withReduction(kDrivingMotorReduction);
 
+    public static final DCMotor kTurningMotor =
+        DCMotor.getNEO(1).withReduction(kTurningMotorReduction);
+
     public static final double kMaxSteerSpeedRadPerSec = 0.9 * kDrivingMotor.freeSpeedRadPerSec;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
