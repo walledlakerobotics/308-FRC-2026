@@ -111,16 +111,13 @@ public final class Constants {
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
 
-    public static final DCMotor kDrivingMotor = DCMotor.getNEO(1);
-
     public static final double kDrivingMotorReduction = 6.75;
-    public static final double kDriveFreeSpeedMetersPerSecond =
-        (kDrivingMotor.freeSpeedRadPerSec * kWheelRadiusMeters) / kDrivingMotorReduction;
-
     public static final double kTurningMotorReduction = 150.0 / 7;
 
-    public static final double kMaxSteerSpeedRadPerSec =
-        0.9 * kDrivingMotor.freeSpeedRadPerSec / kTurningMotorReduction;
+    public static final DCMotor kDrivingMotor =
+        DCMotor.getNEO(1).withReduction(kDrivingMotorReduction);
+
+    public static final double kMaxSteerSpeedRadPerSec = 0.9 * kDrivingMotor.freeSpeedRadPerSec;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
