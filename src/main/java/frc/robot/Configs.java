@@ -178,6 +178,10 @@ public final class Configs {
     public static final TalonFXConfiguration feederConfig = new TalonFXConfiguration();
 
     static {
+      double feederVelocityFeedForward =
+          Constants.kNominalVoltage
+              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
+
       feederConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -191,7 +195,15 @@ public final class Configs {
               new FeedbackConfigs()
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
                   .withRotorToSensorRatio(0)
-                  .withSensorToMechanismRatio(FeederConstants.kFeederMotorReduction));
+                  .withSensorToMechanismRatio(FeederConstants.kFeederMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(feederVelocityFeedForward)
+                  .withKA(0.0));
     }
   }
 
