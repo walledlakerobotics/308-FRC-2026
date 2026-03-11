@@ -33,7 +33,9 @@ public final class Configs {
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
 
       double drivingVelocityFeedForward =
-          Constants.kNominalVoltage / ModuleConstants.kDriveFreeSpeedMetersPerSecond;
+          Constants.kNominalVoltage
+              / (ModuleConstants.kDrivingMotor.freeSpeedRadPerSec
+                  * ModuleConstants.kWheelRadiusMeters);
 
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
