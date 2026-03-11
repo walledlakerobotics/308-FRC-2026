@@ -1,8 +1,12 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +23,7 @@ public class Indexer extends SubsystemBase {
   private TalonFX m_motor = new TalonFX(IndexerConstants.kMotorCANId);
 
   private VoltageOut m_voltageControl = new VoltageOut(0.0);
+  private VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
   private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
@@ -44,12 +49,16 @@ public class Indexer extends SubsystemBase {
     m_motor.setControl(m_voltageControl.withOutput(volts));
   }
 
+  public void setVelocity(AngularVelocity velocity) {
+    m_motor.setControl(m_velocityVoltageControl.withVelocity(velocity));
+  }
+
   public void run() {
-    m_motor.set(IndexerConstants.kMotorSpeed);
+    setVelocity(IndexerConstants.kIndexerVelocity);
   }
 
   public void stop() {
-    m_motor.set(0);
+    setVelocity(RotationsPerSecond.of(0.0));
   }
 
   /**
