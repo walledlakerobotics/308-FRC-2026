@@ -87,7 +87,7 @@ public class Indexer extends SubsystemBase {
    * @return The command.
    */
   public Command feed() {
-    return runEnd(this::run, this::stop);
+    return startEnd(this::run, this::stop);
   }
 
   /**
