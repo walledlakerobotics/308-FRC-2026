@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.drive.Drivetrain;
+import frc.robot.subsystems.shooter.Shooter;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -21,6 +26,10 @@ import frc.robot.subsystems.drive.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems
   private final Drivetrain m_robotDrive = new Drivetrain();
+
+  private final Feeder m_feeder = new Feeder();
+  private final Indexer m_indexer = new Indexer();
+  private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
 
   // The driver's controller
   CommandXboxController m_driverController =
@@ -52,6 +61,14 @@ public class RobotContainer {
     m_driverController.rightBumper().whileTrue(m_robotDrive.setX());
 
     m_driverController.leftBumper().onTrue(m_robotDrive.resetFieldRelative());
+
+    m_driverController.leftTrigger().whileTrue(m_feeder.feed().alongWith(m_indexer.feed()));
+
+    m_driverController
+        .rightTrigger()
+        .whileTrue(
+            m_shooter.startEnd(
+                () -> m_shooter.setVelocity(RotationsPerSecond.of(4500.0)), m_shooter::coast));
   }
 
   /**
