@@ -47,7 +47,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.shooter.math.VirtualTarget;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -175,7 +174,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_field.setRobotPose(getPose());
 
-    VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
+    // VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
   }
 
   /**
