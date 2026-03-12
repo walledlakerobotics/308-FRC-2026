@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,10 +35,10 @@ public class Indexer extends SubsystemBase {
               }),
           new Mechanism(this::setVoltage, null, this, "indexer"));
 
-  private DigitalInput m_lightDetectorLeft =
-      new DigitalInput(IndexerConstants.kLeftLightSensorChannel);
-  private DigitalInput m_lightDetectorRight =
-      new DigitalInput(IndexerConstants.kRightLightSensorChannel);
+  // private DigitalInput m_lightDetectorLeft =
+  //     new DigitalInput(IndexerConstants.kLeftLightSensorChannel);
+  // private DigitalInput m_lightDetectorRight =
+  //     new DigitalInput(IndexerConstants.kRightLightSensorChannel);
 
   public Indexer() {
     m_motor.getConfigurator().apply(Configs.Indexer.indexConfig);
@@ -67,7 +66,8 @@ public class Indexer extends SubsystemBase {
    * @return bool
    */
   public boolean isBallDetected() {
-    return m_lightDetectorLeft.get() || m_lightDetectorRight.get();
+    return false;
+    // return m_lightDetectorLeft.get() || m_lightDetectorRight.get();
   }
 
   /**
