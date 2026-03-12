@@ -130,7 +130,7 @@ public final class Constants {
     public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 35; // amps
 
-    public static final boolean kDrivingMotorsInverted = true;
+    public static final boolean kDrivingMotorsInverted = false;
     public static final boolean kTurningMotorsInverted = true;
     public static final SensorDirectionValue kTurningEncoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
@@ -170,9 +170,7 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String[] kCameraNames = {
-      "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
-    };
+    public static final String[] kCameraNames = {"Arducam OV9281 #1", "Arducam OV9281 #2"};
 
     public static final Transform3d[] kRobotToCameraTransforms = {
       Transform3d.kZero, Transform3d.kZero, Transform3d.kZero, Transform3d.kZero
@@ -266,11 +264,11 @@ public final class Constants {
 
   public static final class IndexerConstants {
 
-    public static final int kMotorCANId = CANIDs.secondaryMotor(0);
+    public static final int kMotorCANId = CANIDs.secondaryMotor(6);
     public static final double kIndexerMotorReduction = 1.0;
 
     public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
-    public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue kMotorInvertedValue = InvertedValue.CounterClockwise_Positive;
 
     public static final DCMotor kIndexerMotor =
         DCMotor.getKrakenX44(1).withReduction(kIndexerMotorReduction);
@@ -285,12 +283,12 @@ public final class Constants {
   }
 
   public static final class FeederConstants {
-    public static final int kFeederCanId = CANIDs.secondaryMotor(0);
+    public static final int kFeederCanId = CANIDs.secondaryMotor(7);
     public static final double kFeederMotorReduction = 1.0;
     public static final NeutralModeValue kFeederIntakeNeutralMode = NeutralModeValue.Brake;
     public static final int kFeederMotorStatorCurrentLimit = 120;
     public static final int kFeederMotorSupplyCurrentLimit = 70;
-    public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue kFeederInverted = InvertedValue.CounterClockwise_Positive;
 
     public static final DCMotor kFeederMotor =
         DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
