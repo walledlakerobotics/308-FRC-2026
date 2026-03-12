@@ -230,7 +230,7 @@ public final class Configs {
                   .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(0.1)
+                  .withKP(1.2)
                   .withKI(0.0)
                   .withKD(0.0)
                   .withKS(0.0)
