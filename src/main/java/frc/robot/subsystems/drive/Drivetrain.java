@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -51,6 +52,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /** Subsystem to control a swerve drivetrain. */
+@Logged
 public class Drivetrain extends SubsystemBase {
   // Create SwerveModules
   private final SwerveModule m_frontLeft =
@@ -82,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
           DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
+  private final AHRS m_gyro = new AHRS(NavXComType.kUSB1);
 
   // Pose estimator class for tracking robot pose
   private final SwerveDrivePoseEstimator3d m_odometry =
@@ -296,6 +298,10 @@ public class Drivetrain extends SubsystemBase {
    */
   public Rotation2d getTurnRate() {
     return Rotation2d.fromDegrees(-m_gyro.getRate());
+  }
+
+  public boolean connect() {
+    return m_gyro.isConnected();
   }
 
   /**
