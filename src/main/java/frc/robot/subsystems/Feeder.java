@@ -49,6 +49,10 @@ public class Feeder extends SubsystemBase {
     setVelocity(FeederConstants.kFeedingVelocity);
   }
 
+  public void runBack() {
+    setVelocity(FeederConstants.kFeedingVelocity);
+  }
+
   public void runIdle() {
     setVelocity(FeederConstants.kIdleVelocity);
   }
