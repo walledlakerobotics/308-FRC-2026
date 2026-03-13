@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -41,10 +40,8 @@ public class Robot extends TimedRobot {
     // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    DataLogManager.start(Constants.kLoggingDir);
+    DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-
-    SignalLogger.setPath(Constants.kLoggingDir);
 
     Epilogue.bind(this);
   }
