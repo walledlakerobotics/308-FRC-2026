@@ -41,10 +41,10 @@ public class Robot extends TimedRobot {
     // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    DataLogManager.start("/media/sda1");
+    DataLogManager.start(Constants.kLoggingDir);
     DriverStation.startDataLog(DataLogManager.getLog());
 
-    SignalLogger.setPath("/media/sda1");
+    SignalLogger.setPath(Constants.kLoggingDir);
 
     Epilogue.bind(this);
   }

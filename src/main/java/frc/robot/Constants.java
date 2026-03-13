@@ -51,6 +51,8 @@ public final class Constants {
   public static final double kPeriodSeconds = TimedRobot.kDefaultPeriod;
   public static final double kNominalVoltage = 12.0;
 
+  public static final String kLoggingDir = "/media/sda1";
+
   public static final RobotConfig kRobotConfig;
 
   static {
