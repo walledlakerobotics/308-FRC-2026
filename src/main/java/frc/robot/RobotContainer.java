@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -23,6 +25,7 @@ import frc.robot.subsystems.shooter.Shooter;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
+@Logged
 public class RobotContainer {
   // The robot's subsystems
   private final Drivetrain m_robotDrive = new Drivetrain();
@@ -30,6 +33,7 @@ public class RobotContainer {
   private final Feeder m_feeder = new Feeder();
   private final Indexer m_indexer = new Indexer();
   private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
+  private final Intake m_intake = new Intake();
 
   // The driver's controller
   CommandXboxController m_driverController =
@@ -64,11 +68,13 @@ public class RobotContainer {
 
     m_driverController.leftTrigger().whileTrue(m_feeder.feed().alongWith(m_indexer.feed()));
 
+    m_driverController.y().whileTrue(m_intake.intake());
+
     m_driverController
         .rightTrigger()
         .whileTrue(
             m_shooter.startEnd(
-                () -> m_shooter.setVelocity(RotationsPerSecond.of(4500.0)), m_shooter::coast));
+                () -> m_shooter.setVelocity(RotationsPerSecond.of(71.0)), m_shooter::coast));
   }
 
   /**
