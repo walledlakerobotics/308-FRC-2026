@@ -21,6 +21,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -173,7 +176,13 @@ public final class Constants {
     public static final String[] kCameraNames = {"Arducam OV9281 #1", "Arducam OV9281 #2"};
 
     public static final Transform3d[] kRobotToCameraTransforms = {
-      Transform3d.kZero, Transform3d.kZero, Transform3d.kZero, Transform3d.kZero
+      new Transform3d(
+          new Pose3d(2.08915, 0.0, -1.12395, new Rotation3d(0.0, 0.0, Math.PI)),
+          new Pose3d(
+              2.144, 0.104, -0.492, new Rotation3d(new Quaternion(-0.196, 0.236, -0.008, 0.952)))),
+      Transform3d.kZero,
+      Transform3d.kZero,
+      Transform3d.kZero
     };
 
     public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
@@ -219,7 +228,7 @@ public final class Constants {
     public static final DCMotor kIntakeMotor =
         DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
 
-    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(3000.0);
+    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(75.0);
   }
 
   public static final class ShooterConstants {
@@ -284,7 +293,7 @@ public final class Constants {
 
   public static final class FeederConstants {
     public static final int kFeederCanId = CANIDs.secondaryMotor(7);
-    public static final double kFeederMotorReduction = 1.0;
+    public static final double kFeederMotorReduction = 30.0 / 18.0;
     public static final NeutralModeValue kFeederIntakeNeutralMode = NeutralModeValue.Brake;
     public static final int kFeederMotorStatorCurrentLimit = 120;
     public static final int kFeederMotorSupplyCurrentLimit = 70;
@@ -293,7 +302,7 @@ public final class Constants {
     public static final DCMotor kFeederMotor =
         DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
 
-    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(1.0);
-    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3000.0);
+    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(5.0);
+    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3600.0);
   }
 }
