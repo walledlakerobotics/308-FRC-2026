@@ -1,90 +1,108 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLimitSwitch;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ExtenderConstants;
 
+// import frc.robot.utils.DIOAbsoluteEncoder;
+
 public class Extender extends SubsystemBase {
+  private TalonFX m_motor = new TalonFX(ExtenderConstants.kExtenderCanId);
+  // private DIOAbsoluteEncoder m_encoder =
+  //     new DIOAbsoluteEncoder(ExtenderConstants.kExtenderEncoderChannel);
 
-  private SparkMax m_motor = new SparkMax(ExtenderConstants.kExtenderCanId, MotorType.kBrushless);
-  private AbsoluteEncoder m_encoder = m_motor.getAbsoluteEncoder();
+  PositionVoltage m_positonVoltageControl = new PositionVoltage(0.0);
 
-  private SparkLimitSwitch m_closedLimitSwitch =
-      m_motor.getForwardLimitSwitch(); // I might make this depend on the angle of the motor,
-  private SparkLimitSwitch m_openedLimitSwitch =
-      m_motor.getReverseLimitSwitch(); // with an absolute encoder.
+  // private ProfiledPIDController m_pidController =
+  //     new ProfiledPIDController(
+  //         ExtenderConstants.kP,
+  //         ExtenderConstants.kI,
+  //         ExtenderConstants.kD,
+  //         new Constraints(ExtenderConstants.kMaxSpeed, ExtenderConstants.kMaxAcceleration));
+
+  // private ArmFeedforward m_feedforward =
+  //     new ArmFeedforward(
+  //         ExtenderConstants.kS,
+  //         ExtenderConstants.kG,
+  //         ExtenderConstants.kV,
+  //         ExtenderConstants.kA,
+  //         Constants.kPeriodSeconds);
 
   public Extender() {
-    m_motor.configure(
-        Configs.Extender.extenderConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-  }
+    m_motor.getConfigurator().apply(Configs.Extender.extenderConfig);
 
-  // gets the position of the encoder.
-  public double getPosition() {
-    return m_encoder.getPosition();
-  }
-
-  // gets the velocity of the encoder.
-  public double getVelocity() {
-    return m_encoder.getVelocity();
-  }
-
-  public boolean isExtendorClosed() {
-    return m_closedLimitSwitch.isPressed();
-  }
-
-  public boolean isExtendorOpened() {
-    return m_openedLimitSwitch.isPressed();
+    // RobotModeTriggers.disabled()
+    //     .onFalse(
+    //         runOnce(
+    //             () -> {
+    //               m_motor.setPosition(0.0);
+    //               setPosition(ExtenderConstants.kExtendedPosition);
+    //             }));
   }
 
   /**
-   * Runs the extendor motor at a set speed until limit switch is triggered.
+   * Gets the current angle of the extender based on the encoder position.
    *
-   * @return Command
+   * @return The current angle of the extender as an Angle object.
    */
-  public Command closeExtender() {
-    return runOnce(
-            () -> {
-              m_motor.set(-ExtenderConstants.kExdenterMotorSpeed);
-            })
-        .andThen(
-            () -> {
-              Commands.waitUntil(() -> m_closedLimitSwitch.isPressed());
-            })
-        .finallyDo(
-            () -> {
-              m_motor.set(0);
-            });
-  }
+  // public Angle getAngle() {
+  //   return Rotations.of(m_encoder.getPosition());
+  // }
+
+  // // gets the velocity of the encoder.
+  // public double getVelocity() {
+  //   return m_encoder.getVelocity();
+  // }
 
   /**
-   * Runs the extendor motor at a set speed until limit switch is triggered.
+   * Calculates the length of the winch string based on the given extender angle using the law of
+   * cosines and pythagorean theorem.
    *
-   * @return Command
+   * @param extenderAngle The angle of the extender, which is used to calculate the winch string
+   *     length.
+   * @return The length of the winch string in meters.
    */
-  public Command openExtender() {
+  // public double getWinchLength(Angle extenderAngle) {
+  //   double a = ExtenderConstants.kDistanceToMotorMeters;
+  //   double b = ExtenderConstants.kRotationRadiusMeters;
+  //   // law of cosines to find the distance from the motor to the winch attachment point
+  //   double cSquared =
+  //       Math.sqrt(
+  //           Math.pow(a, 2) + Math.pow(b, 2) - 2 * a * b * Math.cos(extenderAngle.in(Radians)));
 
-    return runOnce(
-            () -> {
-              m_motor.set(ExtenderConstants.kExdenterMotorSpeed);
-            })
-        .andThen(
-            () -> {
-              Commands.waitUntil(() -> m_openedLimitSwitch.isPressed());
-            })
-        .finallyDo(
-            () -> {
-              m_motor.set(0);
-            });
+  //   // pythagorean theorem to find the length of the winch string
+  //   return Math.sqrt(cSquared - Math.pow(ExtenderConstants.kExtenderWinchRadiusMeters, 2));
+  // }
+
+  /**
+   * Calculates the length of the winch string based on the current extender angle using the law of
+   * cosines and pythagorean theorem.
+   *
+   * @param extenderAngle The angle of the extender, which is used to calculate the winch string
+   *     length.
+   * @return The length of the winch string in meters.
+   */
+  // public double getWinchLength() {
+  //   return getWinchLength(getAngle());
+  // }
+
+  public void setPosition(double position) {
+    m_motor.setControl(m_positonVoltageControl.withPosition(position));
+  }
+
+  public Command run() {
+    return startEnd(() -> m_motor.setVoltage(-3.0), () -> m_motor.setVoltage(0.0));
+  }
+
+  public Command runDown() {
+    return startEnd(() -> m_motor.setVoltage(3.0), () -> m_motor.setVoltage(0.0));
+  }
+
+  public void addOrchestra(Orchestra orchestra) {
+    orchestra.addInstrument(m_motor);
   }
 }

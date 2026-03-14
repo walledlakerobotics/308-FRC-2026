@@ -4,20 +4,30 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Extender;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.drive.Drivetrain;
+import frc.robot.subsystems.shooter.Hood;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.utils.Field;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -34,15 +44,46 @@ public class RobotContainer {
   private final Indexer m_indexer = new Indexer();
   private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
   private final Intake m_intake = new Intake();
+  private final Hood m_hood = new Hood(m_robotDrive::getPose);
+  private final Extender m_extender = new Extender();
 
   // The driver's controller
   CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_coDriverController =
+      new CommandXboxController(OIConstants.kCoDriverControllerPort);
+
+  @NotLogged private final SendableChooser<Command> m_autoChooser;
+
+  // Orchestra m_orchestra = new Orchestra();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+
+    NamedCommands.registerCommand(
+        "Shoot",
+        Commands.waitUntil(m_shooter::isReady)
+            .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
+            .alongWith(
+                m_shooter.startEnd(
+                    () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)), m_shooter::coast))
+            .withTimeout(10.0));
+
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+
+    autoTab.add(m_autoChooser);
+
+    // m_orchestra.loadMusic("eia.chrp");
+
+    // m_extender.addOrchestra(m_orchestra);
+    // m_intake.addOrchestra(m_orchestra);
+    // m_feeder.addOrchestra(m_orchestra);
+    // m_shooter.addOrchestra(m_orchestra);
+    // m_indexer.addOrchestra(m_orchestra);
   }
 
   /**
@@ -62,19 +103,64 @@ public class RobotContainer {
             m_driverController::getRightX,
             true));
 
-    m_driverController.rightBumper().whileTrue(m_robotDrive.setX());
+    // m_driverController.rightBumper().whileTrue(m_robotDrive.setX());
 
     m_driverController.leftBumper().onTrue(m_robotDrive.resetFieldRelative());
 
-    m_driverController.leftTrigger().whileTrue(m_feeder.feed().alongWith(m_indexer.feed()));
-
-    m_driverController.y().whileTrue(m_intake.intake());
-
     m_driverController
+        .rightBumper()
+        .whileTrue(
+            m_robotDrive.faceTowards(
+                () -> Field.Landmark.Hub.getTranslation(Field.getAlliance()).toTranslation2d(),
+                m_driverController::getLeftY,
+                m_driverController::getLeftX,
+                true));
+
+    // m_coDriverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.waitUntil(m_shooter::isReady)
+    //             .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
+    //             .alongWith(
+    //                 m_shooter.startEnd(
+    //                     () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)),
+    //                     m_shooter::coast)));
+
+    m_coDriverController
+        .rightBumper()
+        .whileTrue(
+            Commands.waitUntil(m_shooter::isReady)
+                .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
+                .alongWith(
+                    m_shooter.startEnd(
+                        () -> m_shooter.setVelocity(RotationsPerSecond.of(73.0)),
+                        m_shooter::coast)));
+
+    m_coDriverController
         .rightTrigger()
         .whileTrue(
-            m_shooter.startEnd(
-                () -> m_shooter.setVelocity(RotationsPerSecond.of(71.0)), m_shooter::coast));
+            Commands.waitUntil(m_shooter::isReady)
+                .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
+                .alongWith(
+                    m_shooter.startEnd(
+                        () -> m_shooter.setVelocity(RotationsPerSecond.of(100.0)),
+                        m_shooter::coast)));
+
+    m_coDriverController.leftBumper().whileTrue(m_intake.intake());
+
+    m_coDriverController.x().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(7))));
+    m_coDriverController.a().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(25.0))));
+    m_coDriverController.b().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(35.0))));
+
+    // m_coDriverController
+    //     .povUp()
+    //     .toggleOnTrue(
+    //         m_extender
+    //             .runOnce(() -> m_extender.setPosition(ExtenderConstants.kExtendedPosition))
+    //             .finallyDo(() -> m_extender.setPosition(0.0)));
+
+    m_coDriverController.povDown().whileTrue(m_extender.run());
+    m_coDriverController.povUp().whileTrue(m_extender.runDown());
   }
 
   /**
@@ -83,6 +169,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return m_autoChooser.getSelected();
   }
 }

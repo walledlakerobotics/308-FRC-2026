@@ -2,12 +2,14 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -26,6 +28,7 @@ import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the Fuel shooter. */
+@Logged
 public class Shooter extends SubsystemBase {
   TalonFX m_shooterLeader = new TalonFX(ShooterConstants.kShooterLeaderCanId);
   TalonFX m_shooterFollower = new TalonFX(ShooterConstants.kShooterFollowerCanId);
@@ -95,6 +98,13 @@ public class Shooter extends SubsystemBase {
     m_shooterLeader.setControl(m_neutralControl);
   }
 
+  public boolean isReady() {
+    return Math.abs(
+            m_velocityVoltageControl.getVelocityMeasure().in(RotationsPerSecond)
+                - m_shooterLeader.getVelocity().getValueAsDouble())
+        < 1;
+  }
+
   /**
    * Gets the current shooter velocity in rotations per second.
    *
@@ -136,5 +146,10 @@ public class Shooter extends SubsystemBase {
    */
   public Command sysIdDynamic(Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void addOrchestra(Orchestra orchestra) {
+    orchestra.addInstrument(m_shooterLeader);
+    orchestra.addInstrument(m_shooterFollower);
   }
 }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -64,8 +64,8 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds
     // of the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.47;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxSpeedMetersPerSecond = 6.0;
+    public static final double kMaxAngularSpeed = 4 * Math.PI; // radians per second
 
     // Odometry measurement standard deviations
     public static final Matrix<N4, N1> kOdometryStdDevs =
@@ -141,12 +141,13 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kCoDriverControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 
   public static final class AutoConstants {
-    public static final PIDConstants kTranslationConstants = new PIDConstants(1, 0, 0);
-    public static final PIDConstants kRotationConstants = new PIDConstants(1, 0, 0);
+    public static final PIDConstants kTranslationConstants = new PIDConstants(3.0, 0.0, 0.0);
+    public static final PIDConstants kRotationConstants = new PIDConstants(10.0, 2.0, 1.0);
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
@@ -208,12 +209,23 @@ public final class Constants {
   public static final class ExtenderConstants {
     public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
 
-    public static final double kExtenderMotorReduction = 1.0;
-    public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
-    public static final int kExtenderMotorCurrentLimit = 30; // amps
-    public static final boolean kExtenderMotorInverted = false;
+    public static final double kExtenderWinchRadiusMeters = Units.inchesToMeters(0.5);
+    public static final double kExtenderWinchDiamaterMeters = 2 * kExtenderWinchRadiusMeters;
+    public static final double kExtenderWinchCircumferenceMeters =
+        kExtenderWinchDiamaterMeters * Math.PI;
 
-    public static final double kExdenterMotorSpeed = 0.5;
+    public static final double kExtenderMotorReduction = 1.0;
+
+    public static final DCMotor kExtenderMotor =
+        DCMotor.getKrakenX60(1).withReduction(kExtenderMotorReduction);
+
+    public static final NeutralModeValue kExtenderMotorNeutralMode = NeutralModeValue.Brake;
+    public static final int kExtenderMotorStatorCurrentLimit = 60; // amps
+    public static final int kExtenderMotorSupplyCurrentLimit = 30; // amps
+    public static final InvertedValue kExtenderMotorInverted =
+        InvertedValue.CounterClockwise_Positive;
+
+    public static final double kExtendedPosition = 10.0;
   }
 
   public static final class IntakeConstants {
@@ -228,7 +240,7 @@ public final class Constants {
     public static final DCMotor kIntakeMotor =
         DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
 
-    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(75.0);
+    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(100.0);
   }
 
   public static final class ShooterConstants {
@@ -253,22 +265,22 @@ public final class Constants {
     public static final int kHoodLeaderCanId = CANIDs.secondaryMotor(4);
     public static final int kHoodFollowerCanId = CANIDs.secondaryMotor(5);
 
-    public static final IdleMode kHoodMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kHoodMotorIdleMode = IdleMode.kCoast;
     public static final int kHoodMotorCurrentLimit = 40; // amps
 
-    public static final boolean kHoodLeaderInverted = false;
-    public static final boolean kHoodFollowerInverted = false;
+    public static final boolean kHoodLeaderInverted = true;
+    public static final boolean kHoodFollowerInverted = true;
 
     // angle between horizontal line and the line between the axle of hood and mount point of the
     // actuator
-    public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
+    public static final Angle kActuatorAngleOffset = Degrees.of(39);
 
-    public static final double kHoodEncoderReduction = 1.0;
+    public static final double kHoodEncoderReduction = 19.08 / 7;
 
-    public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
-    public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
+    public static final double kDistanceToMountPointMeters = 0.2;
+    public static final double kRotationRadiusMeters = 0.075;
 
-    public static final PIDConstants kHoodPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+    public static final PIDConstants kHoodPIDConstants = new PIDConstants(50.0, 100.0, 0.0);
   }
 
   public static final class IndexerConstants {
@@ -303,6 +315,6 @@ public final class Constants {
         DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
 
     public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(5.0);
-    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3600.0);
+    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(30.0);
   }
 }

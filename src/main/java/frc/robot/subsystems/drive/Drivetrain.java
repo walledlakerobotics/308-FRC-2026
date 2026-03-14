@@ -7,8 +7,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
@@ -48,6 +46,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.utils.ChassisSpeedsRateLimiter;
+import frc.robot.utils.Field;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -84,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
           DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final AHRS m_gyro = new AHRS(NavXComType.kUSB1);
+  private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 
   // Pose estimator class for tracking robot pose
   private final SwerveDrivePoseEstimator3d m_odometry =
@@ -100,11 +100,11 @@ public class Drivetrain extends SubsystemBase {
   private final Vision m_vision = new Vision(m_odometry);
 
   // Setpoint for physically possible setpoint transitions
-  private SwerveSetpoint m_previousSetpoint =
-      new SwerveSetpoint(
-          getChassisSpeeds(),
-          getModuleStates(),
-          DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
+  // private SwerveSetpoint m_previousSetpoint =
+  //     new SwerveSetpoint(
+  //         getChassisSpeeds(),
+  //         getModuleStates(),
+  //         DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
 
@@ -144,6 +144,12 @@ public class Drivetrain extends SubsystemBase {
               this,
               "drivetrain-rotation"));
 
+  private final ChassisSpeedsRateLimiter m_speedsRateLimiter =
+      new ChassisSpeedsRateLimiter(
+          DriveConstants.kMaxSpeedMetersPerSecond * 2,
+          DriveConstants.kMaxSpeedMetersPerSecond * 2,
+          DriveConstants.kMaxAngularSpeed * 2);
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Report swerve drive to the HAL
@@ -177,6 +183,11 @@ public class Drivetrain extends SubsystemBase {
     m_field.setRobotPose(getPose());
 
     // VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
+
+    // m_frontLeft.update();
+    // m_frontRight.update();
+    // m_rearLeft.update();
+    // m_rearRight.update();
   }
 
   /**
@@ -300,6 +311,15 @@ public class Drivetrain extends SubsystemBase {
     return Rotation2d.fromDegrees(-m_gyro.getRate());
   }
 
+  public Rotation2d getFieldRelativeHeading() {
+    if (DriverStation.isFMSAttached()) {
+      return getHeading()
+          .plus(Field.getAlliance() == Alliance.Red ? Rotation2d.k180deg : Rotation2d.kZero);
+    } else {
+      return getGyroHeading();
+    }
+  }
+
   public boolean connect() {
     return m_gyro.isConnected();
   }
@@ -312,19 +332,40 @@ public class Drivetrain extends SubsystemBase {
    * @param rot Angular rate of the robot in radians per second.
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(
+      double xSpeed,
+      double ySpeed,
+      double rot,
+      boolean fieldRelative,
+      boolean rateLimitTrans,
+      boolean rateLimitRot) {
     ChassisSpeeds chassisSpeeds;
 
     if (fieldRelative) {
-      Rotation2d headingForFieldRelative =
-          DriverStation.isFMSAttached() ? getHeading() : getGyroHeading();
+      Rotation2d headingForFieldRelative = getFieldRelativeHeading();
       chassisSpeeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, headingForFieldRelative);
     } else {
       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
     }
 
+    ChassisSpeeds limitChassisSpeeds = m_speedsRateLimiter.calculate(chassisSpeeds);
+    ;
+
+    if (rateLimitTrans) {
+      chassisSpeeds.vxMetersPerSecond = limitChassisSpeeds.vxMetersPerSecond;
+      chassisSpeeds.vyMetersPerSecond = limitChassisSpeeds.vyMetersPerSecond;
+    }
+
+    if (rateLimitRot) {
+      chassisSpeeds.omegaRadiansPerSecond = limitChassisSpeeds.omegaRadiansPerSecond;
+    }
+
     drive(chassisSpeeds);
+  }
+
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, false);
   }
 
   /**
@@ -333,11 +374,11 @@ public class Drivetrain extends SubsystemBase {
    * @param chassisSpeeds The desired chassis speeds.
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
-    m_previousSetpoint =
-        DriveConstants.kSetpointGenerator.generateSetpoint(
-            m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
+    // m_previousSetpoint =
+    //     DriveConstants.kSetpointGenerator.generateSetpoint(
+    //         m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
 
-    setModuleStates(m_previousSetpoint.moduleStates());
+    setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /**
@@ -370,7 +411,7 @@ public class Drivetrain extends SubsystemBase {
           ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
           rot *= DriveConstants.kMaxAngularSpeed;
 
-          drive(xSpeed, ySpeed, rot, fieldRelative);
+          drive(xSpeed, ySpeed, rot, fieldRelative, true, true);
         });
   }
 
@@ -520,6 +561,8 @@ public class Drivetrain extends SubsystemBase {
             AutoConstants.kRotationConstants.kI,
             AutoConstants.kRotationConstants.kD)) {
 
+      angleController.enableContinuousInput(-Math.PI, Math.PI);
+
       return startRun(
           angleController::reset,
           () -> {
@@ -538,8 +581,14 @@ public class Drivetrain extends SubsystemBase {
             double rot =
                 angleController.calculate(getHeading().getRadians(), angleToTarget.getRadians());
 
-            drive(xSpeed, ySpeed, rot, fieldRelative);
+            drive(xSpeed, ySpeed, rot, fieldRelative, true, false);
           });
     }
+  }
+
+  public double distanceToHub() {
+    return getPose()
+        .getTranslation()
+        .getDistance(Field.Landmark.Hub.getTranslation(Field.getAlliance()).toTranslation2d());
   }
 }
