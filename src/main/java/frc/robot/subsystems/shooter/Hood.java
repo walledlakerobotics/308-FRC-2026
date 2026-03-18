@@ -57,7 +57,6 @@ public class Hood extends SubsystemBase {
    * @param angle The desired hood angle.
    */
   public void setAngle(Angle angle) {
-    System.out.println(angle.in(Rotations));
     m_controller.setSetpoint(angle.in(Rotations));
   }
 

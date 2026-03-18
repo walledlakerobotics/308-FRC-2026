@@ -53,6 +53,10 @@ public class Intake extends SubsystemBase {
     setVelocity(IntakeConstants.kIntakeVelocity);
   }
 
+  public void runBack() {
+    setVelocity(IntakeConstants.kIntakeVelocity.unaryMinus());
+  }
+
   public void stop() {
     setVelocity(RotationsPerSecond.of(0.0));
   }
@@ -63,6 +67,10 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return startEnd(this::run, this::coast);
+  }
+
+  public Command reverse() {
+    return startEnd(this::runBack, this::coast);
   }
 
   /**

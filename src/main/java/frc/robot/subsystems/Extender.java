@@ -105,4 +105,8 @@ public class Extender extends SubsystemBase {
   public void addOrchestra(Orchestra orchestra) {
     orchestra.addInstrument(m_motor);
   }
+
+  public Command agitate() {
+    return run().withTimeout(0.6).andThen(runDown().withTimeout(0.6)).repeatedly();
+  }
 }

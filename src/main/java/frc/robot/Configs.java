@@ -53,10 +53,10 @@ public final class Configs {
       drivingConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(0.1, 0, 0)
+          .pid(0.2, 0, 0)
           .outputRange(-1.0, 1.0)
           .feedForward
-          .sva(0.0, drivingVelocityFeedForward, 0.0);
+          .sva(0.2, drivingVelocityFeedForward, 0.0);
 
       turningConfig
           .inverted(ModuleConstants.kTurningMotorsInverted)

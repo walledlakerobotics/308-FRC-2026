@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,9 +25,10 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.drive.Drivetrain;
-import frc.robot.subsystems.shooter.Hood;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.utils.Field;
+import frc.robot.utils.MatchTimer;
+import frc.robot.utils.MatchTimer.HubState;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -44,7 +45,7 @@ public class RobotContainer {
   private final Indexer m_indexer = new Indexer();
   private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
   private final Intake m_intake = new Intake();
-  private final Hood m_hood = new Hood(m_robotDrive::getPose);
+  // private final Hood m_hood = new Hood(m_robotDrive::getPose);
   private final Extender m_extender = new Extender();
 
   // The driver's controller
@@ -71,11 +72,15 @@ public class RobotContainer {
             .alongWith(
                 m_shooter.startEnd(
                     () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)), m_shooter::coast))
-            .withTimeout(10.0));
+            .withTimeout(5.0));
+
+    NamedCommands.registerCommand("Agitate", m_extender.agitate());
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
 
-    autoTab.add(m_autoChooser);
+    autoTab.add("Auto", m_autoChooser);
+
+    new EventTrigger("Intake").whileTrue(m_intake.intake());
 
     // m_orchestra.loadMusic("eia.chrp");
 
@@ -116,16 +121,6 @@ public class RobotContainer {
                 m_driverController::getLeftX,
                 true));
 
-    // m_coDriverController
-    //     .rightBumper()
-    //     .whileTrue(
-    //         Commands.waitUntil(m_shooter::isReady)
-    //             .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
-    //             .alongWith(
-    //                 m_shooter.startEnd(
-    //                     () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)),
-    //                     m_shooter::coast)));
-
     m_coDriverController
         .rightBumper()
         .whileTrue(
@@ -133,8 +128,18 @@ public class RobotContainer {
                 .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
                 .alongWith(
                     m_shooter.startEnd(
-                        () -> m_shooter.setVelocity(RotationsPerSecond.of(73.0)),
+                        () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)),
                         m_shooter::coast)));
+
+    // m_coDriverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.waitUntil(m_shooter::isReady)
+    //             .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
+    //             .alongWith(
+    //                 m_shooter.startEnd(
+    //                     () -> m_shooter.setVelocity(RotationsPerSecond.of(73.0)),
+    //                     m_shooter::coast)));
 
     m_coDriverController
         .rightTrigger()
@@ -146,11 +151,14 @@ public class RobotContainer {
                         () -> m_shooter.setVelocity(RotationsPerSecond.of(100.0)),
                         m_shooter::coast)));
 
-    m_coDriverController.leftBumper().whileTrue(m_intake.intake());
+    m_coDriverController.y().whileTrue(m_indexer.reverse());
 
-    m_coDriverController.x().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(7))));
-    m_coDriverController.a().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(25.0))));
-    m_coDriverController.b().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(35.0))));
+    m_coDriverController.leftBumper().whileTrue(m_intake.intake());
+    m_coDriverController.leftTrigger().whileTrue(m_intake.reverse());
+
+    // m_coDriverController.x().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(7))));
+    // m_coDriverController.a().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(25.0))));
+    // m_coDriverController.b().onTrue(m_hood.runOnce(() -> m_hood.setAngle(Degrees.of(35.0))));
 
     // m_coDriverController
     //     .povUp()
@@ -161,6 +169,8 @@ public class RobotContainer {
 
     m_coDriverController.povDown().whileTrue(m_extender.run());
     m_coDriverController.povUp().whileTrue(m_extender.runDown());
+
+    m_coDriverController.povLeft().whileTrue(m_extender.agitate());
   }
 
   /**
@@ -170,5 +180,14 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoChooser.getSelected();
+  }
+
+  @Logged(name = "Hub Switch Time")
+  public double getHubSwitchTime() {
+    HubState state =
+        MatchTimer.getInstance().getMatchPeriod().getHubState().orElse(HubState.Active);
+
+    return MatchTimer.getInstance()
+        .getTimeUntilHubState(state == HubState.Active ? HubState.Inactive : HubState.Active);
   }
 }

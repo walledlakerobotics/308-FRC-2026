@@ -7,6 +7,8 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
@@ -18,7 +20,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -29,6 +31,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -100,11 +104,11 @@ public class Drivetrain extends SubsystemBase {
   private final Vision m_vision = new Vision(m_odometry);
 
   // Setpoint for physically possible setpoint transitions
-  // private SwerveSetpoint m_previousSetpoint =
-  //     new SwerveSetpoint(
-  //         getChassisSpeeds(),
-  //         getModuleStates(),
-  //         DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
+  private SwerveSetpoint m_previousSetpoint =
+      new SwerveSetpoint(
+          getChassisSpeeds(),
+          getModuleStates(),
+          DriveFeedforwards.zeros(Constants.kRobotConfig.numModules));
 
   private final Field2d m_field = new Field2d();
 
@@ -146,9 +150,9 @@ public class Drivetrain extends SubsystemBase {
 
   private final ChassisSpeedsRateLimiter m_speedsRateLimiter =
       new ChassisSpeedsRateLimiter(
-          DriveConstants.kMaxSpeedMetersPerSecond * 2,
-          DriveConstants.kMaxSpeedMetersPerSecond * 2,
-          DriveConstants.kMaxAngularSpeed * 2);
+          DriveConstants.kMaxSpeedMetersPerSecond * 3,
+          DriveConstants.kMaxSpeedMetersPerSecond * 3,
+          DriveConstants.kMaxAngularSpeed * 3);
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -350,7 +354,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     ChassisSpeeds limitChassisSpeeds = m_speedsRateLimiter.calculate(chassisSpeeds);
-    ;
 
     if (rateLimitTrans) {
       chassisSpeeds.vxMetersPerSecond = limitChassisSpeeds.vxMetersPerSecond;
@@ -374,11 +377,19 @@ public class Drivetrain extends SubsystemBase {
    * @param chassisSpeeds The desired chassis speeds.
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
-    // m_previousSetpoint =
-    //     DriveConstants.kSetpointGenerator.generateSetpoint(
-    //         m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
+    if (chassisSpeeds.equals(new ChassisSpeeds())) {
+      m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+      m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+      m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+      m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+      return;
+    }
 
-    setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
+    m_previousSetpoint =
+        DriveConstants.kSetpointGenerator.generateSetpoint(
+            m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
+
+    setModuleStates(m_previousSetpoint.moduleStates());
   }
 
   /**
@@ -555,35 +566,50 @@ public class Drivetrain extends SubsystemBase {
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       boolean fieldRelative) {
-    try (PIDController angleController =
-        new PIDController(
+
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
             AutoConstants.kRotationConstants.kP,
             AutoConstants.kRotationConstants.kI,
-            AutoConstants.kRotationConstants.kD)) {
+            AutoConstants.kRotationConstants.kD,
+            new Constraints(
+                DriveConstants.kMaxAngularSpeed * 2, DriveConstants.kMaxAngularSpeed * 20));
 
-      angleController.enableContinuousInput(-Math.PI, Math.PI);
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+    angleController.setIZone(Units.degreesToRadians(10));
 
-      return startRun(
-          angleController::reset,
-          () -> {
-            Translation2d robotTranslation = getPose().getTranslation();
-            Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
+    return startRun(
+        () ->
+            angleController.reset(
+                getHeading().getRadians(), getChassisSpeeds().omegaRadiansPerSecond),
+        () -> {
+          Translation2d robotTranslation = getPose().getTranslation();
+          Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
 
-            double xSpeed = translationXSupplier.getAsDouble();
-            double ySpeed = translationYSupplier.getAsDouble();
+          double xSpeed = translationXSupplier.getAsDouble();
+          double ySpeed = translationYSupplier.getAsDouble();
 
-            xSpeed = -MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband);
-            ySpeed = -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband);
+          xSpeed = -MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband);
+          ySpeed = -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband);
 
-            xSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
-            ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+          xSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+          ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
 
-            double rot =
-                angleController.calculate(getHeading().getRadians(), angleToTarget.getRadians());
+          ChassisSpeeds speeds = getChassisSpeeds();
 
-            drive(xSpeed, ySpeed, rot, fieldRelative, true, false);
-          });
-    }
+          double distance = robotTranslation.getDistance(point.get());
+
+          double rotFF = 1.4 * -speeds.vyMetersPerSecond / distance;
+
+          double rot =
+              rotFF
+                  + angleController.calculate(
+                      getHeading().getRadians(), angleToTarget.getRadians());
+
+          System.out.println(Math.abs(getHeading().getDegrees() - angleToTarget.getDegrees()));
+
+          drive(xSpeed, ySpeed, rot, fieldRelative, true, false);
+        });
   }
 
   public double distanceToHub() {

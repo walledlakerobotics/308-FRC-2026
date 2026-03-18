@@ -70,7 +70,7 @@ public class Vision {
 
     if (latestResult.get().getBestTarget() != null
         && latestResult.get().getBestTarget().bestCameraToTarget != null
-        && cameraIndex == 0) {
+        && cameraIndex == 1) {
       m_cameraPose =
           Pose3d.kZero.transformBy(latestResult.get().getBestTarget().bestCameraToTarget.inverse());
     }

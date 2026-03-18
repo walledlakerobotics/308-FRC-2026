@@ -23,6 +23,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -72,9 +73,9 @@ public final class Constants {
         VecBuilder.fill(0.001, 0.001, 0.001, 0.01);
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(23);
+    public static final double kTrackWidth = Units.inchesToMeters(21.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(23.125);
+    public static final double kWheelBase = Units.inchesToMeters(21.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
@@ -147,7 +148,7 @@ public final class Constants {
 
   public static final class AutoConstants {
     public static final PIDConstants kTranslationConstants = new PIDConstants(3.0, 0.0, 0.0);
-    public static final PIDConstants kRotationConstants = new PIDConstants(10.0, 2.0, 1.0);
+    public static final PIDConstants kRotationConstants = new PIDConstants(1.5, 0.0, 0.0);
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
@@ -178,20 +179,47 @@ public final class Constants {
 
     public static final Transform3d[] kRobotToCameraTransforms = {
       new Transform3d(
-          new Pose3d(2.08915, 0.0, -1.12395, new Rotation3d(0.0, 0.0, Math.PI)),
           new Pose3d(
-              2.144, 0.104, -0.492, new Rotation3d(new Quaternion(-0.196, 0.236, -0.008, 0.952)))),
-      Transform3d.kZero,
+              Units.inchesToMeters(24.0),
+              0.0,
+              Units.inchesToMeters(-44.25),
+              new Rotation3d(Rotation2d.k180deg)),
+          new Pose3d(
+              0.6128275955053124,
+              0.09668390599339825,
+              -0.5964829934833575,
+              new Rotation3d(
+                  new Quaternion(
+                      -0.1299234066976117,
+                      0.2125947453635515,
+                      -0.011083582808246062,
+                      0.9683981701943858)))),
+      new Transform3d(
+          new Pose3d(
+              Units.inchesToMeters(24.0),
+              0.0,
+              Units.inchesToMeters(-44.25),
+              new Rotation3d(Rotation2d.k180deg)),
+          new Pose3d(
+              0.5942146854401791,
+              -0.23197565220133776,
+              -0.5973754694329283,
+              new Rotation3d(
+                  new Quaternion(
+                      0.10571767646617448,
+                      0.1980934342547792,
+                      0.03918154332501794,
+                      0.9736769537300156)))),
       Transform3d.kZero,
       Transform3d.kZero
     };
 
     public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
         List.of(
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
+            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
+            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
+            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
+            VecBuilder.fill(0.01, 0.01, 0.01, 3.0));
   }
 
   public static final class MatchConstants {
@@ -220,8 +248,8 @@ public final class Constants {
         DCMotor.getKrakenX60(1).withReduction(kExtenderMotorReduction);
 
     public static final NeutralModeValue kExtenderMotorNeutralMode = NeutralModeValue.Brake;
-    public static final int kExtenderMotorStatorCurrentLimit = 60; // amps
-    public static final int kExtenderMotorSupplyCurrentLimit = 30; // amps
+    public static final int kExtenderMotorStatorCurrentLimit = 40; // amps
+    public static final int kExtenderMotorSupplyCurrentLimit = 20; // amps
     public static final InvertedValue kExtenderMotorInverted =
         InvertedValue.CounterClockwise_Positive;
 

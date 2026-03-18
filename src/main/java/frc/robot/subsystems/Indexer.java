@@ -57,6 +57,10 @@ public class Indexer extends SubsystemBase {
     setVelocity(IndexerConstants.kIndexerVelocity);
   }
 
+  public void runBack() {
+    setVelocity(IndexerConstants.kIndexerVelocity.unaryMinus());
+  }
+
   public void stop() {
     setVelocity(RotationsPerSecond.of(0.0));
   }
@@ -89,6 +93,10 @@ public class Indexer extends SubsystemBase {
    */
   public Command feed() {
     return startEnd(this::run, this::stop);
+  }
+
+  public Command reverse() {
+    return startEnd(this::runBack, this::stop);
   }
 
   /**
