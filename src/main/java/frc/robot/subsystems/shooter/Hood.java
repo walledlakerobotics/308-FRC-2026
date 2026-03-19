@@ -11,7 +11,9 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.HoodConstants;
@@ -34,10 +36,12 @@ public class Hood extends SubsystemBase {
   private final BangBangController m_controller = new BangBangController(0.01);
 
   private Supplier<Pose2d> robotPoseSupplier;
+  private Supplier<ChassisSpeeds> robotSpeedsSupplier;
 
   /** Creates a new Hood */
-  public Hood(Supplier<Pose2d> robotPoseSupplier) {
+  public Hood(Supplier<Pose2d> robotPoseSupplier, Supplier<ChassisSpeeds> robotSpeedsSupplier) {
     this.robotPoseSupplier = robotPoseSupplier;
+    this.robotSpeedsSupplier = robotSpeedsSupplier;
 
     m_hoodLeader.configure(
         Configs.Hood.hoodLeaderConfig,
@@ -101,12 +105,21 @@ public class Hood extends SubsystemBase {
    * flight.
    *
    * @param target The target position in field coordinates that the shooter should aim at.
+   * @param alliance The alliance of the target.
+   * @pa
    */
-  public void aimAt(Landmark target) {
-    Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
+  public void aimAt(Landmark target, Alliance alliance) {
+    Translation2d virtualTarget =
+        VirtualTarget.getInstance()
+            .calculateVirtualTarget(
+                target, alliance, robotPoseSupplier.get(), robotSpeedsSupplier.get())
+            .toTranslation2d();
+
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
-    setAngle(TrajectoryModel.hoodAngle(distanceToVirtualTarget));
+
+    setAngle(
+        TrajectoryModel.hoodAngle(distanceToVirtualTarget, target.getTranslation(alliance).getZ()));
   }
 
   @Override
