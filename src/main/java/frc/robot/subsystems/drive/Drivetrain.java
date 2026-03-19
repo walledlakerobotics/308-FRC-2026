@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -33,6 +35,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -215,7 +218,7 @@ public class Drivetrain extends SubsystemBase {
     ChassisSpeeds chassisSpeeds =
         DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
 
-    chassisSpeeds.omegaRadiansPerSecond = getTurnRate().getRadians();
+    chassisSpeeds.omegaRadiansPerSecond = getTurnRate().in(RadiansPerSecond);
     return chassisSpeeds;
   }
 
@@ -313,10 +316,10 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Gets the turn rate of the robot.
    *
-   * @return The turn rate of the robot as a {@link Rotation2d}.
+   * @return The turn rate of the robot as a {@link AngularVelocity}.
    */
-  public Rotation2d getTurnRate() {
-    return Rotation2d.fromDegrees(-m_gyro.getRate());
+  public AngularVelocity getTurnRate() {
+    return DegreesPerSecond.of(-m_gyro.getRate());
   }
 
   /**
