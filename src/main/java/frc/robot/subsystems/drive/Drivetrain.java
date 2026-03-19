@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -33,6 +35,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -186,13 +189,6 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(getGyroRotation3d(), getModulePositions());
 
     m_field.setRobotPose(getPose());
-
-    // VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
-
-    // m_frontLeft.update();
-    // m_frontRight.update();
-    // m_rearLeft.update();
-    // m_rearRight.update();
   }
 
   /**
@@ -214,7 +210,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * Gets the current {@link ChassisSpeeds} of the robot.
+   * Gets the current robot-relative {@link ChassisSpeeds} of the robot.
    *
    * @return The current ChassisSpeeds of the robot.
    */
@@ -222,8 +218,18 @@ public class Drivetrain extends SubsystemBase {
     ChassisSpeeds chassisSpeeds =
         DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
 
-    chassisSpeeds.omegaRadiansPerSecond = getTurnRate().getRadians();
+    chassisSpeeds.omegaRadiansPerSecond = getTurnRate().in(RadiansPerSecond);
     return chassisSpeeds;
+  }
+
+  /**
+   * Gets the current field-relative {@link ChassisSpeeds} of the robot.
+   *
+   * @return The current ChassisSpeeds of the robot.
+   */
+  public ChassisSpeeds getFieldSpeeds() {
+    ChassisSpeeds chassisSpeeds = getChassisSpeeds();
+    return ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, getHeading());
   }
 
   /**
@@ -310,13 +316,18 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Gets the turn rate of the robot.
    *
-   * @return The turn rate of the robot as a {@link Rotation2d}.
+   * @return The turn rate of the robot as a {@link AngularVelocity}.
    */
-  public Rotation2d getTurnRate() {
-    return Rotation2d.fromDegrees(-m_gyro.getRate());
+  public AngularVelocity getTurnRate() {
+    return DegreesPerSecond.of(-m_gyro.getRate());
   }
 
-  public Rotation2d getFieldRelativeHeading() {
+  /**
+   * Gets the heading used for field-centric controls.
+   *
+   * @return The heading to use for field-centric controls as a {@link Rotation2d}.
+   */
+  public Rotation2d getFieldCentricHeading() {
     if (DriverStation.isFMSAttached()) {
       return getHeading()
           .plus(Field.getAlliance() == Alliance.Red ? Rotation2d.k180deg : Rotation2d.kZero);
@@ -347,7 +358,7 @@ public class Drivetrain extends SubsystemBase {
     ChassisSpeeds chassisSpeeds;
 
     if (fieldRelative) {
-      Rotation2d headingForFieldRelative = getFieldRelativeHeading();
+      Rotation2d headingForFieldRelative = getFieldCentricHeading();
       chassisSpeeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, headingForFieldRelative);
     } else {

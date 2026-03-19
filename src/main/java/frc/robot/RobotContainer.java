@@ -33,9 +33,9 @@ import frc.robot.utils.MatchTimer;
 import frc.robot.utils.MatchTimer.HubState;
 
 /*
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 @Logged
@@ -45,9 +45,10 @@ public class RobotContainer {
 
   private final Feeder m_feeder = new Feeder();
   private final Indexer m_indexer = new Indexer();
-  private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
+  private final Shooter m_shooter =
+      new Shooter(m_robotDrive::getPose, m_robotDrive::getChassisSpeeds);
   private final Intake m_intake = new Intake();
-  // private final Hood m_hood = new Hood(m_robotDrive::getPose);
+  // private final Hood m_hood = new Hood(m_robotDrive::getPose, m_robotDrive::getChassisSpeeds);
   private final Extender m_extender = new Extender();
 
   // The driver's controller

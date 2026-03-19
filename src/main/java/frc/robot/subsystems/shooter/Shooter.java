@@ -12,8 +12,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -38,6 +40,7 @@ public class Shooter extends SubsystemBase {
   private final VelocityVoltage m_velocityVoltageControl = new VelocityVoltage(0.0);
 
   private Supplier<Pose2d> robotPoseSupplier;
+  private Supplier<ChassisSpeeds> robotSpeedsSupplier;
 
   private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
@@ -51,8 +54,9 @@ public class Shooter extends SubsystemBase {
           new Mechanism(this::setVoltage, null, this, "shooter"));
 
   /** Creates a new Shooter. */
-  public Shooter(Supplier<Pose2d> robotPoseSupplier) {
+  public Shooter(Supplier<Pose2d> robotPoseSupplier, Supplier<ChassisSpeeds> robotSpeedsSupplier) {
     this.robotPoseSupplier = robotPoseSupplier;
+    this.robotSpeedsSupplier = robotSpeedsSupplier;
 
     m_shooterLeader.getConfigurator().apply(Configs.Shooter.shooterConfig);
     m_shooterFollower.getConfigurator().apply(Configs.Shooter.shooterConfig);
@@ -121,11 +125,19 @@ public class Shooter extends SubsystemBase {
    *
    * @param target The target position in field coordinates that the shooter should aim at.
    */
-  public void shootAt(Landmark target) {
-    Translation2d virtualTarget = VirtualTarget.getInstance().getVirtualTarget(target);
+  public void aimAt(Landmark target, Alliance alliance) {
+    Translation2d virtualTarget =
+        VirtualTarget.getInstance()
+            .calculateVirtualTarget(
+                target, alliance, robotPoseSupplier.get(), robotSpeedsSupplier.get())
+            .toTranslation2d();
+
     double distanceToVirtualTarget =
         virtualTarget.minus(robotPoseSupplier.get().getTranslation()).getNorm();
-    setVelocity(TrajectoryModel.shooterVelocity(distanceToVirtualTarget));
+
+    setVelocity(
+        TrajectoryModel.shooterVelocity(
+            distanceToVirtualTarget, target.getTranslation(alliance).getZ()));
   }
 
   /**

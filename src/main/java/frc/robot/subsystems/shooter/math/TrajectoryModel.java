@@ -18,9 +18,10 @@ public class TrajectoryModel {
    * Calculates the required shooter velocity to hit a target at the specified distance.
    *
    * @param distanceMeters The distance to the target in meters.
+   * @param heightMeters The height of the target in meters.
    * @return The required shooter velocity.
    */
-  public static final AngularVelocity shooterVelocity(double distanceMeters) {
+  public static final AngularVelocity shooterVelocity(double distanceMeters, double heightMeters) {
     // Quadratic regression of distance vs. speed data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
@@ -29,9 +30,10 @@ public class TrajectoryModel {
    * Calculates the required shooter angle to hit a target at the specified distance.
    *
    * @param distanceMeters The distance to the target in meters.
+   * @param heightMeters The height of the target in meters.
    * @return The required shooter angle.
    */
-  public static final Angle hoodAngle(double distanceMeters) {
+  public static final Angle hoodAngle(double distanceMeters, double heightMeters) {
     // Quadratic regression of distance vs. angle data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
@@ -41,10 +43,11 @@ public class TrajectoryModel {
    * distance.
    *
    * @param distanceMeters The distance to the target in meters.
+   * @param heightMeters The height of the target in meters.
    * @return The time of flight in seconds for a projectile to hit a target at the specified
    *     distance.
    */
-  public static final double timeOfFlight(double distanceMeters) {
+  public static final double timeOfFlight(double distanceMeters, double heightMeters) {
     // Quadratic regression of distance vs. TOF data from testing.
     throw new UnsupportedOperationException("Not yet implemented");
   }
