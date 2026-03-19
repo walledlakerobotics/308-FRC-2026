@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -131,9 +133,11 @@ public class RobotContainer {
     m_coDriverController
         .rightBumper()
         .whileTrue(
-                    m_shooter.startEnd(
-                        () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)),
-                        m_shooter::coast)));
+            m_shooter.startEnd(
+                () -> m_shooter.setVelocity(RotationsPerSecond.of(speedEntry.get())),
+                m_shooter::coast))
+        .and(m_shooter::isReady)
+        .whileTrue(m_feeder.feed().alongWith(m_indexer.feed()));
 
     // m_coDriverController
     //     .rightBumper()
