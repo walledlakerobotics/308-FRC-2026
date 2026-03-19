@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -52,6 +53,10 @@ public class Intake extends SubsystemBase {
     setVelocity(IntakeConstants.kIntakeVelocity);
   }
 
+  public void runBack() {
+    setVelocity(IntakeConstants.kIntakeVelocity.unaryMinus());
+  }
+
   public void stop() {
     setVelocity(RotationsPerSecond.of(0.0));
   }
@@ -62,6 +67,10 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return startEnd(this::run, this::coast);
+  }
+
+  public Command reverse() {
+    return startEnd(this::runBack, this::coast);
   }
 
   /**
@@ -82,5 +91,9 @@ public class Intake extends SubsystemBase {
    */
   public Command sysIdDynamic(Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void addOrchestra(Orchestra orchestra) {
+    orchestra.addInstrument(m_motor);
   }
 }

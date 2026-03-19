@@ -2,13 +2,13 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,10 +36,10 @@ public class Indexer extends SubsystemBase {
               }),
           new Mechanism(this::setVoltage, null, this, "indexer"));
 
-  private DigitalInput m_lightDetectorLeft =
-      new DigitalInput(IndexerConstants.kLeftLightSensorChannel);
-  private DigitalInput m_lightDetectorRight =
-      new DigitalInput(IndexerConstants.kRightLightSensorChannel);
+  // private DigitalInput m_lightDetectorLeft =
+  //     new DigitalInput(IndexerConstants.kLeftLightSensorChannel);
+  // private DigitalInput m_lightDetectorRight =
+  //     new DigitalInput(IndexerConstants.kRightLightSensorChannel);
 
   public Indexer() {
     m_motor.getConfigurator().apply(Configs.Indexer.indexConfig);
@@ -57,6 +57,10 @@ public class Indexer extends SubsystemBase {
     setVelocity(IndexerConstants.kIndexerVelocity);
   }
 
+  public void runBack() {
+    setVelocity(IndexerConstants.kIndexerVelocity.unaryMinus());
+  }
+
   public void stop() {
     setVelocity(RotationsPerSecond.of(0.0));
   }
@@ -67,7 +71,8 @@ public class Indexer extends SubsystemBase {
    * @return bool
    */
   public boolean isBallDetected() {
-    return m_lightDetectorLeft.get() || m_lightDetectorRight.get();
+    return false;
+    // return m_lightDetectorLeft.get() || m_lightDetectorRight.get();
   }
 
   /**
@@ -90,6 +95,10 @@ public class Indexer extends SubsystemBase {
     return startEnd(this::run, this::stop);
   }
 
+  public Command reverse() {
+    return startEnd(this::runBack, this::stop);
+  }
+
   /**
    * Generates a SysId command for the shooter subsystem to perform a quasistatic test.
    *
@@ -108,5 +117,9 @@ public class Indexer extends SubsystemBase {
    */
   public Command sysIdDynamic(Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void addOrchestra(Orchestra orchestra) {
+    orchestra.addInstrument(m_motor);
   }
 }

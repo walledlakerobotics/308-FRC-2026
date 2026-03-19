@@ -13,13 +13,14 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,6 +31,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -47,11 +50,14 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.shooter.math.VirtualTarget;
+import frc.robot.utils.ChassisSpeedsRateLimiter;
+import frc.robot.utils.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /** Subsystem to control a swerve drivetrain. */
+@Logged
 public class Drivetrain extends SubsystemBase {
   // Create SwerveModules
   private final SwerveModule m_frontLeft =
@@ -143,6 +149,12 @@ public class Drivetrain extends SubsystemBase {
               this,
               "drivetrain-rotation"));
 
+  private final ChassisSpeedsRateLimiter m_speedsRateLimiter =
+      new ChassisSpeedsRateLimiter(
+          DriveConstants.kMaxSpeedMetersPerSecond * 3,
+          DriveConstants.kMaxSpeedMetersPerSecond * 3,
+          DriveConstants.kMaxAngularSpeed * 3);
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Report swerve drive to the HAL
@@ -175,7 +187,12 @@ public class Drivetrain extends SubsystemBase {
 
     m_field.setRobotPose(getPose());
 
-    VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
+    // VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
+
+    // m_frontLeft.update();
+    // m_frontRight.update();
+    // m_rearLeft.update();
+    // m_rearRight.update();
   }
 
   /**
@@ -299,6 +316,19 @@ public class Drivetrain extends SubsystemBase {
     return Rotation2d.fromDegrees(-m_gyro.getRate());
   }
 
+  public Rotation2d getFieldRelativeHeading() {
+    if (DriverStation.isFMSAttached()) {
+      return getHeading()
+          .plus(Field.getAlliance() == Alliance.Red ? Rotation2d.k180deg : Rotation2d.kZero);
+    } else {
+      return getGyroHeading();
+    }
+  }
+
+  public boolean connect() {
+    return m_gyro.isConnected();
+  }
+
   /**
    * Method to drive the robot using speed info.
    *
@@ -307,19 +337,39 @@ public class Drivetrain extends SubsystemBase {
    * @param rot Angular rate of the robot in radians per second.
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(
+      double xSpeed,
+      double ySpeed,
+      double rot,
+      boolean fieldRelative,
+      boolean rateLimitTrans,
+      boolean rateLimitRot) {
     ChassisSpeeds chassisSpeeds;
 
     if (fieldRelative) {
-      Rotation2d headingForFieldRelative =
-          DriverStation.isFMSAttached() ? getHeading() : getGyroHeading();
+      Rotation2d headingForFieldRelative = getFieldRelativeHeading();
       chassisSpeeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, headingForFieldRelative);
     } else {
       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
     }
 
+    ChassisSpeeds limitChassisSpeeds = m_speedsRateLimiter.calculate(chassisSpeeds);
+
+    if (rateLimitTrans) {
+      chassisSpeeds.vxMetersPerSecond = limitChassisSpeeds.vxMetersPerSecond;
+      chassisSpeeds.vyMetersPerSecond = limitChassisSpeeds.vyMetersPerSecond;
+    }
+
+    if (rateLimitRot) {
+      chassisSpeeds.omegaRadiansPerSecond = limitChassisSpeeds.omegaRadiansPerSecond;
+    }
+
     drive(chassisSpeeds);
+  }
+
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, false);
   }
 
   /**
@@ -328,6 +378,14 @@ public class Drivetrain extends SubsystemBase {
    * @param chassisSpeeds The desired chassis speeds.
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
+    if (chassisSpeeds.equals(new ChassisSpeeds())) {
+      m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+      m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+      m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+      m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+      return;
+    }
+
     m_previousSetpoint =
         DriveConstants.kSetpointGenerator.generateSetpoint(
             m_previousSetpoint, chassisSpeeds, Constants.kPeriodSeconds);
@@ -365,7 +423,7 @@ public class Drivetrain extends SubsystemBase {
           ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
           rot *= DriveConstants.kMaxAngularSpeed;
 
-          drive(xSpeed, ySpeed, rot, fieldRelative);
+          drive(xSpeed, ySpeed, rot, fieldRelative, true, true);
         });
   }
 
@@ -509,32 +567,67 @@ public class Drivetrain extends SubsystemBase {
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       boolean fieldRelative) {
-    try (PIDController angleController =
-        new PIDController(
+
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
             AutoConstants.kRotationConstants.kP,
             AutoConstants.kRotationConstants.kI,
-            AutoConstants.kRotationConstants.kD)) {
+            AutoConstants.kRotationConstants.kD,
+            new Constraints(
+                DriveConstants.kMaxAngularSpeed * 2, DriveConstants.kMaxAngularSpeed * 20));
 
-      return startRun(
-          angleController::reset,
-          () -> {
-            Translation2d robotTranslation = getPose().getTranslation();
-            Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+    angleController.setIZone(Units.degreesToRadians(10));
 
-            double xSpeed = translationXSupplier.getAsDouble();
-            double ySpeed = translationYSupplier.getAsDouble();
+    AtomicBoolean stopped = new AtomicBoolean();
 
-            xSpeed = -MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband);
-            ySpeed = -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband);
+    return startRun(
+        () ->
+            angleController.reset(
+                getHeading().getRadians(), getChassisSpeeds().omegaRadiansPerSecond),
+        () -> {
+          Translation2d robotTranslation = getPose().getTranslation();
+          Rotation2d angleToTarget = point.get().minus(robotTranslation).getAngle();
 
-            xSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
-            ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+          double xSpeed = translationXSupplier.getAsDouble();
+          double ySpeed = translationYSupplier.getAsDouble();
 
-            double rot =
-                angleController.calculate(getHeading().getRadians(), angleToTarget.getRadians());
+          xSpeed = -MathUtil.applyDeadband(xSpeed, OIConstants.kDriveDeadband);
+          ySpeed = -MathUtil.applyDeadband(ySpeed, OIConstants.kDriveDeadband);
 
-            drive(xSpeed, ySpeed, rot, fieldRelative);
-          });
-    }
+          xSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+          ySpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+
+          ChassisSpeeds speeds = getChassisSpeeds();
+
+          double distance = robotTranslation.getDistance(point.get());
+
+          double rotFF = 1.4 * -speeds.vyMetersPerSecond / distance;
+
+          double rot =
+              rotFF
+                  + angleController.calculate(
+                      getHeading().getRadians(), angleToTarget.getRadians());
+
+          System.out.println(Math.abs(getHeading().getDegrees() - angleToTarget.getDegrees()));
+
+          if (Math.abs(getHeading().getDegrees() - angleToTarget.getDegrees())
+                  < (stopped.get() ? 1.5 : 0.5)
+              && xSpeed == 0
+              && ySpeed == 0) {
+            rot = 0;
+            stopped.set(true);
+          } else {
+            stopped.set(false);
+          }
+
+          drive(xSpeed, ySpeed, rot, fieldRelative, true, false);
+        });
+  }
+
+  public double distanceToHub() {
+    return getPose()
+        .getTranslation()
+        .getDistance(Field.Landmark.Hub.getTranslation(Field.getAlliance()).toTranslation2d());
   }
 }

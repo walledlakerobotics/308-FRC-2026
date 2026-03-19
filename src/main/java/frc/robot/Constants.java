@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -21,6 +21,10 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -61,17 +65,17 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds
     // of the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.47;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxSpeedMetersPerSecond = 6.0;
+    public static final double kMaxAngularSpeed = 4 * Math.PI; // radians per second
 
     // Odometry measurement standard deviations
     public static final Matrix<N4, N1> kOdometryStdDevs =
         VecBuilder.fill(0.001, 0.001, 0.001, 0.01);
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(23);
+    public static final double kTrackWidth = Units.inchesToMeters(21.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(23.125);
+    public static final double kWheelBase = Units.inchesToMeters(21.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
@@ -130,7 +134,7 @@ public final class Constants {
     public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 35; // amps
 
-    public static final boolean kDrivingMotorsInverted = true;
+    public static final boolean kDrivingMotorsInverted = false;
     public static final boolean kTurningMotorsInverted = true;
     public static final SensorDirectionValue kTurningEncoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
@@ -138,12 +142,13 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kCoDriverControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 
   public static final class AutoConstants {
-    public static final PIDConstants kTranslationConstants = new PIDConstants(1, 0, 0);
-    public static final PIDConstants kRotationConstants = new PIDConstants(1, 0, 0);
+    public static final PIDConstants kTranslationConstants = new PIDConstants(1.5, 0.0, 0.0);
+    public static final PIDConstants kRotationConstants = new PIDConstants(2.5, 0.0, 0.0);
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
@@ -170,20 +175,51 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String[] kCameraNames = {
-      "Arducam OV9281 #1", "Arducam OV9281 #2", "Arducam OV9281 #3", "Arducam OV9281 #4"
-    };
+    public static final String[] kCameraNames = {"Arducam OV9281 #1", "Arducam OV9281 #2"};
 
     public static final Transform3d[] kRobotToCameraTransforms = {
-      Transform3d.kZero, Transform3d.kZero, Transform3d.kZero, Transform3d.kZero
+      new Transform3d(
+          new Pose3d(
+              Units.inchesToMeters(24.0),
+              0.0,
+              Units.inchesToMeters(-44.25),
+              new Rotation3d(Rotation2d.k180deg)),
+          new Pose3d(
+              0.6128275955053124,
+              0.09668390599339825,
+              -0.5964829934833575,
+              new Rotation3d(
+                  new Quaternion(
+                      -0.1299234066976117,
+                      0.2125947453635515,
+                      -0.011083582808246062,
+                      0.9683981701943858)))),
+      new Transform3d(
+          new Pose3d(
+              Units.inchesToMeters(24.0),
+              0.0,
+              Units.inchesToMeters(-44.25),
+              new Rotation3d(Rotation2d.k180deg)),
+          new Pose3d(
+              0.5942146854401791,
+              -0.23197565220133776,
+              -0.5973754694329283,
+              new Rotation3d(
+                  new Quaternion(
+                      0.10571767646617448,
+                      0.1980934342547792,
+                      0.03918154332501794,
+                      0.9736769537300156)))),
+      Transform3d.kZero,
+      Transform3d.kZero
     };
 
     public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
         List.of(
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0),
-            VecBuilder.fill(0.02, 0.02, 0.02, 3.0));
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0));
   }
 
   public static final class MatchConstants {
@@ -201,12 +237,23 @@ public final class Constants {
   public static final class ExtenderConstants {
     public static final int kExtenderCanId = CANIDs.secondaryMotor(0);
 
-    public static final double kExtenderMotorReduction = 1.0;
-    public static final IdleMode kExtenderMotorIdleMode = IdleMode.kBrake;
-    public static final int kExtenderMotorCurrentLimit = 30; // amps
-    public static final boolean kExtenderMotorInverted = false;
+    public static final double kExtenderWinchRadiusMeters = Units.inchesToMeters(0.5);
+    public static final double kExtenderWinchDiamaterMeters = 2 * kExtenderWinchRadiusMeters;
+    public static final double kExtenderWinchCircumferenceMeters =
+        kExtenderWinchDiamaterMeters * Math.PI;
 
-    public static final double kExdenterMotorSpeed = 0.5;
+    public static final double kExtenderMotorReduction = 1.0;
+
+    public static final DCMotor kExtenderMotor =
+        DCMotor.getKrakenX60(1).withReduction(kExtenderMotorReduction);
+
+    public static final NeutralModeValue kExtenderMotorNeutralMode = NeutralModeValue.Brake;
+    public static final int kExtenderMotorStatorCurrentLimit = 40; // amps
+    public static final int kExtenderMotorSupplyCurrentLimit = 20; // amps
+    public static final InvertedValue kExtenderMotorInverted =
+        InvertedValue.CounterClockwise_Positive;
+
+    public static final double kExtendedPosition = 10.0;
   }
 
   public static final class IntakeConstants {
@@ -221,7 +268,7 @@ public final class Constants {
     public static final DCMotor kIntakeMotor =
         DCMotor.getKrakenX60(1).withReduction(kIntakeMotorReduction);
 
-    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(3000.0);
+    public static final AngularVelocity kIntakeVelocity = RotationsPerSecond.of(100.0);
   }
 
   public static final class ShooterConstants {
@@ -232,8 +279,7 @@ public final class Constants {
     public static final NeutralModeValue kShooterMotorNeutralMode = NeutralModeValue.Coast;
     public static final int kShooterMotorStatorCurrentLimit = 120; // amps
     public static final int kShooterMotorSupplyCurrentLimit = 70; // amps
-    public static final InvertedValue kShooterLeaderInverted =
-        InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue kShooterLeaderInverted = InvertedValue.Clockwise_Positive;
     public static final MotorAlignmentValue kShooterFollowerAlignment = MotorAlignmentValue.Opposed;
 
     public static final DCMotor kShooterMotor =
@@ -246,31 +292,31 @@ public final class Constants {
     public static final int kHoodLeaderCanId = CANIDs.secondaryMotor(4);
     public static final int kHoodFollowerCanId = CANIDs.secondaryMotor(5);
 
-    public static final IdleMode kHoodMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kHoodMotorIdleMode = IdleMode.kCoast;
     public static final int kHoodMotorCurrentLimit = 40; // amps
 
-    public static final boolean kHoodLeaderInverted = false;
-    public static final boolean kHoodFollowerInverted = false;
+    public static final boolean kHoodLeaderInverted = true;
+    public static final boolean kHoodFollowerInverted = true;
 
     // angle between horizontal line and the line between the axle of hood and mount point of the
     // actuator
-    public static final Angle kActuatorAngleOffset = Rotations.of(0.0);
+    public static final Angle kActuatorAngleOffset = Degrees.of(39);
 
-    public static final double kHoodEncoderReduction = 1.0;
+    public static final double kHoodEncoderReduction = 19.08 / 7;
 
-    public static final double kDistanceToMountPointMeters = Units.inchesToMeters(5.0);
-    public static final double kRotationRadiusMeters = Units.inchesToMeters(5.0);
+    public static final double kDistanceToMountPointMeters = 0.2;
+    public static final double kRotationRadiusMeters = 0.075;
 
-    public static final PIDConstants kHoodPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+    public static final PIDConstants kHoodPIDConstants = new PIDConstants(50.0, 100.0, 0.0);
   }
 
   public static final class IndexerConstants {
 
-    public static final int kMotorCANId = CANIDs.secondaryMotor(0);
+    public static final int kMotorCANId = CANIDs.secondaryMotor(6);
     public static final double kIndexerMotorReduction = 1.0;
 
     public static final NeutralModeValue kMotorNeutralMode = NeutralModeValue.Brake;
-    public static final InvertedValue kMotorInvertedValue = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue kMotorInvertedValue = InvertedValue.CounterClockwise_Positive;
 
     public static final DCMotor kIndexerMotor =
         DCMotor.getKrakenX44(1).withReduction(kIndexerMotorReduction);
@@ -285,17 +331,17 @@ public final class Constants {
   }
 
   public static final class FeederConstants {
-    public static final int kFeederCanId = CANIDs.secondaryMotor(0);
-    public static final double kFeederMotorReduction = 1.0;
+    public static final int kFeederCanId = CANIDs.secondaryMotor(7);
+    public static final double kFeederMotorReduction = 30.0 / 18.0;
     public static final NeutralModeValue kFeederIntakeNeutralMode = NeutralModeValue.Brake;
     public static final int kFeederMotorStatorCurrentLimit = 120;
     public static final int kFeederMotorSupplyCurrentLimit = 70;
-    public static final InvertedValue kFeederInverted = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue kFeederInverted = InvertedValue.CounterClockwise_Positive;
 
     public static final DCMotor kFeederMotor =
         DCMotor.getKrakenX44(1).withReduction(kFeederMotorReduction);
 
-    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(1.0);
-    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(3000.0);
+    public static final AngularVelocity kIdleVelocity = RotationsPerSecond.of(5.0);
+    public static final AngularVelocity kFeedingVelocity = RotationsPerSecond.of(30.0);
   }
 }

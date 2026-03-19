@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.PoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -17,9 +18,12 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** Processes vision data from PhotonVision and updating the robot's pose estimate. */
+@Logged
 public class Vision {
   private final PoseEstimator3d<?> m_poseEstimator;
   private final PhotonCamera[] m_cameras = new PhotonCamera[VisionConstants.kCameraNames.length];
+
+  @Logged private Pose3d m_cameraPose = Pose3d.kZero;
 
   private final PhotonPoseEstimator m_visionPoseEstimator =
       new PhotonPoseEstimator(FieldConstants.kAprilTagFieldLayout, Transform3d.kZero);
@@ -62,6 +66,13 @@ public class Vision {
     Optional<PhotonPipelineResult> latestResult = getLatestResult(cameraIndex);
     if (latestResult.isEmpty()) {
       return Optional.empty();
+    }
+
+    if (latestResult.get().getBestTarget() != null
+        && latestResult.get().getBestTarget().bestCameraToTarget != null
+        && cameraIndex == 1) {
+      m_cameraPose =
+          Pose3d.kZero.transformBy(latestResult.get().getBestTarget().bestCameraToTarget.inverse());
     }
 
     return m_visionPoseEstimator

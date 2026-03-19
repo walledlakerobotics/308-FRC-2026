@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -34,15 +35,15 @@ public final class Configs {
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
 
       double drivingVelocityFeedForward =
-          Constants.kNominalVoltage
-              / (ModuleConstants.kDrivingMotor.freeSpeedRadPerSec
+          1.0
+              / (ModuleConstants.kDrivingMotor.KvRadPerSecPerVolt
                   * ModuleConstants.kWheelRadiusMeters);
 
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
           .idleMode(ModuleConstants.kDrivingMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .voltageCompensation(ModuleConstants.kDrivingMotor.nominalVoltageVolts);
 
       drivingConfig
           .encoder
@@ -52,16 +53,16 @@ public final class Configs {
       drivingConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(0.04, 0, 0)
+          .pid(0.2, 0, 0)
           .outputRange(-1.0, 1.0)
           .feedForward
-          .sva(0.0, drivingVelocityFeedForward, 0.0);
+          .sva(0.2, drivingVelocityFeedForward, 0.0);
 
       turningConfig
           .inverted(ModuleConstants.kTurningMotorsInverted)
           .idleMode(ModuleConstants.kTurningMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .voltageCompensation(ModuleConstants.kTurningMotor.nominalVoltageVolts);
 
       turningConfig
           .encoder
@@ -71,7 +72,7 @@ public final class Configs {
       turningConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(1.0, 0, 0)
+          .pid(2.0, 0, 0)
           .outputRange(-1.0, 1.0)
           .positionWrappingEnabled(true)
           .positionWrappingInputRange(-0.5, 0.5);
@@ -83,27 +84,35 @@ public final class Configs {
   }
 
   public static final class Extender {
-    public static final SparkMaxConfig extenderConfig = new SparkMaxConfig();
+    public static final TalonFXConfiguration extenderConfig = new TalonFXConfiguration();
 
     static {
-      double extenderFactor = 1.0 / ExtenderConstants.kExtenderMotorReduction;
+      double extenderVelocityFeedForward =
+          1.0 / Units.radiansToRotations(ExtenderConstants.kExtenderMotor.KvRadPerSecPerVolt);
 
       extenderConfig
-          .inverted(ExtenderConstants.kExtenderMotorInverted)
-          .idleMode(ExtenderConstants.kExtenderMotorIdleMode)
-          .smartCurrentLimit(ExtenderConstants.kExtenderMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
-
-      extenderConfig
-          .absoluteEncoder
-          .positionConversionFactor(extenderFactor) // rotations
-          .velocityConversionFactor(extenderFactor / 60.0); // rotations per second
-
-      extenderConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(0.1, 0, 0)
-          .outputRange(-1.0, 1.0);
+          .withMotorOutput(
+              new MotorOutputConfigs()
+                  .withInverted(ExtenderConstants.kExtenderMotorInverted)
+                  .withNeutralMode(ExtenderConstants.kExtenderMotorNeutralMode))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(ExtenderConstants.kExtenderMotorStatorCurrentLimit)
+                  .withSupplyCurrentLimit(ExtenderConstants.kExtenderMotorSupplyCurrentLimit))
+          .withFeedback(
+              new FeedbackConfigs()
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withRotorToSensorRatio(1.0)
+                  .withSensorToMechanismRatio(ExtenderConstants.kExtenderMotorReduction))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(0.1)
+                  .withKI(0.0)
+                  .withKD(0.0)
+                  .withKS(0.0)
+                  .withKV(extenderVelocityFeedForward)
+                  .withKA(0.0))
+          .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
 
@@ -112,8 +121,7 @@ public final class Configs {
 
     static {
       double intakeVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(IntakeConstants.kIntakeMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(IntakeConstants.kIntakeMotor.KvRadPerSecPerVolt);
 
       intakeConfig
           .withMotorOutput(
@@ -131,12 +139,13 @@ public final class Configs {
                   .withSensorToMechanismRatio(IntakeConstants.kIntakeMotorReduction))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(0.1)
+                  .withKP(1.2)
                   .withKI(0.0)
                   .withKD(0.0)
                   .withKS(0.0)
                   .withKV(intakeVelocityFeedForward)
-                  .withKA(0.0));
+                  .withKA(0.0))
+          .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
 
@@ -145,8 +154,7 @@ public final class Configs {
 
     static {
       double feederVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(FeederConstants.kFeederMotor.KvRadPerSecPerVolt);
 
       feederConfig
           .withMotorOutput(
@@ -169,7 +177,8 @@ public final class Configs {
                   .withKD(0.0)
                   .withKS(0.0)
                   .withKV(feederVelocityFeedForward)
-                  .withKA(0.0));
+                  .withKA(0.0))
+          .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
 
@@ -178,8 +187,7 @@ public final class Configs {
 
     static {
       double indexerVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(IndexerConstants.kIndexerMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(IndexerConstants.kIndexerMotor.KvRadPerSecPerVolt);
 
       indexConfig
           .withMotorOutput(
@@ -202,7 +210,8 @@ public final class Configs {
                   .withKD(0.0)
                   .withKS(0.0)
                   .withKV(indexerVelocityFeedForward)
-                  .withKA(0.0));
+                  .withKA(0.0))
+          .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
 
@@ -210,10 +219,6 @@ public final class Configs {
     public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
     static {
-      double shooterVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
-
       shooterConfig
           .withMotorOutput(
               new MotorOutputConfigs()
@@ -233,9 +238,10 @@ public final class Configs {
                   .withKP(0.1)
                   .withKI(0.0)
                   .withKD(0.0)
-                  .withKS(0.0)
-                  .withKV(shooterVelocityFeedForward)
-                  .withKA(0.0));
+                  .withKS(0.095995)
+                  .withKV(0.11533)
+                  .withKA(0.0067228))
+          .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
 

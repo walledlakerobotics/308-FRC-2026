@@ -8,7 +8,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -17,10 +17,12 @@ import frc.robot.Configs;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.shooter.math.TrajectoryModel;
 import frc.robot.subsystems.shooter.math.VirtualTarget;
+import frc.robot.utils.BangBangController;
 import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
+@Logged
 public class Hood extends SubsystemBase {
   private final SparkMax m_hoodLeader =
       new SparkMax(HoodConstants.kHoodLeaderCanId, MotorType.kBrushed);
@@ -29,11 +31,7 @@ public class Hood extends SubsystemBase {
 
   private final AbsoluteEncoder m_hoodEncoder = m_hoodLeader.getAbsoluteEncoder();
 
-  private final PIDController m_controller =
-      new PIDController(
-          HoodConstants.kHoodPIDConstants.kP,
-          HoodConstants.kHoodPIDConstants.kI,
-          HoodConstants.kHoodPIDConstants.kD);
+  private final BangBangController m_controller = new BangBangController(0.01);
 
   private Supplier<Pose2d> robotPoseSupplier;
 
@@ -49,6 +47,8 @@ public class Hood extends SubsystemBase {
         Configs.Hood.hoodFollowerConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
+    setAngle(getAngle());
   }
 
   /**
@@ -57,7 +57,7 @@ public class Hood extends SubsystemBase {
    * @param angle The desired hood angle.
    */
   public void setAngle(Angle angle) {
-    m_controller.setSetpoint(getActuatorLength(angle));
+    m_controller.setSetpoint(angle.in(Rotations));
   }
 
   /**
@@ -111,7 +111,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double output = m_controller.calculate(getActuatorLength());
+    double output = m_controller.calculate(getAngle().in(Rotations));
     m_hoodLeader.set(output);
   }
 }

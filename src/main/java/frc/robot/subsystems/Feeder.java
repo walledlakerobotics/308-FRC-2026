@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -49,6 +50,10 @@ public class Feeder extends SubsystemBase {
     setVelocity(FeederConstants.kFeedingVelocity);
   }
 
+  public void runBack() {
+    setVelocity(FeederConstants.kFeedingVelocity);
+  }
+
   public void runIdle() {
     setVelocity(FeederConstants.kIdleVelocity);
   }
@@ -83,5 +88,9 @@ public class Feeder extends SubsystemBase {
    */
   public Command sysIdDynamic(Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void addOrchestra(Orchestra orchestra) {
+    orchestra.addInstrument(m_motor);
   }
 }
