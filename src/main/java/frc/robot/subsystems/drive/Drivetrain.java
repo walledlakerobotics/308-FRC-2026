@@ -207,7 +207,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * Gets the current {@link ChassisSpeeds} of the robot.
+   * Gets the current robot-relative {@link ChassisSpeeds} of the robot.
    *
    * @return The current ChassisSpeeds of the robot.
    */
@@ -217,6 +217,16 @@ public class Drivetrain extends SubsystemBase {
 
     chassisSpeeds.omegaRadiansPerSecond = getTurnRate().getRadians();
     return chassisSpeeds;
+  }
+
+  /**
+   * Gets the current field-relative {@link ChassisSpeeds} of the robot.
+   *
+   * @return The current ChassisSpeeds of the robot.
+   */
+  public ChassisSpeeds getFieldSpeeds() {
+    ChassisSpeeds chassisSpeeds = getChassisSpeeds();
+    return ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, getHeading());
   }
 
   /**
