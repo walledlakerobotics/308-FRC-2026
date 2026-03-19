@@ -186,13 +186,6 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(getGyroRotation3d(), getModulePositions());
 
     m_field.setRobotPose(getPose());
-
-    // VirtualTarget.getInstance().update(getPose(), getChassisSpeeds());
-
-    // m_frontLeft.update();
-    // m_frontRight.update();
-    // m_rearLeft.update();
-    // m_rearRight.update();
   }
 
   /**
