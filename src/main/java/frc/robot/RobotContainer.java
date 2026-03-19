@@ -124,9 +124,6 @@ public class RobotContainer {
     m_coDriverController
         .rightBumper()
         .whileTrue(
-            Commands.waitUntil(m_shooter::isReady)
-                .andThen(m_feeder.feed().alongWith(m_indexer.feed()))
-                .alongWith(
                     m_shooter.startEnd(
                         () -> m_shooter.setVelocity(RotationsPerSecond.of(65.0)),
                         m_shooter::coast)));
