@@ -45,9 +45,10 @@ public class RobotContainer {
 
   private final Feeder m_feeder = new Feeder();
   private final Indexer m_indexer = new Indexer();
-  private final Shooter m_shooter = new Shooter(m_robotDrive::getPose);
+  private final Shooter m_shooter =
+      new Shooter(m_robotDrive::getPose, m_robotDrive::getChassisSpeeds);
   private final Intake m_intake = new Intake();
-  // private final Hood m_hood = new Hood(m_robotDrive::getPose);
+  // private final Hood m_hood = new Hood(m_robotDrive::getPose, m_robotDrive::getChassisSpeeds);
   private final Extender m_extender = new Extender();
 
   // The driver's controller
