@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.utils.Field.Landmark;
 import java.util.HashMap;
 
 /**
@@ -94,5 +96,24 @@ public class VirtualTarget {
   public final Translation3d calculateVirtualTarget(
       Translation3d target, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
     return calculateVirtualTarget(target, robotPose, robotSpeeds, 5);
+  }
+
+  /**
+   * Calculates a virtual target position that accounts for the robot's movement during the time of
+   * flight of the projectile. This method iteratively calculates the virtual target by estimating
+   * how far the robot will travel during the time of flight of the projectile and adjusting the
+   * target position accordingly until it converges on an accurate virtual target.
+   *
+   * @param target The original target as a field landmark.
+   * @param alliance The alliance of the landmark.
+   * @param robotPose The current position of the robot in field coordinates.
+   * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
+   *     meters per second.
+   * @return The calculated virtual target position in field coordinates that accounts for the
+   *     robot's movement during the time of flight of the projectile.
+   */
+  public final Translation3d calculateVirtualTarget(
+      Landmark target, Alliance alliance, Pose2d robotPose, ChassisSpeeds robotSpeeds) {
+    return calculateVirtualTarget(target.getTranslation(alliance), robotPose, robotSpeeds);
   }
 }
