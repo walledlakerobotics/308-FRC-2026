@@ -52,6 +52,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.utils.ChassisSpeedsRateLimiter;
 import frc.robot.utils.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -578,6 +579,8 @@ public class Drivetrain extends SubsystemBase {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     angleController.setIZone(Units.degreesToRadians(10));
 
+    AtomicBoolean stopped = new AtomicBoolean();
+
     return startRun(
         () ->
             angleController.reset(
@@ -607,6 +610,16 @@ public class Drivetrain extends SubsystemBase {
                       getHeading().getRadians(), angleToTarget.getRadians());
 
           System.out.println(Math.abs(getHeading().getDegrees() - angleToTarget.getDegrees()));
+
+          if (Math.abs(getHeading().getDegrees() - angleToTarget.getDegrees())
+                  < (stopped.get() ? 1.5 : 0.5)
+              && xSpeed == 0
+              && ySpeed == 0) {
+            rot = 0;
+            stopped.set(true);
+          } else {
+            stopped.set(false);
+          }
 
           drive(xSpeed, ySpeed, rot, fieldRelative, true, false);
         });
