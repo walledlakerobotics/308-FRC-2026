@@ -219,9 +219,6 @@ public final class Configs {
     public static final TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
     static {
-      double shooterVelocityFeedForward =
-          1.0 / Units.radiansToRotations(ShooterConstants.kShooterMotor.KvRadPerSecPerVolt);
-
       shooterConfig
           .withMotorOutput(
               new MotorOutputConfigs()
