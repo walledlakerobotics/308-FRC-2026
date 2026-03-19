@@ -319,7 +319,12 @@ public class Drivetrain extends SubsystemBase {
     return Rotation2d.fromDegrees(-m_gyro.getRate());
   }
 
-  public Rotation2d getFieldRelativeHeading() {
+  /**
+   * Gets the heading used for field-centric controls.
+   *
+   * @return The heading to use for field-centric controls as a {@link Rotation2d}.
+   */
+  public Rotation2d getFieldCentricHeading() {
     if (DriverStation.isFMSAttached()) {
       return getHeading()
           .plus(Field.getAlliance() == Alliance.Red ? Rotation2d.k180deg : Rotation2d.kZero);
@@ -350,7 +355,7 @@ public class Drivetrain extends SubsystemBase {
     ChassisSpeeds chassisSpeeds;
 
     if (fieldRelative) {
-      Rotation2d headingForFieldRelative = getFieldRelativeHeading();
+      Rotation2d headingForFieldRelative = getFieldCentricHeading();
       chassisSpeeds =
           ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, headingForFieldRelative);
     } else {
