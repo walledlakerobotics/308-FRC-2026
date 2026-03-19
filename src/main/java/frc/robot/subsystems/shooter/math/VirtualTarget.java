@@ -80,44 +80,26 @@ public class VirtualTarget {
    * @param robotPose The current position of the robot in field coordinates.
    * @param robotSpeeds The current field-relative speeds of the robot in the x and y directions in
    *     meters per second.
-   * @param maxIterations The maximum number of iterations to perform when calculating the virtual
-   *     target. This can be adjusted to balance accuracy and computation time. Defaults to 5.
+   * @param iterations The number of iterations to perform when calculating the virtual target. This
+   *     can be adjusted to balance accuracy and computation time. Defaults to 5.
    * @return The calculated virtual target position in field coordinates that accounts for the
    *     robot's movement during the time of flight of the projectile.
    */
   public static final Translation2d calculateVirtualTarget(
-      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds, int maxIterations) {
+      Translation2d target, Pose2d robotPose, ChassisSpeeds robotSpeeds, int iterations) {
     Translation2d robotTranslation = robotPose.getTranslation();
 
-    Translation2d virtualTarget = target; // virtual target to account for robot's speed
+    Translation2d virtualTarget = target;
 
-    double targetTOF; // seconds, time for projectile to reach target
-    double virtualTargetTOF; // seconds, time for projectile to reach virtual target
+    for (int i = 0; i < iterations; i++) {
+      double distance = robotTranslation.getDistance(virtualTarget);
+      double timeOfFlight = TrajectoryModel.timeOfFlight(distance);
 
-    // Iterate a few times to converge on an accurate virtual target
-    for (int i = 0; i < maxIterations; i++) {
-      double distanceToTarget = target.minus(robotTranslation).getNorm();
+      double deltaX = robotSpeeds.vxMetersPerSecond * timeOfFlight;
+      double deltaY = robotSpeeds.vyMetersPerSecond * timeOfFlight;
+      Translation2d robotDelta = new Translation2d(deltaX, deltaY);
 
-      // Calculate how far bot will travel during the time of flight of the projectile
-      targetTOF = TrajectoryModel.timeOfFlight(distanceToTarget);
-      Translation2d robotDisplacement =
-          new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond)
-              .times(targetTOF);
-
-      // Calculate the virtual target position by subtracting the robot's displacement to the
-      // original target
-      virtualTarget = target.minus(robotDisplacement);
-
-      // Calculate how far bot will travel during the time of flight to the virtual target
-      double distanceToVirtualTarget = virtualTarget.minus(robotTranslation).getNorm();
-      virtualTargetTOF = TrajectoryModel.timeOfFlight(distanceToVirtualTarget);
-
-      // If the time of flight to the virtual target is close enough to the time of flight to the
-      // previous target, we can assume the virtual target is accurate enough and break out of the
-      // loop
-      if (Math.abs(virtualTargetTOF - targetTOF) < 0.1) {
-        break;
-      }
+      virtualTarget = target.minus(robotDelta);
     }
 
     return virtualTarget;
