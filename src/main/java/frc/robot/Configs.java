@@ -35,15 +35,15 @@ public final class Configs {
       double turningFactor = 1.0 / ModuleConstants.kTurningMotorReduction;
 
       double drivingVelocityFeedForward =
-          Constants.kNominalVoltage
-              / (ModuleConstants.kDrivingMotor.freeSpeedRadPerSec
+          1.0
+              / (ModuleConstants.kDrivingMotor.KvRadPerSecPerVolt
                   * ModuleConstants.kWheelRadiusMeters);
 
       drivingConfig
           .inverted(ModuleConstants.kDrivingMotorsInverted)
           .idleMode(ModuleConstants.kDrivingMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .voltageCompensation(ModuleConstants.kDrivingMotor.nominalVoltageVolts);
 
       drivingConfig
           .encoder
@@ -62,7 +62,7 @@ public final class Configs {
           .inverted(ModuleConstants.kTurningMotorsInverted)
           .idleMode(ModuleConstants.kTurningMotorIdleMode)
           .smartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit)
-          .voltageCompensation(Constants.kNominalVoltage);
+          .voltageCompensation(ModuleConstants.kTurningMotor.nominalVoltageVolts);
 
       turningConfig
           .encoder
@@ -88,8 +88,7 @@ public final class Configs {
 
     static {
       double extenderVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ExtenderConstants.kExtenderMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(ExtenderConstants.kExtenderMotor.KvRadPerSecPerVolt);
 
       extenderConfig
           .withMotorOutput(
@@ -122,8 +121,7 @@ public final class Configs {
 
     static {
       double intakeVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(IntakeConstants.kIntakeMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(IntakeConstants.kIntakeMotor.KvRadPerSecPerVolt);
 
       intakeConfig
           .withMotorOutput(
@@ -156,8 +154,7 @@ public final class Configs {
 
     static {
       double feederVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(FeederConstants.kFeederMotor.KvRadPerSecPerVolt);
 
       feederConfig
           .withMotorOutput(
@@ -190,8 +187,7 @@ public final class Configs {
 
     static {
       double indexerVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(IndexerConstants.kIndexerMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(IndexerConstants.kIndexerMotor.KvRadPerSecPerVolt);
 
       indexConfig
           .withMotorOutput(
@@ -224,8 +220,7 @@ public final class Configs {
 
     static {
       double shooterVelocityFeedForward =
-          Constants.kNominalVoltage
-              / Units.radiansToRotations(ShooterConstants.kShooterMotor.freeSpeedRadPerSec);
+          1.0 / Units.radiansToRotations(ShooterConstants.kShooterMotor.KvRadPerSecPerVolt);
 
       shooterConfig
           .withMotorOutput(
@@ -243,12 +238,12 @@ public final class Configs {
                   .withSensorToMechanismRatio(ShooterConstants.kShooterMotorReduction))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(1.2)
+                  .withKP(0.1)
                   .withKI(0.0)
                   .withKD(0.0)
-                  .withKS(0.0)
-                  .withKV(shooterVelocityFeedForward)
-                  .withKA(0.0))
+                  .withKS(0.095995)
+                  .withKV(0.11533)
+                  .withKA(0.0067228))
           .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
   }
