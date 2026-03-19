@@ -63,7 +63,7 @@ public class VirtualTarget {
 
     for (int i = 0; i < iterations; i++) {
       double distance = robotTranslation.getDistance(virtualTarget);
-      double timeOfFlight = TrajectoryModel.timeOfFlight(distance);
+      double timeOfFlight = TrajectoryModel.timeOfFlight(distance, target.getZ());
 
       double deltaX = robotSpeeds.vxMetersPerSecond * timeOfFlight;
       double deltaY = robotSpeeds.vyMetersPerSecond * timeOfFlight;
