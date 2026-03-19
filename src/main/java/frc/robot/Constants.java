@@ -216,10 +216,10 @@ public final class Constants {
 
     public static final List<Matrix<N4, N1>> kVisionMeasurementStdDevs =
         List.of(
-            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
-            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
-            VecBuilder.fill(0.01, 0.01, 0.01, 3.0),
-            VecBuilder.fill(0.01, 0.01, 0.01, 3.0));
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0),
+            VecBuilder.fill(0.005, 0.005, 0.005, 3.0));
   }
 
   public static final class MatchConstants {
