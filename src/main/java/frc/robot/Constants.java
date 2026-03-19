@@ -147,8 +147,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final PIDConstants kTranslationConstants = new PIDConstants(3.0, 0.0, 0.0);
-    public static final PIDConstants kRotationConstants = new PIDConstants(1.5, 0.0, 0.0);
+    public static final PIDConstants kTranslationConstants = new PIDConstants(1.5, 0.0, 0.0);
+    public static final PIDConstants kRotationConstants = new PIDConstants(2.5, 0.0, 0.0);
 
     public static final PathFollowingController kPathFollowingController =
         new PPHolonomicDriveController(kTranslationConstants, kRotationConstants);
