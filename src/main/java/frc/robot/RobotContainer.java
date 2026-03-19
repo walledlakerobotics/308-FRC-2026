@@ -98,6 +98,13 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    DoubleEntry speedEntry =
+        NetworkTableInstance.getDefault()
+            .getTable("Tuning")
+            .getDoubleTopic("Shooter Speed")
+            .getEntry(0.0);
+    speedEntry.set(0.0);
+
     // Configure drive control
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
