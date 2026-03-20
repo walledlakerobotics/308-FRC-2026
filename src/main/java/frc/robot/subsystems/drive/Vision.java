@@ -18,12 +18,13 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** Processes vision data from PhotonVision and updating the robot's pose estimate. */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Vision {
   private final PoseEstimator3d<?> m_poseEstimator;
   private final PhotonCamera[] m_cameras = new PhotonCamera[VisionConstants.kCameraNames.length];
 
-  @Logged private Pose3d m_cameraPose = Pose3d.kZero;
+  @Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
+  private Pose3d m_cameraPose = Pose3d.kZero;
 
   private final PhotonPoseEstimator m_visionPoseEstimator =
       new PhotonPoseEstimator(FieldConstants.kAprilTagFieldLayout, Transform3d.kZero);
