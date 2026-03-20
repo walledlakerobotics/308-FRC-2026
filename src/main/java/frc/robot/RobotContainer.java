@@ -38,7 +38,7 @@ import frc.robot.utils.MatchTimer.HubState;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class RobotContainer {
   // The robot's subsystems
   private final Drivetrain m_robotDrive = new Drivetrain();
@@ -191,7 +191,6 @@ public class RobotContainer {
     return m_autoChooser.getSelected();
   }
 
-  @Logged(name = "Hub Switch Time")
   public double getHubSwitchTime() {
     HubState state =
         MatchTimer.getInstance().getMatchPeriod().getHubState().orElse(HubState.Active);

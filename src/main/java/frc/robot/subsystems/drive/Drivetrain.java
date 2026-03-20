@@ -60,7 +60,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /** Subsystem to control a swerve drivetrain. */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Drivetrain extends SubsystemBase {
   // Create SwerveModules
   private final SwerveModule m_frontLeft =

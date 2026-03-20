@@ -24,7 +24,7 @@ import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the adjustable shooter hood. */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Hood extends SubsystemBase {
   private final SparkMax m_hoodLeader =
       new SparkMax(HoodConstants.kHoodLeaderCanId, MotorType.kBrushed);

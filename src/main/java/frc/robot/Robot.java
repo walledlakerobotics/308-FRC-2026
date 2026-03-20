@@ -8,7 +8,9 @@ import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utils.MatchTimer;
@@ -19,7 +21,7 @@ import frc.robot.utils.MatchTimer;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
@@ -55,6 +57,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    DriverStationSim.setMatchType(MatchType.Elimination);
+
     MatchTimer.getInstance().poll();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled commands,

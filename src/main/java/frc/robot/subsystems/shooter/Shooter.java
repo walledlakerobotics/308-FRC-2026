@@ -30,7 +30,7 @@ import frc.robot.utils.Field.Landmark;
 import java.util.function.Supplier;
 
 /** Subsystem for controlling the Fuel shooter. */
-@Logged
+@Logged(defaultNaming = Logged.Naming.USE_HUMAN_NAME)
 public class Shooter extends SubsystemBase {
   TalonFX m_shooterLeader = new TalonFX(ShooterConstants.kShooterLeaderCanId);
   TalonFX m_shooterFollower = new TalonFX(ShooterConstants.kShooterFollowerCanId);
